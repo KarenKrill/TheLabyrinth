@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField]
     private bool _useRootMotion = false;
     private float _fallSpeed;
-    private bool _isJumping, _isSliding;
+    private bool _isJumping = false, _isSliding = false, _isGrounded = false;
     private Vector3 _slopeSlideVelocity;
     private float _characterControllerStepOffset;
     private float? _lastGroundedTime, _jumpButtonPressedTime;
@@ -58,8 +58,8 @@ public class PlayerController : MonoBehaviour
     }
     private void UpdateMovement()
     {
-        bool isGrounded = _characterController.isGrounded;
-        bool isFalling = !isGrounded;
+        _isGrounded = _characterController.isGrounded;
+        bool isFalling = !_isGrounded;
         Vector3 direction = new(_inputController.MoveDelta.x, 0, _inputController.MoveDelta.y);
         var quat = Quaternion.AngleAxis(Camera.main.transform.rotation.eulerAngles.y, Vector3.up);
         direction = quat * direction;
@@ -79,7 +79,7 @@ public class PlayerController : MonoBehaviour
             _isSliding = false;
         }
 
-        if (isGrounded)
+        if (_isGrounded)
         {
             _lastGroundedTime = Time.time;
         }
@@ -99,7 +99,7 @@ public class PlayerController : MonoBehaviour
             {
                 _fallSpeed = -0.5f;
             }
-            isGrounded = true;
+            _isGrounded = true;
             isFalling = false;
             _isJumping = false;
             if (Time.time - _jumpButtonPressedTime <= _jumpButtonGracePeriod && !_isSliding)
@@ -112,7 +112,7 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
-            isGrounded = false;
+            _isGrounded = false;
             if ((_isJumping && _fallSpeed < 0) || _fallSpeed < -2)
             {
                 isFalling = true;
@@ -125,7 +125,7 @@ public class PlayerController : MonoBehaviour
             velocity.y = _fallSpeed;
             _characterController.Move(velocity * Time.deltaTime);
         }
-        if (!isGrounded && !_isSliding)
+        if (!_isGrounded && !_isSliding)
         {
             float speed = inputMagnitude * _jumpHorizontalSpeed;
             Vector3 velocity = speed * direction;
@@ -148,10 +148,19 @@ public class PlayerController : MonoBehaviour
         if (_animator != null)
         {
             _animator.SetFloat("Input Magnitude", inputMagnitude, 0.5f, Time.deltaTime);
-            _animator.SetBool("IsGrounded", isGrounded);
+            _animator.SetBool("IsGrounded", _isGrounded);
             _animator.SetBool("IsJumping", _isJumping);
             _animator.SetBool("IsFalling", isFalling);
             _animator.SetBool("IsMoving", isMoving);
+        }
+    }
+    private void OnAnimatorMove()
+    {
+        if (_useRootMotion && _isGrounded && !_isSliding && _animator != null)
+        {
+            Vector3 velocity = _animator.deltaPosition;
+            velocity.y = _fallSpeed * Time.deltaTime;
+            _characterController.Move(velocity);
         }
     }
     private void Update()
