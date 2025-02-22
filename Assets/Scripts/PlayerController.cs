@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class PlayerController : MonoBehaviour
@@ -163,8 +164,20 @@ public class PlayerController : MonoBehaviour
             _characterController.Move(velocity);
         }
     }
+    private bool _isMoveLocked = false;
     private void Update()
     {
-        UpdateMovement();
+        if (!_isMoveLocked)
+        {
+            UpdateMovement();
+        }
+    }
+    public IEnumerator Move(Vector3 dest)
+    {
+        _isMoveLocked = true;
+        yield return new WaitForSeconds(1);
+        _characterController.transform.position = dest;
+        yield return new WaitForSeconds(1);
+        _isMoveLocked = false;
     }
 }
