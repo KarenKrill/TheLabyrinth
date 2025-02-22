@@ -175,9 +175,9 @@ public class PlayerController : MonoBehaviour
     public IEnumerator Move(Vector3 dest)
     {
         _isMoveLocked = true;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.01f);
         _characterController.transform.position = dest;
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.01f);
         _isMoveLocked = false;
     }
 }
