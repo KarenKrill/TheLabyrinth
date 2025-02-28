@@ -1,12 +1,8 @@
 using Assets.Scripts;
-using System.Collections;
 using System.Collections.Generic;
-using Unity.EditorCoroutines.Editor;
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.ProBuilder;
-using Zenject;
-using static Cinemachine.DocumentationSortingAttribute;
 
 public class ArcMazeGenerator : MonoBehaviour
 {
@@ -23,6 +19,7 @@ public class ArcMazeGenerator : MonoBehaviour
     [SerializeField]
     private Material _material;
     private List<GameObject> _walls = new();
+    public UnityEvent<CircuitMaze> MazeGenerationFinished = new();
     private void InstantiateArcWall(float radius, float angle, float width, float depth, int radialCuts, float angleRotation, CircuitMazeCell cell, int frontWallIndex)
     {
         var insideFaces = true;
@@ -113,12 +110,21 @@ public class ArcMazeGenerator : MonoBehaviour
             InstantiateBoxWall(levelsDistance, betweenLevelRadius, wallAngleRadians, wallAngle);
         }*/
     }
-    private void Generate()
+    CircuitMaze _circuitMaze;
+    private void DestroyMaze()
     {
-        Debug.Log("New generating");
-        CircuitMazeGenerator circuitMazeGenerator = new();
-        var cells = circuitMazeGenerator.Generate(_levels, _startCellsCount);
-        foreach(var level in cells)
+        if (_circuitMaze != null)
+        {
+            _circuitMaze = null;
+            foreach (var wall in _walls)
+            {
+                DestroyImmediate(wall);
+            }
+        }
+    }
+    private void InstantiateMaze()
+    {
+        foreach (var level in _circuitMaze.Cells)
         {
             foreach (var cell in level)
             {
@@ -126,15 +132,12 @@ public class ArcMazeGenerator : MonoBehaviour
             }
         }
     }
-    private void OnEnable()
+    public void Generate()
     {
-        Generate();
-    }
-    private void OnDisable()
-    {
-        foreach (var wall in _walls)
-        {
-            DestroyImmediate(wall);
-        }
+        DestroyMaze();
+        CircuitMazeGenerator circuitMazeGenerator = new();
+        _circuitMaze = circuitMazeGenerator.Generate(_levels, _startCellsCount);
+        InstantiateMaze();
+        MazeGenerationFinished.Invoke(_circuitMaze);
     }
 }

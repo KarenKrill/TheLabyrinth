@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -17,6 +18,13 @@ public class PlayerController : MonoBehaviour
     private float _jumpButtonGracePeriod = 0.2f;
     [SerializeField]
     private bool _useRootMotion = false;
+    [Header("AI Navigation")]
+    [SerializeField]
+    private bool _useAiNavigation = true;
+    [SerializeField]
+    private NavMeshAgent _playerNavAgent;
+    [SerializeField]
+    private Transform _aiDestination;
     private float _fallSpeed;
     private bool _isJumping = false, _isSliding = false, _isGrounded = false;
     private Vector3 _slopeSlideVelocity;
@@ -165,19 +173,48 @@ public class PlayerController : MonoBehaviour
         }
     }
     private bool _isMoveLocked = false;
+    private bool _IsMoveLocked
+    {
+        get => _isMoveLocked;
+        set
+        {
+            if (value)
+            {
+                _playerNavAgent.enabled = false;
+            }
+            else
+            {
+            }
+            _isMoveLocked = value;
+        }
+    }
     private void Update()
     {
-        if (!_isMoveLocked)
+        if (!_IsMoveLocked)
         {
-            UpdateMovement();
+            if (_useAiNavigation)
+            {
+                if (_playerNavAgent.destination != _aiDestination.position)
+                {
+                    _playerNavAgent.enabled = true;
+                    _playerNavAgent.destination = _aiDestination.position;
+                    _playerNavAgent.acceleration = _maximumSpeed;
+                    _playerNavAgent.speed = _maximumSpeed;
+                }
+            }
+            else
+            {
+                _playerNavAgent.enabled = false;
+                UpdateMovement();
+            }
         }
     }
     public IEnumerator Move(Vector3 dest)
     {
-        _isMoveLocked = true;
+        _IsMoveLocked = true;
         yield return new WaitForSeconds(0.01f);
         _characterController.transform.position = dest;
         yield return new WaitForSeconds(0.01f);
-        _isMoveLocked = false;
+        _IsMoveLocked = false;
     }
 }

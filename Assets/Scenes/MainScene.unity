@@ -243,7 +243,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &9054095
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -500,6 +500,7 @@ GameObject:
   m_Component:
   - component: {fileID: 120555839}
   - component: {fileID: 120555840}
+  - component: {fileID: 120555841}
   m_Layer: 0
   m_Name: ArcMazeGenerator
   m_TagString: Untagged
@@ -537,10 +538,56 @@ MonoBehaviour:
   _radius: 30
   _internalRadius: 2
   _height: 4
-  _levels: 7
+  _levels: 13
   _startCellsCount: 4
   _wallWidth: 0.2
   _material: {fileID: 2100000, guid: 3ea4e0c3e52eb6d499d1947b6aaa7b7d, type: 2}
+  MazeGenerationFinished:
+    m_PersistentCalls:
+      m_Calls:
+      - m_Target: {fileID: 120555841}
+        m_TargetAssemblyTypeName: Unity.AI.Navigation.NavMeshSurface, Unity.AI.Navigation
+        m_MethodName: BuildNavMesh
+        m_Mode: 1
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &120555841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 120555838}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a5ac11cc976e418e8d13136b07e1f52, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_AgentTypeID: 0
+  m_CollectObjects: 0
+  m_Size: {x: 10, y: 10, z: 10}
+  m_Center: {x: 0, y: 2, z: 0}
+  m_LayerMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_UseGeometry: 0
+  m_DefaultArea: 0
+  m_GenerateLinks: 0
+  m_IgnoreNavMeshAgent: 1
+  m_IgnoreNavMeshObstacle: 1
+  m_OverrideTileSize: 0
+  m_TileSize: 256
+  m_OverrideVoxelSize: 0
+  m_VoxelSize: 0.16666667
+  m_MinRegionArea: 2
+  m_NavMeshData: {fileID: 23800000, guid: c1136773d9d7b3d40b80183776927709, type: 2}
+  m_BuildHeightMesh: 0
 --- !u!1001 &146478301
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1868,13 +1915,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 963194225}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.04302022, y: 0.93084997, z: -0.11653334, w: 0.34363875}
-  m_LocalPosition: {x: -1.949337, y: 2, z: 2.2803693}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: 80, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 87.63, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!114 &963194229
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2206,6 +2253,8 @@ MonoBehaviour:
   _winTextBox: {fileID: 654645871}
   _playerSpawnPoint: {x: 0, y: 1, z: 0}
   _playerController: {fileID: 2073521855}
+  _mazeGenerator: {fileID: 120555840}
+  _exitPointTransform: {fileID: 0}
 --- !u!1 &1103324766
 GameObject:
   m_ObjectHideFlags: 3
@@ -2278,7 +2327,7 @@ Transform:
   m_GameObject: {fileID: 1103324766}
   serializedVersion: 2
   m_LocalRotation: {x: 0.055474497, y: 0.92600256, z: -0.15026954, w: 0.34184927}
-  m_LocalPosition: {x: -0.00000011920929, y: 0, z: -0.00000047683716}
+  m_LocalPosition: {x: -0.00000023841858, y: 0, z: -0.00000047683716}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2635,7 +2684,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1479809018}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.043020226, y: 0.93084997, z: -0.11653335, w: 0.34363875}
+  m_LocalRotation: {x: 0.04302024, y: 0.93084997, z: -0.11653338, w: 0.34363893}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3063,6 +3112,7 @@ GameObject:
   - component: {fileID: 1911650154}
   - component: {fileID: 1911650153}
   - component: {fileID: 1911650152}
+  - component: {fileID: 1911650157}
   m_Layer: 3
   m_Name: CapsuleBody
   m_TagString: Untagged
@@ -3184,6 +3234,28 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1911650150}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!195 &1911650157
+NavMeshAgent:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1911650150}
+  m_Enabled: 1
+  m_AgentTypeID: 0
+  m_Radius: 0.5
+  m_Speed: 100
+  m_Acceleration: 8
+  avoidancePriority: 50
+  m_AngularSpeed: 120
+  m_StoppingDistance: 0
+  m_AutoTraverseOffMeshLink: 1
+  m_AutoBraking: 1
+  m_AutoRepath: 1
+  m_Height: 2
+  m_BaseOffset: 1
+  m_WalkableMask: 4294967295
+  m_ObstacleAvoidanceType: 4
 --- !u!1001 &1916203029
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3320,7 +3392,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1949638355}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.049247254, y: 0.9285827, z: -0.13340116, w: 0.34280178}
+  m_LocalRotation: {x: 0.04924725, y: 0.92858267, z: -0.13340111, w: 0.3428018}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3665,6 +3737,9 @@ MonoBehaviour:
   _gravityMultiplier: 1.5
   _jumpButtonGracePeriod: 0.2
   _useRootMotion: 0
+  _useAiNavigation: 0
+  _playerNavAgent: {fileID: 1911650157}
+  _aiDestination: {fileID: 1542953278}
 --- !u!1001 &2097446777
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3817,7 +3892,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5256851200920328858, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 20
+      value: 17
       objectReference: {fileID: 0}
     - target: {fileID: 5256851200920328858, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
       propertyPath: m_LocalPosition.y
@@ -3825,7 +3900,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5256851200920328858, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 20
+      value: 22
       objectReference: {fileID: 0}
     - target: {fileID: 5256851200920328858, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
       propertyPath: m_LocalRotation.w
@@ -3881,7 +3956,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
       propertyPath: TriggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: EndGame
+      value: FinishLevel
       objectReference: {fileID: 0}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
       propertyPath: TriggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName

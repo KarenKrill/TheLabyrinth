@@ -132,10 +132,20 @@ namespace Assets.Scripts
         public void BreakRightWall() => RightWall = false;
         public void BreakBackWall() => BackWall = false;
     }
+    public class CircuitMaze
+    {
+        public CircuitMazeCell[][] Cells { get; set; }
+        public CircuitMazeCell ExitCell { get; set; }
+        public CircuitMaze(CircuitMazeCell[][] cells, CircuitMazeCell exitCell)
+        {
+            Cells = cells;
+            ExitCell = exitCell;
+        }
+    }
     public class CircuitMazeGenerator
     {
         public static int CellsOnLevel(int level) => level == 0 ? 1 : (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(level + 1, 2)) + 1);
-        public CircuitMazeCell[][] Generate(int levels, int startCells)
+        public CircuitMaze Generate(int levels, int startCells)
         {
             // Caching
             int[] cellsOnLevelCache = new int[levels];
@@ -245,7 +255,7 @@ namespace Assets.Scripts
                     prevCell.BreakLeftWall();
                 }
             }
-            return cells;
+            return new(cells, dfsPath[^1]);
         }
     }
 }
