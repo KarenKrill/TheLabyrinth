@@ -192,7 +192,7 @@ public class PlayerController : MonoBehaviour
     {
         if (!_IsMoveLocked)
         {
-            if (_useAiNavigation)
+            if (_useAiNavigation && (_characterController.isGrounded && _characterController.transform.position.y <= 2))
             {
                 if (_playerNavAgent.destination != _aiDestination.position)
                 {

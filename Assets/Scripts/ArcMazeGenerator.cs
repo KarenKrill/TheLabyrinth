@@ -10,8 +10,7 @@ public class ArcMazeGenerator : MonoBehaviour
     private float _radius = 10, _internalRadius = 2;
     [SerializeField]
     private float _height = 2;
-    [SerializeField]
-    private int _levels = 3;
+    public int Levels = 3;
     [SerializeField]
     private int _startCellsCount = 4;
     [SerializeField]
@@ -55,13 +54,13 @@ public class ArcMazeGenerator : MonoBehaviour
         wallGameObject.name = $"WallL{cell.Level}C{cell.Cell}A{wallAngle:#.##}({(isLeft ? "Left" : "Right")})";
         var wallMeshRenderer = wallGameObject.GetComponent<MeshRenderer>();
         wallMeshRenderer.material = _material;
-        wallGameObject.AddComponent<MeshCollider>();
+        _ = wallGameObject.AddComponent<MeshCollider>();
         _walls.Add(wallGameObject);
     }
     private void InstantiateCell(CircuitMazeCell cell)
     {
-        float radius = _levels > 1 ? Mathf.Lerp(_internalRadius, _radius, cell.Level / (float)(_levels - 1)) : _radius;
-        var cellsOnNextLevel = CircuitMazeGenerator.CellsOnLevel(cell.Level + 1 >= _levels ? cell.Level : cell.Level + 1);
+        float radius = Levels > 1 ? Mathf.Lerp(_internalRadius, _radius, cell.Level / (float)(Levels - 1)) : _radius;
+        var cellsOnNextLevel = CircuitMazeGenerator.CellsOnLevel(cell.Level + 1 >= Levels ? cell.Level : cell.Level + 1);
         var cellsOnLevel = CircuitMazeGenerator.CellsOnLevel(cell.Level);
         float angle = 360 / (float)cellsOnNextLevel;
         float width = _wallWidth;
@@ -69,7 +68,7 @@ public class ArcMazeGenerator : MonoBehaviour
         int levelCellsCount = 10;
         int radialCuts = 2 * levelCellsCount + 1; // think about arch, if you don't understand +1
 
-        var nextLevelRadius = _levels > 1 ? Mathf.Lerp(_internalRadius, _radius, (cell.Level - 1) / (float)(_levels - 1)) : _internalRadius;
+        var nextLevelRadius = Levels > 1 ? Mathf.Lerp(_internalRadius, _radius, (cell.Level - 1) / (float)(Levels - 1)) : _internalRadius;
         var levelsDistance = radius - nextLevelRadius;
         var betweenLevelRadius = radius - levelsDistance / 2 - width;
 
@@ -102,13 +101,6 @@ public class ArcMazeGenerator : MonoBehaviour
         {
             Debug.Log($"L{cell.Level}C{cell.Cell}: doesn't have right wall");
         }
-        /*if (cell.BackWall)
-        {
-            var lerp = i / (float)levelCellsCount;
-            var wallAngle = Mathf.Lerp(-180, 180, lerp);
-            var wallAngleRadians = Mathf.Deg2Rad * wallAngle;
-            InstantiateBoxWall(levelsDistance, betweenLevelRadius, wallAngleRadians, wallAngle);
-        }*/
     }
     CircuitMaze _circuitMaze;
     private void DestroyMaze()
@@ -132,11 +124,28 @@ public class ArcMazeGenerator : MonoBehaviour
             }
         }
     }
+    public Vector2 GetCellCenter(CircuitMazeCell cell)
+    {
+        if (cell.Level == 0 && cell.Cell == 0)
+        {
+            return Vector2.zero;
+        }
+        float radius = Levels > 1 ? Mathf.Lerp(_internalRadius, _radius, cell.Level / (float)(Levels - 1)) : _radius;
+        var cellsOnLevel = CircuitMazeGenerator.CellsOnLevel(cell.Level);
+        var nextLevelRadius = Levels > 1 ? Mathf.Lerp(_internalRadius, _radius, (cell.Level - 1) / (float)(Levels - 1)) : _internalRadius;
+        var levelsDistance = radius - nextLevelRadius;
+        var betweenLevelRadius = radius - levelsDistance / 2 - _wallWidth;
+        var angle = 360 / (float)cellsOnLevel;
+        var wallAngle = Mathf.Lerp(-180, 180, (cellsOnLevel - cell.Cell) / (float)(cellsOnLevel));
+        wallAngle += angle/2;
+        var wallAngleRadians = Mathf.Deg2Rad * wallAngle;
+        return new Vector2(betweenLevelRadius * Mathf.Cos(wallAngleRadians), betweenLevelRadius * Mathf.Sin(wallAngleRadians));
+    }
     public void Generate()
     {
         DestroyMaze();
         CircuitMazeGenerator circuitMazeGenerator = new();
-        _circuitMaze = circuitMazeGenerator.Generate(_levels, _startCellsCount);
+        _circuitMaze = circuitMazeGenerator.Generate(Levels, _startCellsCount);
         InstantiateMaze();
         MazeGenerationFinished.Invoke(_circuitMaze);
     }

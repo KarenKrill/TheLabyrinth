@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using TreeEditor;
 using UnityEngine;
 
 #nullable enable
@@ -255,7 +255,17 @@ namespace Assets.Scripts
                     prevCell.BreakLeftWall();
                 }
             }
-            return new(cells, dfsPath[^1]);
+
+            var uniquePath = new List<CircuitMazeCell>();
+            foreach (var node in dfsPath)
+            {
+                if (!uniquePath.Contains(node))
+                {
+                    uniquePath.Add(node);
+                }
+            }
+
+            return new(cells, uniquePath[^1]);
         }
     }
 }
