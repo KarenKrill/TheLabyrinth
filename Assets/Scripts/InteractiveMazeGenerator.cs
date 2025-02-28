@@ -3,18 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-public class MazeGenerator : MonoBehaviour
+public class InteractiveMazeGenerator : MonoBehaviour
 {
     [SerializeField]
     private MazeCell _mazeCellPrefab;
     [SerializeField]
     private int _mazeWidth, _mazeDepth;
+    [SerializeField, Min(1f)]
+    private float _buildSpeed = 10f;
     private MazeCell[,] _mazeCells;
     private IEnumerable<MazeCell> GetUnvisitedCells(MazeCell cell)
     {
         var x = (int)cell.transform.position.x;
         var z = (int)cell.transform.position.z;
-        if (x + 1 < _mazeWidth)
+        if (x + 1 < _mazeWidth) // there is a right neighbour
         {
             var neighbourCell = _mazeCells[x + 1, z];
             if (!neighbourCell.IsVisited)
@@ -22,7 +24,7 @@ public class MazeGenerator : MonoBehaviour
                 yield return neighbourCell;
             }
         }
-        if (x - 1 >= 0)
+        if (x - 1 >= 0) // there is a left neighbour
         {
             var neighbourCell = _mazeCells[x - 1, z];
             if (!neighbourCell.IsVisited)
@@ -30,7 +32,7 @@ public class MazeGenerator : MonoBehaviour
                 yield return neighbourCell;
             }
         }
-        if (z + 1 < _mazeDepth)
+        if (z + 1 < _mazeDepth) // there is a top neighbour
         {
             var neighbourCell = _mazeCells[x, z + 1];
             if (!neighbourCell.IsVisited)
@@ -38,7 +40,7 @@ public class MazeGenerator : MonoBehaviour
                 yield return neighbourCell;
             }
         }
-        if (z - 1 >= 0)
+        if (z - 1 >= 0) // there is a bottom neighbour
         {
             var neighbourCell = _mazeCells[x, z - 1];
             if (!neighbourCell.IsVisited)
@@ -63,7 +65,7 @@ public class MazeGenerator : MonoBehaviour
             prevCell.ClearWall(MazeCellWallType.Right);
             currCell.ClearWall(MazeCellWallType.Left);
         }
-        else if(prevCell.transform.position.x > currCell.transform.position.x)
+        else if (prevCell.transform.position.x > currCell.transform.position.x)
         {
             prevCell.ClearWall(MazeCellWallType.Left);
             currCell.ClearWall(MazeCellWallType.Right);
@@ -81,7 +83,7 @@ public class MazeGenerator : MonoBehaviour
     }
     private IEnumerator GenerateMaze(MazeCell prevCell, MazeCell currCell)
     {
-        yield return new WaitForSeconds(0.1f);
+        yield return new WaitForSeconds(1 / _buildSpeed);
         currCell.Visit();
         ClearWalls(prevCell, currCell);
         MazeCell nextCell;
@@ -94,7 +96,7 @@ public class MazeGenerator : MonoBehaviour
             }
         }
         while (nextCell != null);
-        yield return new WaitForSeconds(0.2f);
+        yield return new WaitForSeconds(1 / _buildSpeed);
     }
     private IEnumerator Start()
     {
