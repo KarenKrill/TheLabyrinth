@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     private Animator _animator = null;
     [SerializeField]
     private float _maximumSpeed = 5f, _rotationDegreeSpeed = 360.0f;
+    public float MaximumSpeed { get => _maximumSpeed; set => _maximumSpeed = value; }
     [SerializeField]
     private float _jumpHeight = 2.0f, _jumpHorizontalSpeed = 3.0f, _gravityMultiplier = 1.5f;
     [SerializeField]
@@ -21,6 +22,7 @@ public class PlayerController : MonoBehaviour
     [Header("AI Navigation")]
     [SerializeField]
     private bool _useAiNavigation = true;
+    public bool UseAiNavigation { get => _useAiNavigation; set => _useAiNavigation = value; }
     [SerializeField]
     private NavMeshAgent _playerNavAgent;
     [SerializeField]
@@ -69,7 +71,8 @@ public class PlayerController : MonoBehaviour
     {
         _isGrounded = _characterController.isGrounded;
         bool isFalling = !_isGrounded;
-        Vector3 direction = new(_inputController.MoveDelta.x, 0, _inputController.MoveDelta.y);
+        var moveDelta = _inputController.MoveDelta;
+        Vector3 direction = new(_xAxisLocked ? 0 : moveDelta.x, 0, _zAxisLocked ? 0 : moveDelta.y);
         var quat = Quaternion.AngleAxis(Camera.main.transform.rotation.eulerAngles.y, Vector3.up);
         direction = quat * direction;
         float inputMagnitude = (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) ? 1 : 0.5f;
@@ -194,10 +197,13 @@ public class PlayerController : MonoBehaviour
         {
             if (_useAiNavigation && (_characterController.isGrounded && _characterController.transform.position.y <= 2))
             {
-                if (_playerNavAgent.destination != _aiDestination.position)
+                if (_playerNavAgent.destination != _aiDestination.position && !(_xAxisLocked && _yAxisLocked && _zAxisLocked))
                 {
+                    var dest = _aiDestination.position;
+                    var prevDest = _playerNavAgent.destination;
+                    var newDest = new Vector3(_xAxisLocked ? prevDest.x : dest.x, _yAxisLocked ? prevDest.y : dest.y, _zAxisLocked ? prevDest.z : dest.z);
                     _playerNavAgent.enabled = true;
-                    _playerNavAgent.destination = _aiDestination.position;
+                    _playerNavAgent.destination = newDest;
                     _playerNavAgent.acceleration = _maximumSpeed;
                     _playerNavAgent.speed = _maximumSpeed;
                 }
@@ -216,5 +222,18 @@ public class PlayerController : MonoBehaviour
         _characterController.transform.position = dest;
         yield return new WaitForSeconds(0.01f);
         _IsMoveLocked = false;
+    }
+    bool _xAxisLocked = false, _yAxisLocked = false, _zAxisLocked = false;
+    public void LockMovement(bool xAxis = true, bool yAxis = true, bool zAxis = true)
+    {
+        _xAxisLocked = xAxis;
+        _yAxisLocked = yAxis;
+        _zAxisLocked = zAxis;
+    }
+    public void UnlockMovement()
+    {
+        _xAxisLocked = false;
+        _yAxisLocked = false;
+        _zAxisLocked = false;
     }
 }

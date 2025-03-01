@@ -1,14 +1,14 @@
 using Assets.Scripts;
-using ModestTree;
 using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
 public class GameplayController : MonoBehaviour
 {
     [SerializeField]
-    private TextMeshProUGUI _winTextBox;
+    private TextMeshProUGUI _levelInfoTextBox;
+    [SerializeField]
+    private TextMeshProUGUI _timesLeftTextBox;
     [SerializeField]
     private Vector3 _playerSpawnPoint = Vector3.one;
     [SerializeField]
@@ -27,73 +27,141 @@ public class GameplayController : MonoBehaviour
             if (value == 0 || _passedLevels != value)
             {
                 _passedLevels = value;
-                _winTextBox.text = $"Пройдено уровней: {_PassedLevels}";
+                _levelInfoTextBox.text = $"Level: {_PassedLevels}";
             }
         }
     }
     [SerializeField]
-    private int _mazeStartLevelsCount = 4;
+    private int _mazeMinLevelsCount = 4;
     [SerializeField]
     private int _mazeMaxLevelsCount = 13;
     [SerializeField]
-    private int _mazeEndLevelsCount = 13;
-    private int _mazeLevelsCount = 4;
+    private int _gameLevelsCount = 13;
+    private int _mazeLevelsCount = 0;
+    private float _playerSpeed;
+    [SerializeField]
+    private float _menuAiPlayerSpeed = 50;
     [SerializeField]
     private GameObject _winWindow;
-    private void OnMazeGenerationFinished(CircuitMaze maze)
+    [SerializeField]
+    private GameObject _looseWindow;
+    float _startTime;
+    [SerializeField]
+    float _timeOnCell = 5f;
+    private IEnumerator AfterLevelGeneratedCoroutine(CircuitMaze maze)
     {
+        var playerSpawnPoint = _mazeGenerator.GetCellCenter(new(_mazeGenerator.Levels - 1, 0, 0));
+        yield return _playerController.Move(new Vector3(playerSpawnPoint.x, 100, playerSpawnPoint.y));
         if (_exitPointTransform != null)
         {
-            var exitCellCenter = _mazeGenerator.GetCellCenter(maze.ExitCell);
-            exitCellCenter = _mazeGenerator.GetCellCenter(maze.Cells[0][0]);
+            var exitCellCenter = _mazeGenerator.GetCellCenter(maze.Cells[0][0]);
             _exitPointTransform.position = new Vector3(exitCellCenter.x, _exitPointTransform.position.y, exitCellCenter.y);
         }
+        _startTime = Time.time;
+        _levelStarted = true;
     }
+    private void OnMazeGenerationFinished(CircuitMaze maze)
+    {
+        StartCoroutine(AfterLevelGeneratedCoroutine(maze));
+    }
+    private bool _levelStarted = false;
     public IEnumerator Start()
     {
-        _PassedLevels = 0;
-        _mazeLevelsCount = 0;
-        _mazeGenerator.Levels = _mazeStartLevelsCount;
+        _timesLeftTextBox.text = $"TimesLeft: 0.000 s";
+        _timesLeftTextBox.color = Color.white;
+        _winWindow.SetActive(false);
+        _looseWindow.SetActive(false);
+        _PassedLevels = 1;
+        _mazeLevelsCount = _mazeMinLevelsCount;
+        _mazeGenerator.Levels = _mazeMinLevelsCount;
         _mazeGenerator.MazeGenerationFinished.AddListener(OnMazeGenerationFinished);
-        var playerSpawnPoint = _mazeGenerator.GetCellCenter(new(_mazeGenerator.Levels - 1, 0, 0));
-        yield return _playerController.Move(new Vector3(playerSpawnPoint.x, 10, playerSpawnPoint.y));
-        _mazeGenerator.Generate();
+        _playerController.LockMovement(xAxis: true, yAxis: false, zAxis: true);
+        yield return _mazeGenerator.GenerateCoroutine();
+        _playerController.UnlockMovement();
     }
     private IEnumerator FinishLevelCoroutine()
     {
-        if (_mazeLevelsCount < _mazeEndLevelsCount - 1)
+        _levelStarted = false;
+        bool isGameEnd = true;
+        if (_PassedLevels < _gameLevelsCount)
         {
-            _mazeLevelsCount++;
-            if (_mazeLevelsCount < _mazeStartLevelsCount)
-            {
-                _mazeGenerator.Levels = _mazeStartLevelsCount;
-            }
-            else
-            {
-                _mazeGenerator.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? _mazeLevelsCount : _mazeMaxLevelsCount;
-            }
-            var playerSpawnPoint = _mazeGenerator.GetCellCenter(new(_mazeGenerator.Levels - 1, 0, 0));
-            yield return _playerController.Move(new Vector3(playerSpawnPoint.x, 10, playerSpawnPoint.y));
-            _mazeGenerator.Generate();
+            _PassedLevels++;
+            isGameEnd = false;
         }
-        else
+        else if (!_winWindow.activeInHierarchy)
         {
+            _playerController.UseAiNavigation = true;
+            _playerSpeed = _playerController.MaximumSpeed;
+            _playerController.MaximumSpeed = _menuAiPlayerSpeed;
             _winWindow.SetActive(true);
         }
+        yield return _playerController.Move(new Vector3(0, 1, 60));
+        _mazeGenerator.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? ++_mazeLevelsCount : _mazeMaxLevelsCount;
+        _playerController.LockMovement(xAxis: true, yAxis: false, zAxis: true);
+        yield return _mazeGenerator.GenerateCoroutine();
+        _playerController.UnlockMovement();
+        if (!isGameEnd)
+        {
+            _startTime = Time.time;
+            _levelStarted = true;
+            _timesLeftTextBox.color = Color.white;
+        }
     }
-    public void FinishLevel()
-    {
-        _PassedLevels++;
-        StartCoroutine(FinishLevelCoroutine());
-    }
+    public void FinishLevel() => StartCoroutine(FinishLevelCoroutine());
     public IEnumerator RestartCoroutine()
     {
+        _playerController.MaximumSpeed = _playerSpeed;
+        _playerController.UseAiNavigation = false;
         _mazeGenerator.MazeGenerationFinished.RemoveListener(OnMazeGenerationFinished);
         yield return Start();
         _winWindow.SetActive(false);
+        _looseWindow.SetActive(false);
     }
-    public void Restart()
+    public void Restart() => StartCoroutine(RestartCoroutine());
+    [SerializeField, Range(0,1)]
+    float _redWarnAlertTimeLeft = 0.1f;
+    [SerializeField, Range(0, 1)]
+    float _warnAlertTimeLeft = 0.3f;
+    public void Update()
     {
-        StartCoroutine(RestartCoroutine());
+        if (_levelStarted)
+        {
+            if (!_winWindow.activeInHierarchy)
+            {
+                var timeSinceLevelStarted = Time.time - _startTime;
+                var timeOnCurrentLevel = _timeOnCell * _mazeGenerator.TotalCellsCount;//_mazeGenerator.Levels;
+                var timeLeft = timeOnCurrentLevel > timeSinceLevelStarted ? timeOnCurrentLevel - timeSinceLevelStarted : 0;
+                _timesLeftTextBox.text = $"TimesLeft: {timeLeft:0.000} s";
+                if (timeLeft / timeOnCurrentLevel < _warnAlertTimeLeft)
+                {
+                    if (timeLeft / timeOnCurrentLevel < _redWarnAlertTimeLeft)
+                    {
+                        _timesLeftTextBox.color = Color.red;
+                    }
+                    else
+                    {
+                        _timesLeftTextBox.color = Color.yellow;
+                    }
+                }
+                if (timeLeft == 0)
+                {
+                    _levelStarted = false;
+                    _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
+                    _looseWindow.SetActive(true);
+                }
+            }
+            if (Input.GetKeyDown(KeyCode.F))
+            {
+                _playerController.UseAiNavigation = !_playerController.UseAiNavigation;
+                if (_playerController.UseAiNavigation)
+                {
+                    _playerController.MaximumSpeed = _menuAiPlayerSpeed;
+                }
+                else
+                {
+                    _playerController.MaximumSpeed = _playerSpeed;
+                }
+            }
+        }
     }
 }

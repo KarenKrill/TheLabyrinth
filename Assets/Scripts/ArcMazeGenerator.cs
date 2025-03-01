@@ -1,5 +1,7 @@
 using Assets.Scripts;
+using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.ProBuilder;
@@ -17,8 +19,22 @@ public class ArcMazeGenerator : MonoBehaviour
     private float _wallWidth = 0.2f;
     [SerializeField]
     private Material _material;
-    private List<GameObject> _walls = new();
+    private List<List<GameObject>> _levelWalls = new();
     public UnityEvent<CircuitMaze> MazeGenerationFinished = new();
+    public int TotalCellsCount
+    {
+        get
+        {
+            if (_circuitMaze != null)
+            {
+                return _circuitMaze.Cells.Sum(level => level == null ? 0 : level.Length);
+            }
+            else
+            {
+                return 0;
+            }
+        }
+    }
     private void InstantiateArcWall(float radius, float angle, float width, float depth, int radialCuts, float angleRotation, CircuitMazeCell cell, int frontWallIndex)
     {
         var insideFaces = true;
@@ -32,7 +48,7 @@ public class ArcMazeGenerator : MonoBehaviour
         gameObject.transform.Rotate(new Vector3(90, angle, angleRotation));
         var cos = Mathf.Cos(Mathf.Deg2Rad * (angleRotation - angle / 2f));
         var sin = Mathf.Sin(Mathf.Deg2Rad * (angleRotation - angle / 2f));
-        var archCenterDistance = angle == 180 ? radius/2 : radius * Mathf.Sqrt(0.5f); // not works for angle > 180
+        //var archCenterDistance = angle == 180 ? radius/2 : radius * Mathf.Sqrt(0.5f); // not works for angle > 180
         //gameObject.transform.localPosition = new Vector3(archCenterDistance * cos, _height / 2, archCenterDistance * sin);
         //var h = (radius - width) * (1 - Mathf.Cos(Mathf.Deg2Rad * angle / 2f));
         //var h = Mathf.Tan(Mathf.Deg2Rad * angle / 2f) * radius / Mathf.Sqrt(2);
@@ -42,7 +58,7 @@ public class ArcMazeGenerator : MonoBehaviour
         var meshRenderer = gameObject.GetComponent<MeshRenderer>();
         meshRenderer.material = _material;
         gameObject.AddComponent<MeshCollider>();
-        _walls.Add(gameObject);
+        _levelWalls[cell.Level].Add(gameObject);
     }
     private void InstantiateBoxWall(float levelsDistance, float betweenLevelRadius, float wallAngleRadians, float wallAngle, CircuitMazeCell cell, bool isLeft)
     {
@@ -55,7 +71,7 @@ public class ArcMazeGenerator : MonoBehaviour
         var wallMeshRenderer = wallGameObject.GetComponent<MeshRenderer>();
         wallMeshRenderer.material = _material;
         _ = wallGameObject.AddComponent<MeshCollider>();
-        _walls.Add(wallGameObject);
+        _levelWalls[cell.Level].Add(wallGameObject);
     }
     private void InstantiateCell(CircuitMazeCell cell)
     {
@@ -86,10 +102,6 @@ public class ArcMazeGenerator : MonoBehaviour
             var wallAngleRadians = Mathf.Deg2Rad * wallAngle;
             InstantiateBoxWall(levelsDistance, betweenLevelRadius, wallAngleRadians, wallAngle, cell, true);
         }
-        else
-        {
-            Debug.Log($"L{cell.Level}C{cell.Cell}: doesn't have left wall");
-        }
         if (cell.RightWall)
         {
             var lerp = (cellsOnLevel - (cell.Cell + 1) % cellsOnLevel) / (float)(cellsOnLevel);
@@ -97,30 +109,34 @@ public class ArcMazeGenerator : MonoBehaviour
             var wallAngleRadians = Mathf.Deg2Rad * wallAngle;
             InstantiateBoxWall(levelsDistance, betweenLevelRadius, wallAngleRadians, wallAngle, cell, false);
         }
-        else
-        {
-            Debug.Log($"L{cell.Level}C{cell.Cell}: doesn't have right wall");
-        }
     }
     CircuitMaze _circuitMaze;
-    private void DestroyMaze()
+    private IEnumerator DestroyMaze()
     {
         if (_circuitMaze != null)
         {
             _circuitMaze = null;
-            foreach (var wall in _walls)
+            foreach (var level in _levelWalls)
             {
-                DestroyImmediate(wall);
+                foreach (var wall in level.AsEnumerable().Reverse())
+                {
+                    DestroyImmediate(wall);
+                    yield return null;
+                }
+                level.Clear();
             }
+            _levelWalls.Clear();
         }
     }
-    private void InstantiateMaze()
+    private IEnumerator InstantiateMaze()
     {
-        foreach (var level in _circuitMaze.Cells)
+        _levelWalls.AddRange(_circuitMaze.Cells.Select(_ => new List<GameObject>()));
+        foreach (var level in _circuitMaze.Cells.Reverse())
         {
             foreach (var cell in level)
             {
                 InstantiateCell(cell);
+                yield return null;
             }
         }
     }
@@ -137,16 +153,16 @@ public class ArcMazeGenerator : MonoBehaviour
         var betweenLevelRadius = radius - levelsDistance / 2 - _wallWidth;
         var angle = 360 / (float)cellsOnLevel;
         var wallAngle = Mathf.Lerp(-180, 180, (cellsOnLevel - cell.Cell) / (float)(cellsOnLevel));
-        wallAngle += angle/2;
+        wallAngle -= angle/2;
         var wallAngleRadians = Mathf.Deg2Rad * wallAngle;
         return new Vector2(betweenLevelRadius * Mathf.Cos(wallAngleRadians), betweenLevelRadius * Mathf.Sin(wallAngleRadians));
     }
-    public void Generate()
+    public IEnumerator GenerateCoroutine()
     {
-        DestroyMaze();
+        yield return DestroyMaze();
         CircuitMazeGenerator circuitMazeGenerator = new();
         _circuitMaze = circuitMazeGenerator.Generate(Levels, _startCellsCount);
-        InstantiateMaze();
+        yield return InstantiateMaze();
         MazeGenerationFinished.Invoke(_circuitMaze);
     }
 }

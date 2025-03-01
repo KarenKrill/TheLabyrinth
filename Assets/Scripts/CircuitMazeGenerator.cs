@@ -82,21 +82,21 @@ namespace Assets.Scripts
             {
                 values.Add(currCell.Data);
                 nextCell = GetNextUnvisitedCell(currCell);
-                if (nextCell != null && nextCell.Data is CircuitMazeCell nextMazeCell)
-                {
-                    Debug.Log($"Next unvisited L{nextMazeCell.Level}C{nextMazeCell.Cell}");
-                }
                 if (nextCell != null)
                 {
+                    /*if (nextCell.Data is CircuitMazeCell nextMazeCell)
+                    {
+                        Debug.Log($"Next unvisited L{nextMazeCell.Level}C{nextMazeCell.Cell}");
+                    }*/
                     DepthFirstSearch(nextCell, ref values);
                 }
-                else
+                /*else
                 {
                     if (currCell.Data is CircuitMazeCell cell2)
                     {
                         Debug.Log($"No neghbours for L{cell2.Level}C{cell2.Cell}");
                     }
-                }
+                }*/
             }
             while (nextCell != null);
         }
@@ -144,7 +144,7 @@ namespace Assets.Scripts
     }
     public class CircuitMazeGenerator
     {
-        public static int CellsOnLevel(int level) => level == 0 ? 1 : (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(level + 1, 2)) + 1);
+        public static int CellsOnLevel(int level) => level == 0 ? 1 : (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(level + 1, 2)) + 2);
         public CircuitMaze Generate(int levels, int startCells)
         {
             // Caching
@@ -197,7 +197,7 @@ namespace Assets.Scripts
                 {
                     var cellNode = cellNodes[level][cell];
                     var nextCellNode = cellNodes[level][(cell + 1) % cellsOnLevel];
-                    Debug.Log($"Bind1 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{nextCellNode.Data.Level}C{nextCellNode.Data.Cell}");
+                    //Debug.Log($"Bind1 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{nextCellNode.Data.Level}C{nextCellNode.Data.Cell}");
                     cellNode.BindWith(nextCellNode);
                     if (isNotLastLevel)
                     {
@@ -206,13 +206,13 @@ namespace Assets.Scripts
                             var nextLevelCellsOffset = cell * cellsPerPrevLevelCell;
                             for (int i = 0; i < cellsPerPrevLevelCell; i++)
                             {
-                                Debug.Log($"Bind2 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{level + 1}C{nextLevelCellsOffset + i}");
+                                //Debug.Log($"Bind2 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{level + 1}C{nextLevelCellsOffset + i}");
                                 cellNode.BindWith(cellNodes[level + 1][nextLevelCellsOffset + i]);
                             }
                         }
                         else
                         {
-                            Debug.Log($"Bind3 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{level + 1}C{cell}");
+                            //Debug.Log($"Bind3 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{level + 1}C{cell}");
                             cellNode.BindWith(cellNodes[level + 1][cell]);
                         }
                     }
