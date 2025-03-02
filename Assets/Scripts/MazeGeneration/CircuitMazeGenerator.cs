@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using UnityEngine;
 
 #nullable enable
 
-namespace Assets.Scripts
+namespace KarenKrill.MazeGeneration
 {
     public class TreeNode<T>
     {
@@ -24,7 +23,7 @@ namespace Assets.Scripts
             var neighbourNeighbours = neighbour.Neighbours.Select(node => (node.Data as CircuitMazeCell)!);
             if (neighbourNeighbours.Where(c => c.Level == cell.Level && c.Cell == cell.Cell).Any())
             {
-                Debug.LogWarning($"BindWith:L{cell.Level}C{cell.Cell} already neigh of L{neighbourCell.Level}C{neighbourCell.Cell}");
+                //Debug.LogWarning($"BindWith:L{cell.Level}C{cell.Cell} already neigh of L{neighbourCell.Level}C{neighbourCell.Cell}");
             }
             if (cellNeighbours.Where(c => c.Level == neighbourCell.Level && c.Cell == neighbourCell.Cell).Any())
             {
@@ -84,19 +83,8 @@ namespace Assets.Scripts
                 nextCell = GetNextUnvisitedCell(currCell);
                 if (nextCell != null)
                 {
-                    /*if (nextCell.Data is CircuitMazeCell nextMazeCell)
-                    {
-                        Debug.Log($"Next unvisited L{nextMazeCell.Level}C{nextMazeCell.Cell}");
-                    }*/
                     DepthFirstSearch(nextCell, ref values);
                 }
-                /*else
-                {
-                    if (currCell.Data is CircuitMazeCell cell2)
-                    {
-                        Debug.Log($"No neghbours for L{cell2.Level}C{cell2.Cell}");
-                    }
-                }*/
             }
             while (nextCell != null);
         }

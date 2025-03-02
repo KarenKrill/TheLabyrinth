@@ -239,7 +239,6 @@ GameObject:
   - component: {fileID: 9054095}
   - component: {fileID: 9054097}
   - component: {fileID: 9054099}
-  - component: {fileID: 9054098}
   m_Layer: 0
   m_Name: FreeLook Camera
   m_TagString: Untagged
@@ -400,18 +399,6 @@ MonoBehaviour:
   m_Damping: 2
   m_DampingWhenOccluded: 2
   m_OptimalTargetDistance: 0
---- !u!114 &9054098
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9054094}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5d144ad9f205368438eb00f265383350, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &9054099
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1877,7 +1864,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _levelInfoTextBox: {fileID: 654645871}
   _timesLeftTextBox: {fileID: 916873666}
-  _playerSpawnPoint: {x: 0, y: 1, z: 0}
   _playerController: {fileID: 2073521855}
   _mazeGenerator: {fileID: 120555840}
   _exitPointTransform: {fileID: 1542953278}
@@ -3232,7 +3218,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2105699661}
-  - component: {fileID: 2105699662}
   - component: {fileID: 2105699663}
   m_Layer: 0
   m_Name: MazeGenerator
@@ -3256,21 +3241,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 996450251}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2105699662
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2105699660}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8f4ed4bd84b219e4b90bba42c7a691fa, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _wallPrefab: {fileID: 3588516377044621257, guid: 185cfb0553f386b46814b1967b0a3a12, type: 3}
-  _mazeWidth: 20
-  _mazeDepth: 20
 --- !u!114 &2105699663
 MonoBehaviour:
   m_ObjectHideFlags: 0
