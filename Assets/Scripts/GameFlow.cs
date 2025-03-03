@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
+using Zenject;
 
 namespace KarenKrill
 {
@@ -19,6 +20,8 @@ namespace KarenKrill
     }
     public class GameFlow : MonoBehaviour
     {
+        [Inject]
+        ILogger _logger;
         private GameState _validState;
         [SerializeField]
         private GameState _state;
@@ -67,7 +70,7 @@ namespace KarenKrill
         {
             if (!TryChangeState(_state))
             {
-                Debug.LogWarning($"Invalid state transition {_validState} -> {_state}");
+                _logger.LogWarning(string.Empty, $"Invalid state transition {_validState} -> {_state}");
                 _state = _validState;
             }
         }

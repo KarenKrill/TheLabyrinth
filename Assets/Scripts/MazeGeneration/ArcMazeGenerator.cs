@@ -4,11 +4,14 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.ProBuilder;
+using Zenject;
 
 namespace KarenKrill.MazeGeneration
 {
     public class ArcMazeGenerator : MonoBehaviour
     {
+        [Inject]
+        ILogger _logger;
         [SerializeField]
         private float _radius = 10, _internalRadius = 2;
         [SerializeField]
@@ -161,7 +164,7 @@ namespace KarenKrill.MazeGeneration
         public IEnumerator GenerateCoroutine()
         {
             yield return DestroyMaze();
-            CircuitMazeGenerator circuitMazeGenerator = new();
+            CircuitMazeGenerator circuitMazeGenerator = new(_logger);
             _circuitMaze = circuitMazeGenerator.Generate(Levels, _startCellsCount);
             yield return InstantiateMaze();
             MazeGenerationFinished.Invoke(_circuitMaze);

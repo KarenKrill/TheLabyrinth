@@ -2,18 +2,22 @@
 using System.Linq;
 using UnityEngine;
 
+using KarenKrill.Logging;
+
 #nullable enable
 
 namespace KarenKrill.MazeGeneration
 {
     public class TreeNode<T>
     {
+        ILogger _logger;
         public T Data { get; private set; }
         public bool IsVisited { get; private set; } = false;
         public List<TreeNode<T>> Neighbours { get; private set; } = new();
-        public TreeNode(T data)
+        public TreeNode(T data, ILogger logger)
         {
             Data = data;
+            _logger = logger;
         }
         public void BindWith(TreeNode<T> neighbour)
         {
@@ -23,11 +27,11 @@ namespace KarenKrill.MazeGeneration
             var neighbourNeighbours = neighbour.Neighbours.Select(node => (node.Data as CircuitMazeCell)!);
             if (neighbourNeighbours.Where(c => c.Level == cell.Level && c.Cell == cell.Cell).Any())
             {
-                //Debug.LogWarning($"BindWith:L{cell.Level}C{cell.Cell} already neigh of L{neighbourCell.Level}C{neighbourCell.Cell}");
+                _logger.LogWarning($"BindWith:L{cell.Level}C{cell.Cell} already neigh of L{neighbourCell.Level}C{neighbourCell.Cell}");
             }
             if (cellNeighbours.Where(c => c.Level == neighbourCell.Level && c.Cell == neighbourCell.Cell).Any())
             {
-                Debug.LogWarning($"BindWith:L{neighbourCell.Level}C{neighbourCell.Cell} already neigh of L{cell.Level}C{cell.Cell}");
+                _logger.LogWarning($"BindWith:L{neighbourCell.Level}C{neighbourCell.Cell} already neigh of L{cell.Level}C{cell.Cell}");
             }
             Neighbours.Add(neighbour);
             neighbour.Neighbours.Add(this);
@@ -37,13 +41,16 @@ namespace KarenKrill.MazeGeneration
     public class Tree<T>
     {
         public TreeNode<T> RootNode { get; private set; }
-        public Tree(T data)
+        ILogger _logger;
+        public Tree(T data, ILogger logger)
         {
-            RootNode = new(data);
+            RootNode = new(data, logger);
+            _logger = logger;
         }
-        public Tree(TreeNode<T> rootNode)
+        public Tree(TreeNode<T> rootNode, ILogger logger)
         {
             RootNode = rootNode;
+            _logger = logger;
         }
 
         private IEnumerable<TreeNode<T>> GetUnvisitedCells(TreeNode<T> cell)
@@ -74,7 +81,7 @@ namespace KarenKrill.MazeGeneration
                     }
                     else return "NoMazeCell";
                 }));
-                Debug.Log($"Added L{cell.Level}C{cell.Cell} Neighbours: {neighbours}");
+                _logger.Log($"Added L{cell.Level}C{cell.Cell} Neighbours: {neighbours}");
             }
             TreeNode<T> nextCell;
             do
@@ -132,6 +139,12 @@ namespace KarenKrill.MazeGeneration
     }
     public class CircuitMazeGenerator
     {
+        ILogger _logger;
+        public CircuitMazeGenerator(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public static int CellsOnLevel(int level) => level == 0 ? 1 : (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(level + 1, 2)) + 2);
         public CircuitMaze Generate(int levels, int startCells)
         {
@@ -156,7 +169,7 @@ namespace KarenKrill.MazeGeneration
                 for (int cellIndex = 0; cellIndex < cellsOnLevel; cellIndex++)
                 {
                     var cell = new CircuitMazeCell(level, cellIndex, wallsOnCell);
-                    cellNodes[level][cellIndex] = new(cell);
+                    cellNodes[level][cellIndex] = new(cell, _logger);
                     cells[level][cellIndex] = cell;
                 }
             }
@@ -168,7 +181,7 @@ namespace KarenKrill.MazeGeneration
             centerCell.BreakBackWall();
 
             // Tree building:
-            Tree<CircuitMazeCell> tree = new(cellNodes[0][0]);
+            Tree<CircuitMazeCell> tree = new(cellNodes[0][0], _logger);
             var rootNode = tree.RootNode;
             for (int cell = 0; cell < cellsOnLevelCache[1]; cell++)
             {
@@ -185,7 +198,7 @@ namespace KarenKrill.MazeGeneration
                 {
                     var cellNode = cellNodes[level][cell];
                     var nextCellNode = cellNodes[level][(cell + 1) % cellsOnLevel];
-                    //Debug.Log($"Bind1 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{nextCellNode.Data.Level}C{nextCellNode.Data.Cell}");
+                    //_logger.Log($"Bind1 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{nextCellNode.Data.Level}C{nextCellNode.Data.Cell}");
                     cellNode.BindWith(nextCellNode);
                     if (isNotLastLevel)
                     {
@@ -194,13 +207,13 @@ namespace KarenKrill.MazeGeneration
                             var nextLevelCellsOffset = cell * cellsPerPrevLevelCell;
                             for (int i = 0; i < cellsPerPrevLevelCell; i++)
                             {
-                                //Debug.Log($"Bind2 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{level + 1}C{nextLevelCellsOffset + i}");
+                                //_logger.Log($"Bind2 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{level + 1}C{nextLevelCellsOffset + i}");
                                 cellNode.BindWith(cellNodes[level + 1][nextLevelCellsOffset + i]);
                             }
                         }
                         else
                         {
-                            //Debug.Log($"Bind3 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{level + 1}C{cell}");
+                            //_logger.Log($"Bind3 L{cellNode.Data.Level}C{cellNode.Data.Cell} with L{level + 1}C{cell}");
                             cellNode.BindWith(cellNodes[level + 1][cell]);
                         }
                     }
@@ -209,7 +222,7 @@ namespace KarenKrill.MazeGeneration
 
             var dfsPath = tree.DepthFirstSearch();
 
-            Debug.Log(string.Join("->", dfsPath.Select(cell => $"L{cell.Level}C{cell.Cell}")));
+            _logger.Log(string.Join("->", dfsPath.Select(cell => $"L{cell.Level}C{cell.Cell}")));
 
             // Walls destroing:
             for (int i = 1; i < dfsPath.Count; i++)

@@ -1,11 +1,14 @@
 using System;
 using UnityEngine;
 using TMPro;
+using Zenject;
 
 namespace KarenKrill
 {
     public class RigidBodyMovement : MonoBehaviour
     {
+        [Inject]
+        ILogger _logger;
         [SerializeField]
         private InputController _inputController;
         [SerializeField]
@@ -32,7 +35,7 @@ namespace KarenKrill
         }
         private void OnMoved(Vector2 moveDelta)
         {
-            Debug.Log($"Player starts moving with delta {moveDelta}");
+            _logger.Log($"Player starts moving with delta {moveDelta}");
         }
         private void FixedUpdate()
         {

@@ -1,12 +1,20 @@
 using System.Collections;
 using UnityEngine;
 using TMPro;
+using Zenject;
 
 namespace KarenKrill
 {
     using MazeGeneration;
     public class GameplayController : MonoBehaviour
     {
+        [Inject]
+        ILogger _logger;
+        /*[Inject]
+        public GameplayController(ILogger logger)
+        {
+            _logger = logger;
+        }*/
         [SerializeField]
         private TextMeshProUGUI _levelInfoTextBox;
         [SerializeField]
