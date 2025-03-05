@@ -1,6 +1,6 @@
+using KarenKrill.Core;
+using KarenKrill.Logging;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Zenject;
 
@@ -8,80 +8,115 @@ namespace KarenKrill
 {
     public enum GameState
     {
-        StartMenu,
+        GameStart,
+        MainMenu,
+        LevelLoad,
+        LevelPlay,
+        LevelFinish,
         PauseMenu,
         WinMenu,
         LooseMenu,
-        GameStart,
-        LevelLoading,
-        LevelStarted,
-        LevelFinished,
         GameEnd
     }
-    public class GameFlow : MonoBehaviour
+    public interface IGameFlow
+    {
+        GameState State { get; }
+        event Action GameStart;
+        event Action MainMenuLoad;
+        event Action LevelLoad;
+        event Action LevelPlay;
+        event Action LevelFinish;
+        event Action LevelPause;
+        event Action PlayerWin;
+        event Action PlayerLoose;
+        event Action GameEnd;
+        void LoadMainMenu();
+        void LoadLevel();
+        void PlayLevel();
+        void PauseLevel();
+        void FinishLevel();
+        void StartGame();
+        void WinGame();
+        void LooseGame();
+    }
+    public class GameFlow : IGameFlow, IDisposable
     {
         [Inject]
         ILogger _logger;
-        private GameState _validState;
-        [SerializeField]
-        private GameState _state;
-        public GameState State => _validState;
-        private static IEnumerable<GameState> ValidStateTransitions(GameState state) => state switch
+        [Inject]
+        IStateMachine<GameState> _stateMachine;
+        public GameState State => _stateMachine.State;
+        public event Action LevelFinish;
+        public event Action GameStart;
+        public event Action LevelPause;
+        public event Action GameEnd;
+        public event Action MainMenuLoad;
+        public event Action LevelLoad;
+        public event Action PlayerWin;
+        public event Action PlayerLoose;
+        public event Action LevelPlay;
+
+        private void OnStateEnter(IStateMachine<GameState> stateMachine, GameState state)
         {
-            GameState.StartMenu => new GameState[] { GameState.GameStart },
-            GameState.GameStart => new GameState[] { GameState.LevelLoading },
-            GameState.LevelLoading => new GameState[] { GameState.LevelStarted },
-            GameState.LevelStarted => new GameState[] { GameState.LevelFinished, GameState.PauseMenu },
-            GameState.PauseMenu => new GameState[] { GameState.GameEnd, GameState.GameStart, GameState.LevelStarted },
-            GameState.LevelFinished => new GameState[] { GameState.WinMenu, GameState.LooseMenu },
-            GameState.GameEnd => new GameState[] { GameState.GameStart },
-            GameState.WinMenu => new GameState[] { GameState.GameEnd, GameState.GameStart },
-            GameState.LooseMenu => new GameState[] { GameState.GameEnd, GameState.GameStart },
-            _ => null,
-        };
-        private static bool IsValidStateTransition(GameState from, GameState to)
-        {
-            var validStates = ValidStateTransitions(from);
-            return validStates != null && validStates.Contains(to);
-        }
-        private static void ThrowIfInvalidStateTransition(GameState from, GameState to)
-        {
-            if (!IsValidStateTransition(from, to))
+            _logger.Log($"{nameof(GameFlow)} Entered to {state} state");
+            switch (state)
             {
-                throw new InvalidOperationException($"Invalid state transition {from} -> {to}");
+                case GameState.GameStart:
+                    GameStart?.Invoke();
+                    break;
+                case GameState.MainMenu:
+                    MainMenuLoad?.Invoke();
+                    break;
+                case GameState.LevelLoad:
+                    LevelLoad?.Invoke();
+                    break;
+                case GameState.LevelFinish:
+                    LevelFinish?.Invoke();
+                    break;
+                case GameState.PauseMenu:
+                    LevelPause?.Invoke();
+                    break;
+                case GameState.WinMenu:
+                    PlayerWin?.Invoke();
+                    break;
+                case GameState.LooseMenu:
+                    PlayerLoose?.Invoke();
+                    break;
+                case GameState.GameEnd:
+                    GameEnd?.Invoke();
+                    break;
+                case GameState.LevelPlay:
+                    LevelPlay?.Invoke();
+                    break;
+                default:
+                    _logger.LogWarning($"{state} state not implemented!");
+                    break;
             }
         }
-        private void ChangeState(GameState newState)
+        private void OnStateExit(IStateMachine<GameState> stateMachine, GameState state)
         {
-            ThrowIfInvalidStateTransition(_validState, newState);
-            _validState = newState;
+            //throw new NotImplementedException();
         }
-        private bool TryChangeState(GameState newState)
+        public void FinishLevel() => _stateMachine.TransitTo(GameState.LevelFinish);
+        public void LoadMainMenu() => _stateMachine.TransitTo(GameState.MainMenu);
+        public void LoadLevel() => _stateMachine.TransitTo(GameState.LevelLoad);
+        public void PauseLevel() => _stateMachine.TransitTo(GameState.PauseMenu);
+        public void StartGame() => _stateMachine.TransitTo(GameState.GameStart);
+        public void WinGame() => _stateMachine.TransitTo(GameState.WinMenu);
+        public void LooseGame() => _stateMachine.TransitTo(GameState.LooseMenu);
+        public void PlayLevel() => _stateMachine.TransitTo(GameState.LevelPlay);
+        [Inject]
+        private void Initialize()
         {
-            if(IsValidStateTransition(_validState, newState))
-            {
-                _validState = newState;
-                return true;
-            }
-            return false;
+            _stateMachine.StateEnter += OnStateEnter;
+            _stateMachine.StateExit += OnStateExit;
+            _logger.Log($"GameFlow()");
         }
-
-        private void OnValidate()
+        public void Dispose()
         {
-            if (!TryChangeState(_state))
-            {
-                _logger.LogWarning(string.Empty, $"Invalid state transition {_validState} -> {_state}");
-                _state = _validState;
-            }
-        }
-
-        public event Action LevelStarted;
-        public event Action LevelFinished;
-
-        public void FinishLevel()
-        {
-            ChangeState(GameState.LevelFinished);
-            LevelFinished?.Invoke();
+            _stateMachine.StateEnter -= OnStateEnter;
+            _stateMachine.StateExit -= OnStateExit;
+            _logger.Log($"GameFlow.Dispose()");
         }
     }
 }

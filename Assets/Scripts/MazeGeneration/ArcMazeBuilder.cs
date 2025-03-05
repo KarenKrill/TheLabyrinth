@@ -8,7 +8,7 @@ using Zenject;
 
 namespace KarenKrill.MazeGeneration
 {
-    public class ArcMazeGenerator : MonoBehaviour
+    public class ArcMazeBuilder : MonoBehaviour
     {
         [Inject]
         ILogger _logger;
@@ -29,9 +29,9 @@ namespace KarenKrill.MazeGeneration
         {
             get
             {
-                if (_circuitMaze != null)
+                if (LastBuildedMaze != null)
                 {
-                    return _circuitMaze.Cells.Sum(level => level == null ? 0 : level.Length);
+                    return LastBuildedMaze.Cells.Sum(level => level == null ? 0 : level.Length);
                 }
                 else
                 {
@@ -114,12 +114,12 @@ namespace KarenKrill.MazeGeneration
                 InstantiateBoxWall(levelsDistance, betweenLevelRadius, wallAngleRadians, wallAngle, cell, false);
             }
         }
-        CircuitMaze _circuitMaze;
-        private IEnumerator DestroyMaze()
+        public CircuitMaze LastBuildedMaze { get; private set; }
+        private IEnumerator DestroyMazeCoroutine()
         {
-            if (_circuitMaze != null)
+            if (LastBuildedMaze != null)
             {
-                _circuitMaze = null;
+                LastBuildedMaze = null;
                 foreach (var level in _levelWalls)
                 {
                     foreach (var wall in level.AsEnumerable().Reverse())
@@ -134,8 +134,8 @@ namespace KarenKrill.MazeGeneration
         }
         private IEnumerator InstantiateMaze()
         {
-            _levelWalls.AddRange(_circuitMaze.Cells.Select(_ => new List<GameObject>()));
-            foreach (var level in _circuitMaze.Cells.Reverse())
+            _levelWalls.AddRange(LastBuildedMaze.Cells.Select(_ => new List<GameObject>()));
+            foreach (var level in LastBuildedMaze.Cells.Reverse())
             {
                 foreach (var cell in level)
                 {
@@ -144,30 +144,30 @@ namespace KarenKrill.MazeGeneration
                 }
             }
         }
-        public Vector2 GetCellCenter(CircuitMazeCell cell)
+        public Vector2 GetCellCenter(int level, int cell)
         {
-            if (cell.Level == 0 && cell.Cell == 0)
+            if (level == 0 && cell == 0)
             {
                 return Vector2.zero;
             }
-            float radius = Levels > 1 ? Mathf.Lerp(_internalRadius, _radius, cell.Level / (float)(Levels - 1)) : _radius;
-            var cellsOnLevel = CircuitMazeGenerator.CellsOnLevel(cell.Level);
-            var nextLevelRadius = Levels > 1 ? Mathf.Lerp(_internalRadius, _radius, (cell.Level - 1) / (float)(Levels - 1)) : _internalRadius;
+            float radius = Levels > 1 ? Mathf.Lerp(_internalRadius, _radius, level / (float)(Levels - 1)) : _radius;
+            var cellsOnLevel = CircuitMazeGenerator.CellsOnLevel(level);
+            var nextLevelRadius = Levels > 1 ? Mathf.Lerp(_internalRadius, _radius, (level - 1) / (float)(Levels - 1)) : _internalRadius;
             var levelsDistance = radius - nextLevelRadius;
             var betweenLevelRadius = radius - levelsDistance / 2 - _wallWidth;
             var angle = 360 / (float)cellsOnLevel;
-            var wallAngle = Mathf.Lerp(-180, 180, (cellsOnLevel - cell.Cell) / (float)(cellsOnLevel));
+            var wallAngle = Mathf.Lerp(-180, 180, (cellsOnLevel - cell) / (float)(cellsOnLevel));
             wallAngle -= angle / 2;
             var wallAngleRadians = Mathf.Deg2Rad * wallAngle;
             return new Vector2(betweenLevelRadius * Mathf.Cos(wallAngleRadians), betweenLevelRadius * Mathf.Sin(wallAngleRadians));
         }
-        public IEnumerator GenerateCoroutine()
+        public IEnumerator BuildCoroutine()
         {
-            yield return DestroyMaze();
+            yield return DestroyMazeCoroutine();
             CircuitMazeGenerator circuitMazeGenerator = new(_logger);
-            _circuitMaze = circuitMazeGenerator.Generate(Levels, _startCellsCount);
+            LastBuildedMaze = circuitMazeGenerator.Generate(Levels, _startCellsCount);
             yield return InstantiateMaze();
-            MazeGenerationFinished.Invoke(_circuitMaze);
+            MazeGenerationFinished.Invoke(LastBuildedMaze);
         }
     }
 }

@@ -1,11 +1,15 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
+using Zenject;
+using KarenKrill.Logging;
 
 namespace KarenKrill
 {
     public class PlayerController : MonoBehaviour
     {
+        [Inject]
+        ILogger _logger;
         [SerializeField]
         private InputController _inputController;
         [SerializeField]
@@ -15,6 +19,7 @@ namespace KarenKrill
         [SerializeField]
         private float _maximumSpeed = 5f, _rotationDegreeSpeed = 360.0f;
         public float MaximumSpeed { get => _maximumSpeed; set => _maximumSpeed = value; }
+        public bool IsGrounded => _characterController.isGrounded;
         [SerializeField]
         private float _jumpHeight = 2.0f, _jumpHorizontalSpeed = 3.0f, _gravityMultiplier = 1.5f;
         [SerializeField]
@@ -25,6 +30,9 @@ namespace KarenKrill
         [SerializeField]
         private bool _useAiNavigation = true;
         public bool UseAiNavigation { get => _useAiNavigation; set => _useAiNavigation = value; }
+        [SerializeField]
+        public float _aiMinSpeed = 5f;
+        public float AiMinSpeed { get => _aiMinSpeed; set => _aiMinSpeed = value; }
         [SerializeField]
         private NavMeshAgent _playerNavAgent;
         [SerializeField]
@@ -206,8 +214,8 @@ namespace KarenKrill
                         var newDest = new Vector3(_xAxisLocked ? prevDest.x : dest.x, _yAxisLocked ? prevDest.y : dest.y, _zAxisLocked ? prevDest.z : dest.z);
                         _playerNavAgent.enabled = true;
                         _playerNavAgent.destination = newDest;
-                        _playerNavAgent.acceleration = _maximumSpeed;
-                        _playerNavAgent.speed = _maximumSpeed;
+                        _playerNavAgent.acceleration = Random.Range(_aiMinSpeed, _maximumSpeed);
+                        _playerNavAgent.speed = Random.Range(_aiMinSpeed, _maximumSpeed);
                     }
                 }
                 else
@@ -220,9 +228,9 @@ namespace KarenKrill
         public IEnumerator Move(Vector3 dest)
         {
             _IsMoveLocked = true;
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(0.1f);
             _characterController.transform.position = dest;
-            yield return new WaitForSeconds(0.01f);
+            yield return new WaitForSeconds(0.1f);
             _IsMoveLocked = false;
         }
         bool _xAxisLocked = false, _yAxisLocked = false, _zAxisLocked = false;
@@ -231,12 +239,14 @@ namespace KarenKrill
             _xAxisLocked = xAxis;
             _yAxisLocked = yAxis;
             _zAxisLocked = zAxis;
+            _logger.LogWarning($"Move locked: ({xAxis},{yAxis},{zAxis})");
         }
         public void UnlockMovement()
         {
             _xAxisLocked = false;
             _yAxisLocked = false;
             _zAxisLocked = false;
+            _logger.LogWarning("Move unlocked");
         }
     }
 }

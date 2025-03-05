@@ -6,15 +6,13 @@ using Zenject;
 namespace KarenKrill
 {
     using MazeGeneration;
+
     public class GameplayController : MonoBehaviour
     {
         [Inject]
+        IGameFlow _gameFlow;
+        [Inject]
         ILogger _logger;
-        /*[Inject]
-        public GameplayController(ILogger logger)
-        {
-            _logger = logger;
-        }*/
         [SerializeField]
         private TextMeshProUGUI _levelInfoTextBox;
         [SerializeField]
@@ -22,7 +20,7 @@ namespace KarenKrill
         [SerializeField]
         private PlayerController _playerController;
         [SerializeReference]
-        private ArcMazeGenerator _mazeGenerator;
+        private ArcMazeBuilder _mazeBuilder;
         [SerializeField]
         private Transform _exitPointTransform;
         [SerializeField]
@@ -38,11 +36,44 @@ namespace KarenKrill
         [SerializeField]
         private GameObject _looseWindow;
         [SerializeField]
-        float _timeOnCell = 5f;
+        float _levelTimeFactor = 5f;
+        float _timeOnCurrentLevel;
         [SerializeField, Range(0, 1)]
         float _redWarnAlertTimeLeft = 0.1f;
         [SerializeField, Range(0, 1)]
         float _warnAlertTimeLeft = 0.3f;
+
+        private float _timeLeft;
+        private float _TimeLeft
+        {
+            get => _timeLeft;
+            set
+            {
+                if (_timeLeft != value)
+                {
+                    if (System.MathF.Round(value, 1) != System.MathF.Round(_timeLeft, 1))
+                    {
+                        _timeLeft = value;
+                        _timesLeftTextBox.text = $"TimesLeft: {_timeLeft:0.0} s";
+                        if (_timeLeft / _timeOnCurrentLevel < _warnAlertTimeLeft)
+                        {
+                            if (_timeLeft / _timeOnCurrentLevel < _redWarnAlertTimeLeft)
+                            {
+                                _timesLeftTextBox.color = Color.red;
+                            }
+                            else
+                            {
+                                _timesLeftTextBox.color = Color.yellow;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        _timeLeft = value;
+                    }
+                }
+            }
+        }
 
         private int _passedLevels = 0;
         private int _PassedLevels
@@ -58,124 +89,130 @@ namespace KarenKrill
             }
         }
         private int _mazeLevelsCount = 0;
-        private float _playerSpeed;
-        float _startTime;
-        private bool _levelStarted = false;
+        private float _humanPlayerModePlayerSpeed = 0;
 
-        private IEnumerator AfterLevelGeneratedCoroutine(CircuitMaze maze)
+        public void Start()
         {
-            var playerSpawnPoint = _mazeGenerator.GetCellCenter(new(_mazeGenerator.Levels - 1, 0, 0));
-            yield return _playerController.Move(new Vector3(playerSpawnPoint.x, 100, playerSpawnPoint.y));
-            if (_exitPointTransform != null)
-            {
-                var exitCellCenter = _mazeGenerator.GetCellCenter(maze.Cells[0][0]);
-                _exitPointTransform.position = new Vector3(exitCellCenter.x, _exitPointTransform.position.y, exitCellCenter.y);
-            }
-            if (_PassedLevels < _gameLevelsCount) // game not ended
-            {
-                _startTime = Time.time;
-                _levelStarted = true;
-                _timesLeftTextBox.color = Color.white;
-            }
+            _gameFlow.GameStart += OnGameStart;
+            _gameFlow.LevelFinish += OnLevelFinish;
+            _gameFlow.LevelLoad += OnLevelLoad;
+            _gameFlow.PlayerWin += OnPlayerWin;
+            _gameFlow.PlayerLoose += OnPlayerLoose;
+            _gameFlow.LevelPlay += OnLevelPlay;
+
+            //_gameFlow.LoadMainMenu();
+            _gameFlow.StartGame();
         }
-        private void OnMazeGenerationFinished(CircuitMaze maze) => StartCoroutine(AfterLevelGeneratedCoroutine(maze));
-        public IEnumerator Start()
+        void ResetToDefaults()
         {
+            SetAiPlayingMode(false);
             _timesLeftTextBox.text = $"TimesLeft: 0.000 s";
             _timesLeftTextBox.color = Color.white;
             _winWindow.SetActive(false);
             _looseWindow.SetActive(false);
             _PassedLevels = 1;
             _mazeLevelsCount = _mazeMinLevelsCount;
-            _mazeGenerator.Levels = _mazeMinLevelsCount;
-            _mazeGenerator.MazeGenerationFinished.AddListener(OnMazeGenerationFinished);
+            _mazeBuilder.Levels = _mazeLevelsCount;
+        }
+        private IEnumerator LoadLevelCoroutine()
+        {
+            _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
+            yield return _mazeBuilder.BuildCoroutine();
+            _timeOnCurrentLevel = Mathf.Round(_levelTimeFactor * Mathf.Sqrt(_mazeBuilder.TotalCellsCount) / 5) * 5;
+            if (_PassedLevels < _gameLevelsCount) // game not ended
+            {
+                _TimeLeft = _timeOnCurrentLevel;
+                _timesLeftTextBox.color = Color.white;
+            }
+            var playerSpawnPoint = _mazeBuilder.GetCellCenter(_mazeBuilder.Levels - 1, 0);
             _playerController.LockMovement(xAxis: true, yAxis: false, zAxis: true);
-            yield return _mazeGenerator.GenerateCoroutine();
-            _playerController.UnlockMovement();
+            yield return _playerController.Move(new Vector3(playerSpawnPoint.x, 100, playerSpawnPoint.y));
+            if (_exitPointTransform != null)
+            {
+                var exitCellCenter = _mazeBuilder.GetCellCenter(0, 0);
+                _exitPointTransform.position = new Vector3(exitCellCenter.x, _exitPointTransform.position.y, exitCellCenter.y);
+            }
+            yield return new WaitForSeconds(0.5f); // wait while player isn't fall (stucks in air)
+            yield return new WaitUntil(() => _playerController.IsGrounded);// wait until player isn't grounded
+            _gameFlow.PlayLevel();
         }
         private IEnumerator FinishLevelCoroutine()
         {
-            _levelStarted = false;
-            bool isGameEnd = true;
+            _playerController.LockMovement();
+            yield return _playerController.Move(new Vector3(0, 1, 60));
+            _mazeBuilder.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? ++_mazeLevelsCount : _mazeMaxLevelsCount;
             if (_PassedLevels < _gameLevelsCount)
             {
                 _PassedLevels++;
-                isGameEnd = false;
+                _gameFlow.LoadLevel();
             }
-            else if (!_winWindow.activeInHierarchy)
+            else
             {
-                _playerController.UseAiNavigation = true;
-                _playerSpeed = _playerController.MaximumSpeed;
-                _playerController.MaximumSpeed = _menuAiPlayerSpeed;
-                _winWindow.SetActive(true);
-            }
-            yield return _playerController.Move(new Vector3(0, 1, 60));
-            _mazeGenerator.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? ++_mazeLevelsCount : _mazeMaxLevelsCount;
-            _playerController.LockMovement(xAxis: true, yAxis: false, zAxis: true);
-            yield return _mazeGenerator.GenerateCoroutine();
-            _playerController.UnlockMovement();
-            if (!isGameEnd)
-            {
-                _startTime = Time.time;
-                _levelStarted = true;
-                _timesLeftTextBox.color = Color.white;
+                _gameFlow.WinGame();
             }
         }
-        public void FinishLevel() => StartCoroutine(FinishLevelCoroutine());
-        public IEnumerator RestartCoroutine()
+
+        private void OnGameStart()
         {
-            _playerController.MaximumSpeed = _playerSpeed;
-            _playerController.UseAiNavigation = false;
-            _mazeGenerator.MazeGenerationFinished.RemoveListener(OnMazeGenerationFinished);
-            yield return Start();
-            _winWindow.SetActive(false);
-            _looseWindow.SetActive(false);
+            ResetToDefaults();
+            _gameFlow.LoadLevel();
         }
-        public void Restart() => StartCoroutine(RestartCoroutine());
-        public void Update()
+        private void OnLevelLoad() => StartCoroutine(LoadLevelCoroutine());
+        private void OnLevelPlay() => _playerController.UnlockMovement();
+        private void OnLevelFinish() => StartCoroutine(FinishLevelCoroutine());
+        private void OnPlayerLoose()
         {
-            if (_levelStarted)
+            SetAiPlayingMode();
+            _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
+            _looseWindow.SetActive(true);
+        }
+        private void OnPlayerWin()
+        {
+            SetAiPlayingMode();
+            _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
+            _winWindow.SetActive(true);
+        }
+        private void SetAiPlayingMode(bool turnOn = true)
+        {
+            if (_playerController.UseAiNavigation != turnOn)
             {
-                if (!_winWindow.activeInHierarchy)
+                _playerController.UseAiNavigation = turnOn;
+                if (turnOn)
                 {
-                    var timeSinceLevelStarted = Time.time - _startTime;
-                    var timeOnCurrentLevel = _timeOnCell * _mazeGenerator.TotalCellsCount;//_mazeGenerator.Levels;
-                    var timeLeft = timeOnCurrentLevel > timeSinceLevelStarted ? timeOnCurrentLevel - timeSinceLevelStarted : 0;
-                    _timesLeftTextBox.text = $"TimesLeft: {timeLeft:0.000} s";
-                    if (timeLeft / timeOnCurrentLevel < _warnAlertTimeLeft)
-                    {
-                        if (timeLeft / timeOnCurrentLevel < _redWarnAlertTimeLeft)
-                        {
-                            _timesLeftTextBox.color = Color.red;
-                        }
-                        else
-                        {
-                            _timesLeftTextBox.color = Color.yellow;
-                        }
-                    }
-                    if (timeLeft == 0)
-                    {
-                        _levelStarted = false;
-                        _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
-                        _looseWindow.SetActive(true);
-                    }
+                    _humanPlayerModePlayerSpeed = _playerController.MaximumSpeed;
+                    _playerController.MaximumSpeed = _menuAiPlayerSpeed;
+                    _playerController.AiMinSpeed = _menuAiPlayerSpeed / 10;
                 }
-            }
-            if (_levelStarted || _PassedLevels >= _gameLevelsCount) // game ended
-            {
-                if (Input.GetKeyDown(KeyCode.F))
+                else
                 {
-                    _playerController.UseAiNavigation = !_playerController.UseAiNavigation;
-                    if (_playerController.UseAiNavigation)
+                    if (_humanPlayerModePlayerSpeed == 0) // first time
                     {
-                        _playerSpeed = _playerController.MaximumSpeed;
-                        _playerController.MaximumSpeed = _menuAiPlayerSpeed;
+                        _humanPlayerModePlayerSpeed = _playerController.MaximumSpeed;
                     }
                     else
                     {
-                        _playerController.MaximumSpeed = _playerSpeed;
+                        _playerController.MaximumSpeed = _humanPlayerModePlayerSpeed;
                     }
                 }
+            }
+        }
+        private void UpdateLeftLevelTime()
+        {
+            _TimeLeft = _TimeLeft > Time.deltaTime ? _TimeLeft - Time.deltaTime : 0;
+            if (_TimeLeft == 0)
+            {
+                _gameFlow.LooseGame();
+            }
+        }
+        public void Update()
+        {
+            if (_gameFlow.State == GameState.LevelPlay)
+            {
+                if (Input.GetKeyDown(KeyCode.F)) // cheat
+                {
+                    SetAiPlayingMode(!_playerController.UseAiNavigation);
+                }
+                UpdateLeftLevelTime();
             }
         }
     }
