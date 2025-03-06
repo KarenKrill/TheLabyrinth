@@ -1915,7 +1915,7 @@ MonoBehaviour:
   _mazeMinLevelsCount: 4
   _mazeMaxLevelsCount: 12
   _gameLevelsCount: 20
-  _menuAiPlayerSpeed: 500
+  _aiPlayerModeMaxSpeed: 500
   _winWindow: {fileID: 320844667}
   _looseWindow: {fileID: 1000698456}
   _levelTimeFactor: 4

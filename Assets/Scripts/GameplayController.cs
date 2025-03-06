@@ -30,7 +30,7 @@ namespace KarenKrill
         [SerializeField]
         private int _gameLevelsCount = 13;
         [SerializeField]
-        private float _menuAiPlayerSpeed = 50;
+        private float _aiPlayerModeMaxSpeed = 50;
         [SerializeField]
         private GameObject _winWindow;
         [SerializeField]
@@ -180,8 +180,8 @@ namespace KarenKrill
                 if (turnOn)
                 {
                     _humanPlayerModePlayerSpeed = _playerController.MaximumSpeed;
-                    _playerController.MaximumSpeed = _menuAiPlayerSpeed;
-                    _playerController.AiMinSpeed = _menuAiPlayerSpeed / 10;
+                    _playerController.MaximumSpeed = _aiPlayerModeMaxSpeed;
+                    _playerController.AiMinSpeed = _aiPlayerModeMaxSpeed / 10;
                 }
                 else
                 {
