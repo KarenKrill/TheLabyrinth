@@ -81,7 +81,7 @@ namespace KarenKrill.MazeGeneration
                     }
                     else return "NoMazeCell";
                 }));
-                _logger.Log($"Added L{cell.Level}C{cell.Cell} Neighbours: {neighbours}");
+                //_logger.Log($"Added L{cell.Level}C{cell.Cell} Neighbours: {neighbours}");
             }
             TreeNode<T> nextCell;
             do

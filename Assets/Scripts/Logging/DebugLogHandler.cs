@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KarenKrill.Logging
 {
-    internal class DebugLogHandler : ILogHandler
+    public class DebugLogHandler : ILogHandler
     {
         public void LogException(Exception exception, UnityEngine.Object context)
         {
