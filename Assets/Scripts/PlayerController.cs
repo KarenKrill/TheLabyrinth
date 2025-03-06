@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
 using KarenKrill.Logging;
+using KarenKrill.Core;
 
 namespace KarenKrill
 {
@@ -47,7 +48,22 @@ namespace KarenKrill
         {
             _inputController.Moved += OnMoved;
             _inputController.Jumped += OnJumped;
+            _inputController.Paused += OnPaused;
         }
+        [Inject]
+        IGameFlow _gameFlow;
+        private void OnPaused(bool isPaused)
+        {
+            if (_gameFlow.State == GameState.PauseMenu)
+            {
+                _gameFlow.PlayLevel();
+            }
+            else if(_gameFlow.State == GameState.LevelPlay)
+            {
+                _gameFlow.PauseLevel();
+            }
+        }
+
         private void OnJumped(bool isButtonClicked)
         {
             if (isButtonClicked)

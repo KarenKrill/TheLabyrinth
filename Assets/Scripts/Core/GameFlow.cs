@@ -1,10 +1,9 @@
-using KarenKrill.Core;
-using KarenKrill.Logging;
 using System;
 using UnityEngine;
 using Zenject;
+using KarenKrill.Logging;
 
-namespace KarenKrill
+namespace KarenKrill.Core
 {
     public enum GameState
     {
@@ -36,6 +35,7 @@ namespace KarenKrill
         void PauseLevel();
         void FinishLevel();
         void StartGame();
+        void EndGame();
         void WinGame();
         void LooseGame();
     }
@@ -102,6 +102,7 @@ namespace KarenKrill
         public void LoadLevel() => _stateMachine.TransitTo(GameState.LevelLoad);
         public void PauseLevel() => _stateMachine.TransitTo(GameState.PauseMenu);
         public void StartGame() => _stateMachine.TransitTo(GameState.GameStart);
+        public void EndGame() => _stateMachine.TransitTo(GameState.GameEnd);
         public void WinGame() => _stateMachine.TransitTo(GameState.WinMenu);
         public void LooseGame() => _stateMachine.TransitTo(GameState.LooseMenu);
         public void PlayLevel() => _stateMachine.TransitTo(GameState.LevelPlay);
@@ -118,5 +119,6 @@ namespace KarenKrill
             _stateMachine.StateExit -= OnStateExit;
             _logger.Log($"GameFlow.Dispose()");
         }
+
     }
 }

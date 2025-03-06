@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -10,6 +11,7 @@ namespace KarenKrill
     {
         public event MovementDelegate Moved;
         public event ButtonClickDelegate Jumped;
+        public event Action<bool> Paused;
         public Vector2 MoveDelta { get; private set; }
         public bool IsJumpPressed { get; private set; }
         private void OnMovement(InputValue inputValue)
@@ -21,6 +23,10 @@ namespace KarenKrill
         {
             IsJumpPressed = inputValue.isPressed;
             Jumped?.Invoke(inputValue.isPressed);
+        }
+        private void OnPause(InputValue inputValue)
+        {
+            Paused?.Invoke(inputValue.isPressed);
         }
     }
 }

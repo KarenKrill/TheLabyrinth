@@ -120,5 +120,6 @@ namespace KarenKrill.Core
         public void LooseGame() => _gameFlow.LooseGame();
         public void WinGame() => _gameFlow.WinGame();
         public void PlayLevel() => _gameFlow.PlayLevel();
+        public void EndGame() => _gameFlow.EndGame();
     }
 }

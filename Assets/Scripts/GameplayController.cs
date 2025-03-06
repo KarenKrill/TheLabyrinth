@@ -6,6 +6,7 @@ using Zenject;
 namespace KarenKrill
 {
     using MazeGeneration;
+    using Core;
 
     public class GameplayController : MonoBehaviour
     {
@@ -35,6 +36,8 @@ namespace KarenKrill
         private GameObject _winWindow;
         [SerializeField]
         private GameObject _looseWindow;
+        [SerializeField]
+        private GameObject _pauseWindow;
         [SerializeField]
         float _levelTimeFactor = 5f;
         float _timeOnCurrentLevel;
@@ -99,6 +102,8 @@ namespace KarenKrill
             _gameFlow.PlayerWin += OnPlayerWin;
             _gameFlow.PlayerLoose += OnPlayerLoose;
             _gameFlow.LevelPlay += OnLevelPlay;
+            _gameFlow.LevelPause += OnLevelPause;
+            _gameFlow.GameEnd += OnGameEnd;
 
             //_gameFlow.LoadMainMenu();
             _gameFlow.StartGame();
@@ -110,12 +115,14 @@ namespace KarenKrill
             _timesLeftTextBox.color = Color.white;
             _winWindow.SetActive(false);
             _looseWindow.SetActive(false);
+            _pauseWindow.SetActive(false);
             _PassedLevels = 1;
             _mazeLevelsCount = _mazeMinLevelsCount;
             _mazeBuilder.Levels = _mazeLevelsCount;
         }
         private IEnumerator LoadLevelCoroutine()
         {
+            Time.timeScale = 1;
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
             yield return _mazeBuilder.RebuildCoroutine();
             _timeOnCurrentLevel = Mathf.Round(_levelTimeFactor * Mathf.Sqrt(_mazeBuilder.TotalCellsCount) / 5) * 5;
@@ -157,8 +164,27 @@ namespace KarenKrill
             ResetToDefaults();
             _gameFlow.LoadLevel();
         }
+        private void OnGameEnd()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
         private void OnLevelLoad() => StartCoroutine(LoadLevelCoroutine());
-        private void OnLevelPlay() => _playerController.UnlockMovement();
+        private void OnLevelPlay()
+        {
+            _pauseWindow.SetActive(false);
+            _playerController.UnlockMovement();
+            Time.timeScale = 1;
+        }
+        private void OnLevelPause()
+        {
+            //_playerController.LockMovement();
+            Time.timeScale = 0;
+            _pauseWindow.SetActive(true);
+        }
         private void OnLevelFinish() => StartCoroutine(FinishLevelCoroutine());
         private void OnPlayerLoose()
         {

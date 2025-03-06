@@ -16,11 +16,11 @@ namespace KarenKrill
                 { GameState.GameStart, new List<GameState> { GameState.LevelLoad } },
                 { GameState.LevelLoad, new List<GameState> { GameState.LevelPlay } },
                 { GameState.LevelPlay, new List<GameState> { GameState.LooseMenu, GameState.LevelFinish, GameState.PauseMenu } },
-                { GameState.PauseMenu, new List<GameState> { GameState.GameEnd, GameState.GameStart, GameState.LevelPlay } },
+                { GameState.PauseMenu, new List<GameState> { GameState.GameEnd, GameState.GameStart, GameState.MainMenu, GameState.LevelPlay } },
                 { GameState.LevelFinish, new List<GameState> { GameState.LevelLoad, GameState.WinMenu, GameState.LooseMenu } },
-                { GameState.GameEnd, new List<GameState> { GameState.GameStart } },
                 { GameState.WinMenu, new List<GameState> { GameState.GameEnd, GameState.GameStart } },
-                { GameState.LooseMenu, new List<GameState> { GameState.GameEnd, GameState.GameStart } }
+                { GameState.LooseMenu, new List<GameState> { GameState.GameEnd, GameState.GameStart } },
+                { GameState.GameEnd, new List<GameState>() }
             };
             Container.Bind<IStateMachine<GameState>>().To<StateMachine<GameState>>().AsSingle().WithArguments(validTransitions, GameState.MainMenu);
         }
