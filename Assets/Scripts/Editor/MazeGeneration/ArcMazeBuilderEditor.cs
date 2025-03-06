@@ -1,3 +1,4 @@
+#if UNITY_EDITOR
 using UnityEngine;
 using UnityEditor;
 using Unity.EditorCoroutines.Editor;
@@ -35,3 +36,4 @@ namespace KarenKrill.MazeGeneration
         }
     }
 }
+#endif
