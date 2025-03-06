@@ -25,6 +25,7 @@ namespace KarenKrill.MazeGeneration
         {
             base.OnInspectorGUI();
             var arcMazeBuilder = (ArcMazeBuilder)target;
+            GUILayout.BeginHorizontal();
             if (GUILayout.Button("Rebuild"))
             {
                 EditorCoroutineUtility.StartCoroutine(arcMazeBuilder.RebuildCoroutine(), this);
@@ -33,6 +34,7 @@ namespace KarenKrill.MazeGeneration
             {
                 EditorCoroutineUtility.StartCoroutine(arcMazeBuilder.DestroyCoroutine(), this);
             }
+            GUILayout.EndHorizontal();
         }
     }
 }
