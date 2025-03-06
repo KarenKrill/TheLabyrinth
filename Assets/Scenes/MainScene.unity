@@ -637,8 +637,8 @@ MonoBehaviour:
   _radius: 30
   _internalRadius: 4
   _height: 4
-  Levels: 3
-  _startCellsCount: 4
+  _minArcSegmentLength: 50
+  Levels: 15
   _wallWidth: 0.5
   _material: {fileID: 2100000, guid: 3ea4e0c3e52eb6d499d1947b6aaa7b7d, type: 2}
   MazeGenerationFinished:

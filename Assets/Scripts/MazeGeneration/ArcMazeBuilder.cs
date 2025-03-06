@@ -17,9 +17,9 @@ namespace KarenKrill.MazeGeneration
         private float _radius = 10, _internalRadius = 2;
         [SerializeField]
         private float _height = 2;
-        public int Levels = 3;
         [SerializeField]
-        private int _startCellsCount = 4;
+        private float _minArcSegmentLength = 10f;
+        public int Levels = 3;
         [SerializeField]
         private float _wallWidth = 0.2f;
         [SerializeField]
@@ -86,8 +86,13 @@ namespace KarenKrill.MazeGeneration
             float angle = 360 / (float)cellsOnNextLevel;
             float width = _wallWidth;
             float depth = _height;
-            int levelCellsCount = 10;
-            int radialCuts = 2 * levelCellsCount + 1; // think about arch, if you don't understand +1
+            float arcLength = angle * radius;
+            int arcSegments = Mathf.RoundToInt(arcLength / _minArcSegmentLength);
+            if (arcSegments < 2)
+            {
+                arcSegments = 2;
+            }
+            int radialCuts = arcSegments + 1; // think about arch, if you don't understand +1
 
             var nextLevelRadius = Levels > 1 ? Mathf.Lerp(_internalRadius, _radius, (cell.Level - 1) / (float)(Levels - 1)) : _internalRadius;
             var levelsDistance = radius - nextLevelRadius;
@@ -120,21 +125,21 @@ namespace KarenKrill.MazeGeneration
         public IEnumerator DestroyCoroutine()
         {
             if (_buildSemaphore.Wait(1))
-        {
-            if (LastBuildedMaze != null)
             {
-                LastBuildedMaze = null;
-                foreach (var level in _levelWalls)
+                if (LastBuildedMaze != null)
                 {
-                    foreach (var wall in level.AsEnumerable().Reverse())
+                    LastBuildedMaze = null;
+                    foreach (var level in _levelWalls)
                     {
-                        DestroyImmediate(wall);
-                        yield return null;
+                        foreach (var wall in level.AsEnumerable().Reverse())
+                        {
+                            DestroyImmediate(wall);
+                            yield return null;
+                        }
+                        level.Clear();
                     }
-                    level.Clear();
+                    _levelWalls.Clear();
                 }
-                _levelWalls.Clear();
-            }
                 _ = _buildSemaphore.Release();
             }
         }
@@ -171,10 +176,10 @@ namespace KarenKrill.MazeGeneration
         {
             if (_buildSemaphore.Wait(1))
             {
-            CircuitMazeGenerator circuitMazeGenerator = new(_logger);
+                CircuitMazeGenerator circuitMazeGenerator = new(_logger);
                 LastBuildedMaze = circuitMazeGenerator.Generate(Levels);
-            yield return InstantiateMaze();
-            MazeGenerationFinished.Invoke(LastBuildedMaze);
+                yield return InstantiateMaze();
+                MazeGenerationFinished.Invoke(LastBuildedMaze);
                 _ = _buildSemaphore.Release();
             }
         }
