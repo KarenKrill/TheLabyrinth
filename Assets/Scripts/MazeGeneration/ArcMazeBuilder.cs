@@ -172,7 +172,7 @@ namespace KarenKrill.MazeGeneration
             if (_buildSemaphore.Wait(1))
             {
             CircuitMazeGenerator circuitMazeGenerator = new(_logger);
-            LastBuildedMaze = circuitMazeGenerator.Generate(Levels, _startCellsCount);
+                LastBuildedMaze = circuitMazeGenerator.Generate(Levels);
             yield return InstantiateMaze();
             MazeGenerationFinished.Invoke(LastBuildedMaze);
                 _ = _buildSemaphore.Release();

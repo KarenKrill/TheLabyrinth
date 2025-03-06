@@ -146,7 +146,7 @@ namespace KarenKrill.MazeGeneration
         }
 
         public static int CellsOnLevel(int level) => level == 0 ? 1 : (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(level + 1, 2)) + 2);
-        public CircuitMaze Generate(int levels, int startCells)
+        public CircuitMaze Generate(int levels)
         {
             // Caching
             int[] cellsOnLevelCache = new int[levels];
