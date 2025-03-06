@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.ProBuilder;
@@ -115,7 +116,10 @@ namespace KarenKrill.MazeGeneration
             }
         }
         public CircuitMaze LastBuildedMaze { get; private set; }
-        private IEnumerator DestroyMazeCoroutine()
+        private SemaphoreSlim _buildSemaphore = new(1, 1);
+        public IEnumerator DestroyCoroutine()
+        {
+            if (_buildSemaphore.Wait(1))
         {
             if (LastBuildedMaze != null)
             {
@@ -130,6 +134,8 @@ namespace KarenKrill.MazeGeneration
                     level.Clear();
                 }
                 _levelWalls.Clear();
+            }
+                _ = _buildSemaphore.Release();
             }
         }
         private IEnumerator InstantiateMaze()
@@ -163,11 +169,19 @@ namespace KarenKrill.MazeGeneration
         }
         public IEnumerator BuildCoroutine()
         {
-            yield return DestroyMazeCoroutine();
+            if (_buildSemaphore.Wait(1))
+            {
             CircuitMazeGenerator circuitMazeGenerator = new(_logger);
             LastBuildedMaze = circuitMazeGenerator.Generate(Levels, _startCellsCount);
             yield return InstantiateMaze();
             MazeGenerationFinished.Invoke(LastBuildedMaze);
+                _ = _buildSemaphore.Release();
+            }
+        }
+        public IEnumerator RebuildCoroutine()
+        {
+            yield return DestroyCoroutine();
+            yield return BuildCoroutine();
         }
     }
 }

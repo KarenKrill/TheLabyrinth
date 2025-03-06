@@ -117,7 +117,7 @@ namespace KarenKrill
         private IEnumerator LoadLevelCoroutine()
         {
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
-            yield return _mazeBuilder.BuildCoroutine();
+            yield return _mazeBuilder.RebuildCoroutine();
             _timeOnCurrentLevel = Mathf.Round(_levelTimeFactor * Mathf.Sqrt(_mazeBuilder.TotalCellsCount) / 5) * 5;
             if (_PassedLevels < _gameLevelsCount) // game not ended
             {
