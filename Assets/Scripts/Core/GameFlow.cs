@@ -7,6 +7,7 @@ namespace KarenKrill.Core
 {
     public enum GameState
     {
+        Initial,
         GameStart,
         MainMenu,
         LevelLoad,

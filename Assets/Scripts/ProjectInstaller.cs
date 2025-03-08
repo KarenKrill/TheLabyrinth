@@ -12,6 +12,7 @@ namespace KarenKrill
         {
             Dictionary<GameState, IList<GameState>> validTransitions = new()
             {
+                { GameState.Initial, new List<GameState> { GameState.MainMenu } },
                 { GameState.MainMenu, new List<GameState> { GameState.GameStart } },
                 { GameState.GameStart, new List<GameState> { GameState.LevelLoad } },
                 { GameState.LevelLoad, new List<GameState> { GameState.LevelPlay } },
@@ -22,7 +23,7 @@ namespace KarenKrill
                 { GameState.LooseMenu, new List<GameState> { GameState.GameEnd, GameState.GameStart } },
                 { GameState.GameEnd, new List<GameState>() }
             };
-            Container.Bind<IStateMachine<GameState>>().To<StateMachine<GameState>>().AsSingle().WithArguments(validTransitions, GameState.MainMenu);
+            Container.Bind<IStateMachine<GameState>>().To<StateMachine<GameState>>().AsSingle().WithArguments(validTransitions, GameState.Initial);
         }
         public override void InstallBindings()
         {

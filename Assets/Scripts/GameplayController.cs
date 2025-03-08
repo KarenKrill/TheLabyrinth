@@ -14,30 +14,17 @@ namespace KarenKrill
         IGameFlow _gameFlow;
         [Inject]
         ILogger _logger;
+
+        [SerializeField]
+        private PlayerController _playerController;
         [SerializeField]
         private TextMeshProUGUI _levelInfoTextBox;
         [SerializeField]
         private TextMeshProUGUI _timesLeftTextBox;
         [SerializeField]
-        private PlayerController _playerController;
-        [SerializeReference]
-        private ArcMazeBuilder _mazeBuilder;
-        [SerializeField]
-        private Transform _exitPointTransform;
-        [SerializeField]
-        private int _mazeMinLevelsCount = 4;
-        [SerializeField]
-        private int _mazeMaxLevelsCount = 13;
-        [SerializeField]
         private int _gameLevelsCount = 13;
         [SerializeField]
         private float _aiPlayerModeMaxSpeed = 50;
-        [SerializeField]
-        private GameObject _winWindow;
-        [SerializeField]
-        private GameObject _looseWindow;
-        [SerializeField]
-        private GameObject _pauseWindow;
         [SerializeField]
         float _levelTimeFactor = 5f;
         float _timeOnCurrentLevel;
@@ -45,6 +32,8 @@ namespace KarenKrill
         float _redWarnAlertTimeLeft = 0.1f;
         [SerializeField, Range(0, 1)]
         float _warnAlertTimeLeft = 0.3f;
+        [SerializeField]
+        LoadLevelManager _loadLevelManager;
 
         private float _timeLeft;
         private float _TimeLeft
@@ -91,10 +80,9 @@ namespace KarenKrill
                 }
             }
         }
-        private int _mazeLevelsCount = 0;
         private float _humanPlayerModePlayerSpeed = 0;
 
-        public void Start()
+        public void Awake()
         {
             _gameFlow.GameStart += OnGameStart;
             _gameFlow.LevelFinish += OnLevelFinish;
@@ -104,50 +92,50 @@ namespace KarenKrill
             _gameFlow.LevelPlay += OnLevelPlay;
             _gameFlow.LevelPause += OnLevelPause;
             _gameFlow.GameEnd += OnGameEnd;
-
             //_gameFlow.LoadMainMenu();
-            _gameFlow.StartGame();
+            //_gameFlow.StartGame();
         }
         void ResetToDefaults()
         {
             SetAiPlayingMode(false);
             _timesLeftTextBox.text = $"TimesLeft: 0.000 s";
             _timesLeftTextBox.color = Color.white;
-            _winWindow.SetActive(false);
-            _looseWindow.SetActive(false);
-            _pauseWindow.SetActive(false);
             _PassedLevels = 1;
-            _mazeLevelsCount = _mazeMinLevelsCount;
-            _mazeBuilder.Levels = _mazeLevelsCount;
         }
-        private IEnumerator LoadLevelCoroutine()
+
+        private void OnGameStart()
         {
-            Time.timeScale = 1;
-            _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
-            yield return _mazeBuilder.RebuildCoroutine();
-            _timeOnCurrentLevel = Mathf.Round(_levelTimeFactor * Mathf.Sqrt(_mazeBuilder.TotalCellsCount) / 5) * 5;
+            ResetToDefaults();
+        }
+        private void OnGameEnd()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
+        private void OnLevelLoad()
+        {
+        }
+        private void OnLevelPlay()
+        {
+            _timeOnCurrentLevel = Mathf.Round(_levelTimeFactor * Mathf.Sqrt(_loadLevelManager.TotalMazeCellsCount) / 5) * 5;
             if (_PassedLevels < _gameLevelsCount) // game not ended
             {
                 _TimeLeft = _timeOnCurrentLevel;
                 _timesLeftTextBox.color = Color.white;
             }
-            var playerSpawnPoint = _mazeBuilder.GetCellCenter(_mazeBuilder.Levels - 1, 0);
-            _playerController.LockMovement(xAxis: true, yAxis: false, zAxis: true);
-            yield return _playerController.Move(new Vector3(playerSpawnPoint.x, 100, playerSpawnPoint.y));
-            if (_exitPointTransform != null)
-            {
-                var exitCellCenter = _mazeBuilder.GetCellCenter(0, 0);
-                _exitPointTransform.position = new Vector3(exitCellCenter.x, _exitPointTransform.position.y, exitCellCenter.y);
-            }
-            yield return new WaitForSeconds(0.5f); // wait while player isn't fall (stucks in air)
-            yield return new WaitUntil(() => _playerController.IsGrounded);// wait until player isn't grounded
-            _gameFlow.PlayLevel();
+            _playerController.UnlockMovement();
+            //Time.timeScale = 1;
         }
-        private IEnumerator FinishLevelCoroutine()
+        private void OnLevelPause()
         {
             _playerController.LockMovement();
-            yield return _playerController.Move(new Vector3(0, 1, 60));
-            _mazeBuilder.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? ++_mazeLevelsCount : _mazeMaxLevelsCount;
+            //Time.timeScale = 0;
+        }
+        private void OnLevelFinish()
+        {
             if (_PassedLevels < _gameLevelsCount)
             {
                 _PassedLevels++;
@@ -158,45 +146,17 @@ namespace KarenKrill
                 _gameFlow.WinGame();
             }
         }
-
-        private void OnGameStart()
-        {
-            ResetToDefaults();
-            _gameFlow.LoadLevel();
-        }
-        private void OnGameEnd()
-        {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
-        }
-        private void OnLevelLoad() => StartCoroutine(LoadLevelCoroutine());
-        private void OnLevelPlay()
-        {
-            _pauseWindow.SetActive(false);
-            _playerController.UnlockMovement();
-            Time.timeScale = 1;
-        }
-        private void OnLevelPause()
-        {
-            //_playerController.LockMovement();
-            Time.timeScale = 0;
-            _pauseWindow.SetActive(true);
-        }
-        private void OnLevelFinish() => StartCoroutine(FinishLevelCoroutine());
         private void OnPlayerLoose()
         {
             SetAiPlayingMode();
+            //Time.timeScale = 0;
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
-            _looseWindow.SetActive(true);
         }
         private void OnPlayerWin()
         {
             SetAiPlayingMode();
+            //Time.timeScale = 0;
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
-            _winWindow.SetActive(true);
         }
         private void SetAiPlayingMode(bool turnOn = true)
         {

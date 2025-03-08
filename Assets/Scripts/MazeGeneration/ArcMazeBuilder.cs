@@ -133,7 +133,7 @@ namespace KarenKrill.MazeGeneration
                     {
                         foreach (var wall in level.AsEnumerable().Reverse())
                         {
-                            DestroyImmediate(wall);
+                            Destroy(wall);
                             yield return null;
                         }
                         level.Clear();
