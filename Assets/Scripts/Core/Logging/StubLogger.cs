@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace KarenKrill.Logging
+namespace KarenKrill.Core.Logging
 {
     internal class StubLogger : ILogger
     {

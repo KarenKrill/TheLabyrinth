@@ -1,13 +1,14 @@
 #if UNITY_EDITOR
+using System.Linq;
 using UnityEngine;
 using UnityEditor;
 using Unity.EditorCoroutines.Editor;
 using UnityEngine.UIElements;
-using System.Linq;
 using Zenject;
 
 namespace KarenKrill.MazeGeneration
 {
+    using Core.Logging;
     [CustomEditor(typeof(ArcMazeBuilder))]
     public class ArcMazeBuilderEditor : Editor
     {
@@ -18,7 +19,7 @@ namespace KarenKrill.MazeGeneration
                 .Where(field => field.FieldType == typeof(ILogger) &&
                     field.CustomAttributes.Select(attr => attr.AttributeType).Contains(typeof(InjectAttribute)))
                 .FirstOrDefault();
-            loggerField?.SetValue((ArcMazeBuilder)target, new Logger(new Logging.DebugLogHandler()));
+            loggerField?.SetValue((ArcMazeBuilder)target, new Logger(new DebugLogHandler()));
             return base.CreateInspectorGUI();
         }
         public override void OnInspectorGUI()

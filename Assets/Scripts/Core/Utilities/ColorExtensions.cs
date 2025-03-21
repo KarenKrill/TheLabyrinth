@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace KarenKrill.Utilities
+namespace KarenKrill.Core.Utilities
 {
     internal static class ColorExtensions
     {

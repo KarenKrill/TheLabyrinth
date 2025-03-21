@@ -1,11 +1,9 @@
-using KarenKrill.Core;
-using KarenKrill.MazeGeneration;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using KarenKrill.MazeGeneration;
 
-namespace KarenKrill
+namespace KarenKrill.Core
 {
     public class LoadLevelManager : MonoBehaviour
     {

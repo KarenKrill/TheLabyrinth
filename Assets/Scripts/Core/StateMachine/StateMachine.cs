@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace KarenKrill.Core
+namespace KarenKrill.Core.StateMachine
 {
     internal class StateMachine<T> : IStateMachine<T> where T : Enum
     {

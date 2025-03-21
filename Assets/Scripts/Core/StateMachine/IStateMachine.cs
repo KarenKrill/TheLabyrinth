@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace KarenKrill.Core
+namespace KarenKrill.Core.StateMachine
 {
     public delegate void StateTransitionDelegate<T>(IStateMachine<T> stateMachine, T state) where T : Enum;
     public interface IStateMachine<T> where T : Enum

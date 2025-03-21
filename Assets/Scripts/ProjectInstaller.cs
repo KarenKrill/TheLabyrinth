@@ -2,7 +2,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 using KarenKrill.Core;
-using KarenKrill.Logging;
+using KarenKrill.Core.Logging;
+using KarenKrill.Core.StateMachine;
 
 namespace KarenKrill
 {

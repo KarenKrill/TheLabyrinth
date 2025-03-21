@@ -1,15 +1,16 @@
 using System;
 using UnityEngine;
 using Zenject;
-using KarenKrill.Logging;
+using KarenKrill.Core.Logging;
+using KarenKrill.Core.StateMachine;
 
 namespace KarenKrill.Core
 {
     public enum GameState
     {
         Initial,
-        GameStart,
-        MainMenu,
+        GameStart, // ui manager (disable all menus, enable main menu), scene loader (load menu scene)
+        MainMenu, // ui manager, player data (statistics, records, info to continue game, reset data for new game), level loader (load level)
         LevelLoad,
         LevelPlay,
         LevelFinish,

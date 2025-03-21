@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-using KarenKrill.Logging;
+using KarenKrill.Core.Logging;
 
 #nullable enable
 
