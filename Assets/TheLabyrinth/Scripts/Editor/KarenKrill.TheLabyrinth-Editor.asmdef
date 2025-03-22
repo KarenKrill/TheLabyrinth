@@ -1,0 +1,18 @@
+{
+    "name": "KarenKrill.TheLabyrinth-Editor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:478a2357cc57436488a56e564b08d223",
+        "GUID:dba450939f2546049b63d2109a9dfa51",
+        "GUID:4da59cf68760d4448ad74b8c0d7330ac"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

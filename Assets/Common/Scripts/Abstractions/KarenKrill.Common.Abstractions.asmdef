@@ -1,0 +1,14 @@
+{
+    "name": "KarenKrill.Common.Abstractions",
+    "rootNamespace": "KarenKrill.Common",
+    "references": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
