@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KarenKrill.Common.Logging
 {
-    internal class StubLogger : ILogger
+    public class StubLogger : ILogger
     {
         public ILogHandler logHandler { get; set; }
         public bool logEnabled { get; set; }
