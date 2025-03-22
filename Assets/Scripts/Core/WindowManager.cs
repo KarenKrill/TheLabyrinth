@@ -1,8 +1,9 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
+using KarenKrill.Core.Level;
+using KarenKrill.Core.UI;
+using KarenKrill.UI.Presenters;
+using KarenKrill.UI.Views;
 
 namespace KarenKrill.Core
 {
@@ -12,17 +13,45 @@ namespace KarenKrill.Core
         IGameFlow _gameFlow;
         [Inject]
         ILogger _logger;
-        [SerializeField]
-        GameObject _mainMenuWindow, _pauseWindow, _winWindow, _looseWindow;
+        [Inject]
+        IUserInterfaceFactory _userInterfaceFactory;
+        [Inject]
+        ITimeLimitedLevelController _timeLimitedLevelController;
+        [Inject]
+        IGameController _gameController;
+        
+        MainMenuPresenter _mainMenuPresenter;
+        PauseMenuPresenter _pauseMenuPresenter;
+        WinMenuPresenter _winMenuPresenter;
+        LooseMenuPresenter _looseMenuPresenter;
+        LevelInfoPresenter _levelInfoPresenter;
+
         public void Awake()
         {
             _gameFlow.MainMenuLoad += OnMainMenuLoad;
-            _gameFlow.GameStart += OnGameStart;
             _gameFlow.LevelPlay += OnLevelPlay;
             _gameFlow.LevelPause += OnLevelPause;
             _gameFlow.PlayerWin += OnPlayerWin;
             _gameFlow.PlayerLoose += OnPlayerLoose;
+            _gameFlow.LevelLoad += OnLevelLoad;
+
+            var mainMenuView = _userInterfaceFactory.Create<IMainMenuView>();
+            _mainMenuPresenter = new(mainMenuView, _logger, _gameFlow);
+            var pauseMenuView = _userInterfaceFactory.Create<IPauseMenuView>();
+            _pauseMenuPresenter = new(pauseMenuView, _logger, _gameFlow);
+            var winMenuView = _userInterfaceFactory.Create<IWinMenuView>();
+            _winMenuPresenter = new(winMenuView, _gameFlow);
+            var looseMenuView = _userInterfaceFactory.Create<ILooseMenuView>();
+            _looseMenuPresenter = new(looseMenuView, _gameFlow);
+            var levelInfoView = _userInterfaceFactory.Create<IILevelInfoView>();
+            _levelInfoPresenter = new(levelInfoView, _timeLimitedLevelController, _gameController);
         }
+
+        private void OnLevelLoad()
+        {
+            _levelInfoPresenter.Enable();
+        }
+
         public void Start()
         {
             _gameFlow.LoadMainMenu();
@@ -30,30 +59,31 @@ namespace KarenKrill.Core
 
         private void OnMainMenuLoad()
         {
-            //_mainMenuWindow.SetActive(true);
-            _gameFlow.StartGame();
+            _mainMenuPresenter.Enable();
+            //_gameFlow.StartGame();
         }
-        private void OnGameStart()
-        {
-            _winWindow.SetActive(false);
-            _looseWindow.SetActive(false);
-            _pauseWindow.SetActive(false);
-        }
+        bool _isPaused = false;
         private void OnLevelPlay()
         {
-            _pauseWindow.SetActive(false);
+            if (_isPaused)
+            {
+                _pauseMenuPresenter.Disable();
+            }
         }
         private void OnLevelPause()
         {
-            _pauseWindow.SetActive(true);
+            _isPaused = true;
+            _pauseMenuPresenter.Enable();
         }
         private void OnPlayerLoose()
         {
-            _looseWindow.SetActive(true);
+            _looseMenuPresenter.Enable();
+            _levelInfoPresenter.Disable();
         }
         private void OnPlayerWin()
         {
-            _winWindow.SetActive(true);
+            _winMenuPresenter.Enable();
+            _levelInfoPresenter.Disable();
         }
     }
 }

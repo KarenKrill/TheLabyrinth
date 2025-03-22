@@ -1,15 +1,49 @@
-using System.Collections;
+using System;
 using UnityEngine;
-using TMPro;
 using Zenject;
 
 namespace KarenKrill
 {
-    using MazeGeneration;
     using Core;
+    using Core.Level;
 
-    public class GameplayController : MonoBehaviour
+    public class GameplayController : MonoBehaviour, ITimeLimitedLevelController, IGameController
     {
+        public float MaxCompleteTime => _timeOnCurrentLevel;
+        public float RemainingTime => _TimeLeft;
+        public int CurrentLevelNumber => _PassedLevels;
+        public float WarningTime => _warningLeftTime;
+        public float LastWarningTime => _lastWarningLeftTime;
+#nullable enable
+        public string? CurrentLevelName => null;
+        public event Action? CurrentLevelChanged;
+        public event Action<float>? MaxCompleteTimeChanged;
+        public event Action<float>? RemainingTimeChanged;
+        public event Action<float>? WarningTimeChanged;
+        public event Action<float>? LastWarningTimeChanged;
+        private void OnMaxCompleteTimeChanged()
+        {
+            MaxCompleteTimeChanged?.Invoke(MaxCompleteTime);
+        }
+        private void OnRemainingTimeChanged()
+        {
+            RemainingTimeChanged?.Invoke(RemainingTime);
+        }
+        private void OnCurrentLevelChanged()
+        {
+            CurrentLevelChanged?.Invoke();
+        }
+        private void OnWarningTimeChanged()
+        {
+            WarningTimeChanged?.Invoke(_warningLeftTime);
+        }
+        private void OnLastWarningTimeChanged()
+        {
+            LastWarningTimeChanged?.Invoke(_lastWarningLeftTime);
+        }
+
+#nullable restore
+
         [Inject]
         IGameFlow _gameFlow;
         [Inject]
@@ -18,10 +52,6 @@ namespace KarenKrill
         [SerializeField]
         private PlayerController _playerController;
         [SerializeField]
-        private TextMeshProUGUI _levelInfoTextBox;
-        [SerializeField]
-        private TextMeshProUGUI _timesLeftTextBox;
-        [SerializeField]
         private int _gameLevelsCount = 13;
         [SerializeField]
         private float _aiPlayerModeMaxSpeed = 50;
@@ -29,9 +59,9 @@ namespace KarenKrill
         float _levelTimeFactor = 5f;
         float _timeOnCurrentLevel;
         [SerializeField, Range(0, 1)]
-        float _redWarnAlertTimeLeft = 0.1f;
+        float _lastWarningLeftTime = 0.1f;
         [SerializeField, Range(0, 1)]
-        float _warnAlertTimeLeft = 0.3f;
+        float _warningLeftTime = 0.3f;
         [SerializeField]
         LoadLevelManager _loadLevelManager;
 
@@ -43,22 +73,11 @@ namespace KarenKrill
             {
                 if (_timeLeft != value)
                 {
-                    if (System.MathF.Round(value, 1) != System.MathF.Round(_timeLeft, 1))
+                    if (MathF.Round(value, 1) != MathF.Round(_timeLeft, 1))
                     {
                         _timeLeft = value;
-                        _timesLeftTextBox.text = $"TimesLeft: {_timeLeft:0.0} s";
-                        if (_timeLeft / _timeOnCurrentLevel < _warnAlertTimeLeft)
-                        {
-                            if (_timeLeft / _timeOnCurrentLevel < _redWarnAlertTimeLeft)
-                            {
-                                _timesLeftTextBox.color = Color.red;
+                        OnRemainingTimeChanged();
                             }
-                            else
-                            {
-                                _timesLeftTextBox.color = Color.yellow;
-                            }
-                        }
-                    }
                     else
                     {
                         _timeLeft = value;
@@ -76,7 +95,6 @@ namespace KarenKrill
                 if (value == 0 || _passedLevels != value)
                 {
                     _passedLevels = value;
-                    _levelInfoTextBox.text = $"Level: {_PassedLevels}";
                 }
             }
         }
@@ -98,9 +116,9 @@ namespace KarenKrill
         void ResetToDefaults()
         {
             SetAiPlayingMode(false);
-            _timesLeftTextBox.text = $"TimesLeft: 0.000 s";
-            _timesLeftTextBox.color = Color.white;
+            _TimeLeft = 0;
             _PassedLevels = 1;
+            OnCurrentLevelChanged();
         }
 
         private void OnGameStart()
@@ -115,22 +133,32 @@ namespace KarenKrill
             Application.Quit();
 #endif
         }
+        bool _isLevelWasPaused = false;
         private void OnLevelLoad()
         {
+            _isLevelWasPaused = false;
         }
         private void OnLevelPlay()
         {
+            if (_isLevelWasPaused)
+            {
+                _isLevelWasPaused = false;
+            }
+            else
+            {
             _timeOnCurrentLevel = Mathf.Round(_levelTimeFactor * Mathf.Sqrt(_loadLevelManager.TotalMazeCellsCount) / 5) * 5;
+                OnMaxCompleteTimeChanged();
             if (_PassedLevels < _gameLevelsCount) // game not ended
             {
                 _TimeLeft = _timeOnCurrentLevel;
-                _timesLeftTextBox.color = Color.white;
+            }
             }
             _playerController.UnlockMovement();
             //Time.timeScale = 1;
         }
         private void OnLevelPause()
         {
+            _isLevelWasPaused = true;
             _playerController.LockMovement();
             //Time.timeScale = 0;
         }
@@ -139,6 +167,7 @@ namespace KarenKrill
             if (_PassedLevels < _gameLevelsCount)
             {
                 _PassedLevels++;
+                OnCurrentLevelChanged();
                 _gameFlow.LoadLevel();
             }
             else
@@ -200,6 +229,15 @@ namespace KarenKrill
                 }
                 UpdateLeftLevelTime();
             }
+        }
+        private void OnValidate()
+        {
+            if (_warningLeftTime < _lastWarningLeftTime)
+            {
+                _warningLeftTime = _lastWarningLeftTime;
+            }
+            OnWarningTimeChanged();
+            OnLastWarningTimeChanged();
         }
     }
 }

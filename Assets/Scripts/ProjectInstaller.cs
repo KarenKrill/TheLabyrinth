@@ -3,17 +3,21 @@ using UnityEngine;
 using Zenject;
 using KarenKrill.Core;
 using KarenKrill.Core.Logging;
+using KarenKrill.Core.UI;
 using KarenKrill.Core.StateMachine;
 
 namespace KarenKrill
 {
     public class ProjectInstaller : MonoInstaller
     {
+        [SerializeField]
+        List<GameObject> _uiPrefabs;
         private void InstallGameStateMachine()
         {
             Dictionary<GameState, IList<GameState>> validTransitions = new()
             {
                 { GameState.Initial, new List<GameState> { GameState.MainMenu } },
+                { GameState.MainMenu, new List<GameState> { GameState.GameStart, GameState.GameEnd } },
                 { GameState.MainMenu, new List<GameState> { GameState.GameStart } },
                 { GameState.GameStart, new List<GameState> { GameState.LevelLoad } },
                 { GameState.LevelLoad, new List<GameState> { GameState.LevelPlay } },
@@ -34,6 +38,11 @@ namespace KarenKrill
             Container.Bind<ILogger>().To<StubLogger>().FromNew().AsSingle();
 #endif
             InstallGameStateMachine();
+            Container.BindInterfacesAndSelfTo<UserInterfaceFactory>().AsSingle().WithArguments(_uiPrefabs);
+            Container.BindInterfacesAndSelfTo<GameplayController>().FromMethod(context =>
+            {
+                return GameObject.FindFirstObjectByType<GameplayController>(FindObjectsInactive.Exclude);
+            }).AsTransient();
             Container.Bind<IGameFlow>().To<GameFlow>().FromNew().AsSingle();
         }
     }
