@@ -2,6 +2,7 @@ using System;
 using UnityEngine;
 using TMPro;
 using Zenject;
+using KarenKrill.TheLabyrinth.Input.Abstractions;
 
 namespace KarenKrill.TheLabyrinth
 {
@@ -9,8 +10,8 @@ namespace KarenKrill.TheLabyrinth
     {
         [Inject]
         ILogger _logger;
-        [SerializeField]
-        private InputController _inputController;
+        [Inject]
+        private IInputActionService _inputActionSevice;
         [SerializeField]
         private Rigidbody _rigidbody;
         [SerializeField]
@@ -22,8 +23,9 @@ namespace KarenKrill.TheLabyrinth
         private TextMeshProUGUI _debugText;
         private void Awake()
         {
-            _inputController.Moved += OnMoved;
-            _inputController.Jumped += OnJumped;
+            _inputActionSevice.Move += OnMoved;
+            _inputActionSevice.Jump += () => OnJumped(true);
+            _inputActionSevice.JumpCancel += () => OnJumped(false);
         }
 
         private void OnJumped(bool isButtonClicked)
@@ -39,7 +41,7 @@ namespace KarenKrill.TheLabyrinth
         }
         private void FixedUpdate()
         {
-            var velocity = new Vector3(_inputController.MoveDelta.x, 0, _inputController.MoveDelta.y);
+            var velocity = new Vector3(_inputActionSevice.LastMoveDelta.x, 0, _inputActionSevice.LastMoveDelta.y);
             velocity *= _speed;
             velocity.y = _rigidbody.velocity.y;
             _isGrounded = Mathf.Abs(velocity.y) <= Mathf.Epsilon;

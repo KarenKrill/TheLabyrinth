@@ -6,6 +6,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
     using Common.GameLevel;
+    using KarenKrill.TheLabyrinth.Input.Abstractions;
 
     public class GameplayController : MonoBehaviour, ITimeLimitedLevelController, IGameController
     {
@@ -48,6 +49,8 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         IGameFlow _gameFlow;
         [Inject]
         ILogger _logger;
+        [Inject]
+        IInputActionService _inputActionService;
         /*[Inject]
         InitialState _initialState;
         [Inject]
@@ -115,12 +118,29 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _gameFlow.LevelPlay += OnLevelPlay;
             _gameFlow.LevelPause += OnLevelPause;
             _gameFlow.GameEnd += OnGameEnd;
+            _inputActionService.AutoPlayCheat += OnAutoPlayCheat;
+            _inputActionService.Pause += OnPaused;
+            _inputActionService.Back += OnResumed;
             //_gameFlow.LoadMainMenu();
             //_gameFlow.StartGame();
         }
+        bool _autoPlayCheatEnabled = false;
+        private void OnAutoPlayCheat()
+        {
+            _autoPlayCheatEnabled = !_autoPlayCheatEnabled;
+        }
+        private void OnPaused()
+        {
+            _gameFlow.PauseLevel();
+        }
+        private void OnResumed()
+        {
+            _gameFlow.PlayLevel();
+        }
+
         void ResetToDefaults()
         {
-            SetAiPlayingMode(false);
+            UpdateAiPlayingMode(false);
             _TimeLeft = 0;
             _PassedLevels = 1;
             OnCurrentLevelChanged();
@@ -129,6 +149,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private void OnGameStart()
         {
             ResetToDefaults();
+            _inputActionService.Disable();
         }
         private void OnGameEnd()
         {
@@ -142,6 +163,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private void OnLevelLoad()
         {
             _isLevelWasPaused = false;
+            _inputActionService.Disable();
         }
         private void OnLevelPlay()
         {
@@ -159,12 +181,15 @@ namespace KarenKrill.TheLabyrinth.GameFlow
                 }
             }
             _playerController.UnlockMovement();
+            _inputActionService.SetActionMap(ActionMap.InGame);
             //Time.timeScale = 1;
         }
         private void OnLevelPause()
         {
             _isLevelWasPaused = true;
             _playerController.LockMovement();
+            UpdateAiPlayingMode(false);
+            _inputActionService.SetActionMap(ActionMap.UI);
             //Time.timeScale = 0;
         }
         private void OnLevelFinish()
@@ -182,17 +207,19 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         }
         private void OnPlayerLoose()
         {
-            SetAiPlayingMode();
+            UpdateAiPlayingMode();
             //Time.timeScale = 0;
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
+            _inputActionService.Disable();
         }
         private void OnPlayerWin()
         {
-            SetAiPlayingMode();
+            UpdateAiPlayingMode();
             //Time.timeScale = 0;
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
+            _inputActionService.Disable();
         }
-        private void SetAiPlayingMode(bool turnOn = true)
+        private void UpdateAiPlayingMode(bool turnOn = true)
         {
             if (_playerController.UseAiNavigation != turnOn)
             {
@@ -228,10 +255,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         {
             if (_gameFlow.State == GameState.LevelPlay)
             {
-                if (Input.GetKeyDown(KeyCode.F)) // cheat
-                {
-                    SetAiPlayingMode(!_playerController.UseAiNavigation);
-                }
+                UpdateAiPlayingMode(_autoPlayCheatEnabled);
                 UpdateLeftLevelTime();
             }
         }

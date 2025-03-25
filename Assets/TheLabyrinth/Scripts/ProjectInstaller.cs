@@ -8,6 +8,8 @@ using KarenKrill.Common.UI.Views;
 using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
 using KarenKrill.TheLabyrinth.StateMachine.Abstractions;
 using KarenKrill.TheLabyrinth.GameFlow;
+using KarenKrill.TheLabyrinth.Input;
+using KarenKrill.TheLabyrinth.Input.Abstractions;
 
 namespace KarenKrill.TheLabyrinth
 {
@@ -15,6 +17,7 @@ namespace KarenKrill.TheLabyrinth
     {
         [SerializeField]
         List<GameObject> _uiPrefabs;
+
         private void InstallGameStateMachine()
         {
             Dictionary<GameState, IList<GameState>> validTransitions = new()
@@ -54,6 +57,7 @@ namespace KarenKrill.TheLabyrinth
         }
         public override void InstallBindings()
         {
+            Container.Bind<IInputActionService>().To<InputActionService>().FromNew().AsSingle().NonLazy();
 #if DEBUG
             Container.Bind<ILogger>().To<Logger>().FromNew().AsSingle().WithArguments(new DebugLogHandler());
 #else

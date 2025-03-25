@@ -4,6 +4,7 @@ using UnityEngine.AI;
 using Zenject;
 using KarenKrill.Common.Logging;
 using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
+using KarenKrill.TheLabyrinth.Input.Abstractions;
 
 namespace KarenKrill.TheLabyrinth
 {
@@ -11,8 +12,8 @@ namespace KarenKrill.TheLabyrinth
     {
         [Inject]
         ILogger _logger;
-        [SerializeField]
-        private InputController _inputController;
+        [Inject]
+        private IInputActionService _inputActionService;
         [SerializeField]
         private CharacterController _characterController;
         [SerializeField]
@@ -46,32 +47,35 @@ namespace KarenKrill.TheLabyrinth
 
         private void Awake()
         {
-            _inputController.Moved += OnMoved;
-            _inputController.Jumped += OnJumped;
-            _inputController.Paused += OnPaused;
+            _inputActionService.Run += OnRun;
+            _inputActionService.RunCancel += OnRunCancel;
+            _inputActionService.Jump += OnJump;
+            _inputActionService.JumpCancel += OnJumpCancel;
         }
-        [Inject]
-        IGameFlow _gameFlow;
-        private void OnPaused(bool isPaused)
+        bool _isRunModeEnabled = false;
+        private void OnRun()
         {
-            if (_gameFlow.State == GameState.PauseMenu)
-            {
-                _gameFlow.PlayLevel();
-            }
-            else if(_gameFlow.State == GameState.LevelPlay)
-            {
-                _gameFlow.PauseLevel();
-            }
+            _isRunModeEnabled = true;
+        }
+        private void OnRunCancel()
+        {
+            _isRunModeEnabled = false;
         }
 
-        private void OnJumped(bool isButtonClicked)
+        [Inject]
+        IGameFlow _gameFlow;
+
+        bool _isJumpPressed = false;
+        private void OnJump()
         {
-            if (isButtonClicked)
-            {
-                _jumpButtonPressedTime = Time.time;
-            }
+            _jumpButtonPressedTime = Time.time;
+            _isJumpPressed = true;
         }
-        private void OnMoved(Vector2 moveDelta) { }
+        private void OnJumpCancel()
+        {
+            _isJumpPressed = false;
+        }
+
         private void UpdateSlopeSlideVelocity()
         {
             if (Physics.Raycast(_characterController.transform.position, Vector3.down, out var hitInfo))
@@ -97,16 +101,16 @@ namespace KarenKrill.TheLabyrinth
         {
             _isGrounded = _characterController.isGrounded;
             bool isFalling = !_isGrounded;
-            var moveDelta = _inputController.MoveDelta;
+            var moveDelta = _inputActionService.LastMoveDelta;
             Vector3 direction = new(_xAxisLocked ? 0 : moveDelta.x, 0, _zAxisLocked ? 0 : moveDelta.y);
             var quat = Quaternion.AngleAxis(Camera.main.transform.rotation.eulerAngles.y, Vector3.up);
             direction = quat * direction;
-            float inputMagnitude = (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) ? 1 : 0.5f;
+            float inputMagnitude = (_isRunModeEnabled) ? 1 : 0.5f;
             // Only if InputAction mode is not DigitalNormalized
-            //float inputMagnitude = Mathf.Clamp(direction.magnitude, 0, (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) ? 1 : 0.5f);
+            //inputMagnitude = Mathf.Clamp(direction.magnitude, 0, inputMagnitude);
             //direction.Normalize();
             float gravity = Physics.gravity.y * _gravityMultiplier;
-            if (_isJumping && _fallSpeed > 0 && !_inputController.IsJumpPressed) // если короткое нажатие
+            if (_isJumping && _fallSpeed > 0 && !_isJumpPressed) // если короткое нажатие
             {
                 gravity *= 2; // ускоряем прыжок
             }
