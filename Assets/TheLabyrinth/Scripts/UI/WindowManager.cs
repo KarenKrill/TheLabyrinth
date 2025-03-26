@@ -1,8 +1,5 @@
-using UnityEngine;
-using Zenject;
-using KarenKrill.Common.GameLevel;
 using KarenKrill.Common.UI.Views.Abstractions;
-using KarenKrill.TheLabyrinth.UI.Presenters;
+using KarenKrill.Common.UI.Presenters.Abstractions;
 using KarenKrill.TheLabyrinth.UI.Views.Abstractions;
 using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
 
@@ -10,37 +7,35 @@ namespace KarenKrill.TheLabyrinth.UI
 {
     public class WindowManager
     {
-        [Inject]
         IGameFlow _gameFlow;
-        [Inject]
-        ILogger _logger;
-        [Inject]
         IUserInterfaceFactory _userInterfaceFactory;
-        [Inject]
-        ITimeLimitedLevelController _timeLimitedLevelController;
-        [Inject]
-        IGameController _gameController;
-        
-        MainMenuPresenter _mainMenuPresenter;
-        PauseMenuPresenter _pauseMenuPresenter;
-        WinMenuPresenter _winMenuPresenter;
-        LooseMenuPresenter _looseMenuPresenter;
-        LevelInfoPresenter _levelInfoPresenter;
-
-        public void Initialize()
+        IPresenter<IMainMenuView> _mainMenuPresenter;
+        IPresenter<IPauseMenuView> _pauseMenuPresenter;
+        IPresenter<IWinMenuView> _winMenuPresenter;
+        IPresenter<ILooseMenuView> _looseMenuPresenter;
+        IPresenter<IILevelInfoView> _levelInfoPresenter;
+        public WindowManager(IUserInterfaceFactory userInterfaceFactory,
+            IPresenter<IMainMenuView> mainMenuPresenter,
+            IPresenter<IPauseMenuView> pauseMenuPresenter,
+            IPresenter<IWinMenuView> winMenuPresenter,
+            IPresenter<ILooseMenuView> looseMenuPresenter,
+            IPresenter<IILevelInfoView> levelInfoPresenter,
+            IGameFlow gameFlow)
         {
+            _userInterfaceFactory = userInterfaceFactory;
+            _mainMenuPresenter = mainMenuPresenter;
+            _pauseMenuPresenter = pauseMenuPresenter;
+            _winMenuPresenter = winMenuPresenter;
+            _looseMenuPresenter = looseMenuPresenter;
+            _levelInfoPresenter = levelInfoPresenter;
+            _gameFlow = gameFlow;
+
             _gameFlow.MainMenuLoad += OnMainMenuLoad;
             _gameFlow.LevelPlay += OnLevelPlay;
             _gameFlow.LevelPause += OnLevelPause;
             _gameFlow.PlayerWin += OnPlayerWin;
             _gameFlow.PlayerLoose += OnPlayerLoose;
             _gameFlow.LevelLoad += OnLevelLoad;
-
-            _mainMenuPresenter = new(_logger, _gameFlow);
-            _pauseMenuPresenter = new(_logger, _gameFlow);
-            _winMenuPresenter = new(_gameFlow);
-            _looseMenuPresenter = new(_gameFlow);
-            _levelInfoPresenter = new(_timeLimitedLevelController, _gameController);
         }
 
         private void OnLevelLoad()
