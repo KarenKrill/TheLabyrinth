@@ -7,10 +7,8 @@ namespace KarenKrill.Common.UI.Presenters.Abstractions
         void Enable();
         void Disable();
     }
-    public interface IPresenter<T> where T : IUserInterfaceView
+    public interface IPresenter<T> : IPresenter where T : IUserInterfaceView
     {
         T View { get; }
-        void Enable();
-        void Disable();
     }
 }
