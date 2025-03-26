@@ -71,7 +71,13 @@ namespace KarenKrill.TheLabyrinth
                 return GameObject.FindFirstObjectByType<GameplayController>(FindObjectsInactive.Exclude);
             }).AsTransient();
             Container.Bind<IGameFlow>().To<GameFlow.GameFlow>().FromNew().AsSingle();
-            Container.Bind<WindowManager>().FromNew().AsSingle().NonLazy();
+            Container.Bind<WindowManager>().FromNew().AsSingle().OnInstantiated((context, instance) =>
+            {
+                if (instance is WindowManager windowManager)
+                {
+                    windowManager.Initialize();
+                }
+            }).NonLazy();
         }
     }
 }

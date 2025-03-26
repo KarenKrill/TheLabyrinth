@@ -27,7 +27,7 @@ namespace KarenKrill.TheLabyrinth.UI
         LooseMenuPresenter _looseMenuPresenter;
         LevelInfoPresenter _levelInfoPresenter;
 
-        public WindowManager()
+        public void Initialize()
         {
             _gameFlow.MainMenuLoad += OnMainMenuLoad;
             _gameFlow.LevelPlay += OnLevelPlay;
