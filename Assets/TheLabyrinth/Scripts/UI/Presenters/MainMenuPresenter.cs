@@ -8,7 +8,7 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
 
     public class MainMenuPresenter : IPresenter<IMainMenuView>
     {
-        public IMainMenuView View { get; }
+        public IMainMenuView View { get; set; }
         readonly ILogger _logger;
         readonly IGameFlow _gameFlow;
         void OnNewGame()
@@ -21,9 +21,8 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
             _logger.Log("Settings shown");
         }
         void OnExit() => _gameFlow.EndGame();
-        public MainMenuPresenter(IMainMenuView view, ILogger logger, IGameFlow gameFlow)
+        public MainMenuPresenter(ILogger logger, IGameFlow gameFlow)
         {
-            View = view;
             _logger = logger;
             _gameFlow = gameFlow;
         }

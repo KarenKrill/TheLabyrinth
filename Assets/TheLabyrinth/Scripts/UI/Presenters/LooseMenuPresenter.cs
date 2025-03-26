@@ -7,7 +7,7 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
 
     public class LooseMenuPresenter : IPresenter<ILooseMenuView>
     {
-        public ILooseMenuView View { get; }
+        public ILooseMenuView View { get; set; }
         readonly IGameFlow _gameFlow;
         void OnRestart()
         {
@@ -15,9 +15,8 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
             _gameFlow.StartGame();
         }
         void OnExit() => _gameFlow.EndGame();
-        public LooseMenuPresenter(ILooseMenuView view, IGameFlow gameFlow)
+        public LooseMenuPresenter(IGameFlow gameFlow)
         {
-            View = view;
             _gameFlow = gameFlow;
         }
         public void Enable()

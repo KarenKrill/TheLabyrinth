@@ -36,16 +36,16 @@ namespace KarenKrill.TheLabyrinth.UI
             _gameFlow.PlayerLoose += OnPlayerLoose;
             _gameFlow.LevelLoad += OnLevelLoad;
 
-            var mainMenuView = _userInterfaceFactory.Create<IMainMenuView>();
-            _mainMenuPresenter = new(mainMenuView, _logger, _gameFlow);
-            var pauseMenuView = _userInterfaceFactory.Create<IPauseMenuView>();
-            _pauseMenuPresenter = new(pauseMenuView, _logger, _gameFlow);
-            var winMenuView = _userInterfaceFactory.Create<IWinMenuView>();
-            _winMenuPresenter = new(winMenuView, _gameFlow);
-            var looseMenuView = _userInterfaceFactory.Create<ILooseMenuView>();
-            _looseMenuPresenter = new(looseMenuView, _gameFlow);
-            var levelInfoView = _userInterfaceFactory.Create<IILevelInfoView>();
-            _levelInfoPresenter = new(levelInfoView, _timeLimitedLevelController, _gameController);
+            _mainMenuPresenter = new(_logger, _gameFlow);
+            _pauseMenuPresenter = new(_logger, _gameFlow);
+            _winMenuPresenter = new(_gameFlow);
+            _looseMenuPresenter = new(_gameFlow);
+            _levelInfoPresenter = new(_timeLimitedLevelController, _gameController);
+            _mainMenuPresenter.View = _viewFactory.Create<IMainMenuView>();
+            _looseMenuPresenter.View = _viewFactory.Create<ILooseMenuView>();
+            _levelInfoPresenter.View = _viewFactory.Create<IILevelInfoView>();
+            _pauseMenuPresenter.View = _viewFactory.Create<IPauseMenuView>();
+            _winMenuPresenter.View = _viewFactory.Create<IWinMenuView>();
         }
 
         private void OnLevelLoad()

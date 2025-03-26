@@ -8,7 +8,7 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
 
     public class PauseMenuPresenter : IPresenter<IPauseMenuView>
     {
-        public IPauseMenuView View { get; }
+        public IPauseMenuView View { get; set; }
         readonly ILogger _logger;
         readonly IGameFlow _gameFlow;
         void OnRestart()
@@ -28,9 +28,8 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
             _gameFlow.PlayLevel();
         }
         void OnExit() => _gameFlow.EndGame();
-        public PauseMenuPresenter(IPauseMenuView view, ILogger logger, IGameFlow gameFlow)
+        public PauseMenuPresenter(ILogger logger, IGameFlow gameFlow)
         {
-            View = view;
             _logger = logger;
             _gameFlow = gameFlow;
         }

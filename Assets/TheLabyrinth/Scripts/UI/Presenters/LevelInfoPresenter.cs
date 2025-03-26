@@ -11,12 +11,11 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
 
     public class LevelInfoPresenter : IPresenter<IILevelInfoView>
     {
-        public IILevelInfoView View { get; }
+        public IILevelInfoView View { get; set; }
         ITimeLimitedLevelController _levelController;
         IGameController _gameController;
-        public LevelInfoPresenter(IILevelInfoView view, ITimeLimitedLevelController levelController, IGameController gameController)
+        public LevelInfoPresenter(ITimeLimitedLevelController levelController, IGameController gameController)
         {
-            View = view;
             _levelController = levelController;
             _gameController = gameController;
         }

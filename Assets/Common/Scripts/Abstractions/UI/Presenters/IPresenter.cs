@@ -9,6 +9,9 @@ namespace KarenKrill.Common.UI.Presenters.Abstractions
     }
     public interface IPresenter<T> : IPresenter where T : IUserInterfaceView
     {
-        T View { get; }
+        /// <summary>
+        /// <see cref="View"/> property must be set before calling <see cref="IPresenter.Enable"/> or <see cref="IPresenter.Disable"/>
+        /// </summary>
+        T View { get; set; }
     }
 }
