@@ -70,6 +70,7 @@ namespace KarenKrill.TheLabyrinth
                 return GameObject.FindFirstObjectByType<GameplayController>(FindObjectsInactive.Exclude);
             }).AsTransient();
             Container.Bind<IGameFlow>().To<GameFlow.GameFlow>().FromNew().AsSingle();
+            Container.Bind<WindowManager>().FromNew().AsSingle().NonLazy();
         }
     }
 }
