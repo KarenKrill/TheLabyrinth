@@ -108,6 +108,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
         public void Awake()
         {
+            _gameFlow.LoadMainMenu();
             //_initialState.Enter();
             //_mainMenuState.Enter();
             _gameFlow.GameStart += OnGameStart;
