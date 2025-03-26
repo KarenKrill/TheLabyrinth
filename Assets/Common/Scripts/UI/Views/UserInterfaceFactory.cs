@@ -11,7 +11,7 @@ namespace KarenKrill.Common.UI.Views
         {
             _viewPrefabs = viewPrefabs;
         }
-        public UIViewType Create<UIViewType>() where UIViewType : class
+        public UIViewType Create<UIViewType>() where UIViewType : IUserInterfaceView
         {
             var rootUiTransform = Object.FindFirstObjectByType<Canvas>(FindObjectsInactive.Exclude).gameObject.transform;
             foreach (var viewPrefab in _viewPrefabs)
