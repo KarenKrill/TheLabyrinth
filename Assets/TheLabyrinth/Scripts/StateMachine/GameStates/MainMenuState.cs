@@ -5,37 +5,20 @@ using KarenKrill.Common.UI.Views.Abstractions;
 using KarenKrill.TheLabyrinth.UI.Views.Abstractions;
 using KarenKrill.TheLabyrinth.StateMachine.Abstractions;
 using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
+using KarenKrill.Common.UI.Presenters.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.GameStates
 {
     public class MainMenuState : IGameState
     {
         [Inject]
-        IUserInterfaceFactory _userInterfaceFactory;
+        IPresenter<IMainMenuView> _mainMenuPresenter;
         [Inject]
-        IGameApp _application;
-        [Inject]
-        ILogger _logger;
-        IMainMenuView _mainMenuView;
+        IUserInterfaceFactory _viewFactory;
         public void Enter()
         {
-            _mainMenuView = _userInterfaceFactory.Create<IMainMenuView>();
-            _mainMenuView.Exit += OnExit;
-            _mainMenuView.Settings += OnSettings;
-            _mainMenuView.NewGame += OnNewGame;
-            _mainMenuView.Show();
-        }
-        private void OnNewGame()
-        {
-            _logger.Log("OnNewGame");
-        }
-        private void OnSettings()
-        {
-            _logger.Log("OnNewGame");
-        }
-        private void OnExit()
-        {
-            _application.Quit();
+            _mainMenuPresenter.View ??= _viewFactory.Create<IMainMenuView>();
+            _mainMenuPresenter.Enable();
         }
     }
 }
