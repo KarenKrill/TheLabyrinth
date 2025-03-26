@@ -49,11 +49,11 @@ namespace KarenKrill.TheLabyrinth.UI
         }
         private void OnMainMenuLoad()
         {
-            _mainMenuPresenter.View ??= _viewFactory.Create<IMainMenuView>();
-            _looseMenuPresenter.View ??= _viewFactory.Create<ILooseMenuView>();
-            _levelInfoPresenter.View ??= _viewFactory.Create<IILevelInfoView>();
-            _pauseMenuPresenter.View ??= _viewFactory.Create<IPauseMenuView>();
-            _winMenuPresenter.View ??= _viewFactory.Create<IWinMenuView>();
+            _mainMenuPresenter.View ??= _userInterfaceFactory.Create<IMainMenuView>();
+            _looseMenuPresenter.View ??= _userInterfaceFactory.Create<ILooseMenuView>();
+            _levelInfoPresenter.View ??= _userInterfaceFactory.Create<IILevelInfoView>();
+            _pauseMenuPresenter.View ??= _userInterfaceFactory.Create<IPauseMenuView>();
+            _winMenuPresenter.View ??= _userInterfaceFactory.Create<IWinMenuView>();
             _mainMenuPresenter.Enable();
         }
         bool _isPaused = false;
