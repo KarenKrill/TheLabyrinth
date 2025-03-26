@@ -5,7 +5,7 @@ using KarenKrill.Common.UI.Views.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
 {
-    public interface IMainMenuView : IUserInterfaceView
+    public interface IMainMenuView : IView
     {
         public event Action? NewGame;
         public event Action? Exit;

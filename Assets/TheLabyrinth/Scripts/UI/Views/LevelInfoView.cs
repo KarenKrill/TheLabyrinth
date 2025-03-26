@@ -7,7 +7,7 @@ namespace KarenKrill.TheLabyrinth.UI.Views
 {
     using Abstractions;
 
-    public class LevelInfoView : UiViewBehaviour, IILevelInfoView
+    public class LevelInfoView : ViewBehaviour, IILevelInfoView
     {
         [SerializeField]
         TextMeshProUGUI _titleText;

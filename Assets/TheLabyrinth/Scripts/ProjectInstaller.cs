@@ -55,7 +55,7 @@ namespace KarenKrill.TheLabyrinth
                 { GameState.GameEnd, new List<GameState>() }
             };
             Container.BindInterfacesAndSelfTo<GameApp>().AsSingle();
-            Container.BindInterfacesAndSelfTo<UserInterfaceFactory>().AsSingle().WithArguments(_uiPrefabs);
+            Container.BindInterfacesAndSelfTo<ViewFactory>().AsSingle().WithArguments(_uiPrefabs);
             Container.Bind<InitialState>().AsSingle();//.NonLazy();
             Container.Bind<MainMenuState>().AsSingle();//.NonLazy();
         }
@@ -96,14 +96,14 @@ namespace KarenKrill.TheLabyrinth
             Container.Bind<ILogger>().To<StubLogger>().FromNew().AsSingle();
 #endif
             InstallGameStateMachine();
-            Container.BindInterfacesAndSelfTo<UserInterfaceFactory>().AsSingle().WithArguments(_uiPrefabs);
+            Container.BindInterfacesAndSelfTo<ViewFactory>().AsSingle().WithArguments(_uiPrefabs);
             Container.BindInterfacesAndSelfTo<GameplayController>().FromMethod(context =>
             {
                 return GameObject.FindFirstObjectByType<GameplayController>(FindObjectsInactive.Exclude);
             }).AsTransient();
             Container.Bind<IGameFlow>().To<GameFlow.GameFlow>().FromNew().AsSingle();
             InstallPresenterBindings();
-            Container.Bind<WindowManager>().FromNew().AsSingle().NonLazy();
+            Container.Bind<PresenterManager>().FromNew().AsSingle().NonLazy();
         }
     }
 }

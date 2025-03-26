@@ -7,7 +7,7 @@ namespace KarenKrill.TheLabyrinth.UI.Views
 {
     using Abstractions;
 
-    public class WinMenuView : UiViewBehaviour, IWinMenuView
+    public class WinMenuView : ViewBehaviour, IWinMenuView
     {
         [SerializeField]
         Button _restartButton;

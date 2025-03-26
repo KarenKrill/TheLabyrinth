@@ -2,7 +2,7 @@
 
 namespace KarenKrill.TheLabyrinth.UI.Presenters
 {
-    using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
+    using GameFlow.Abstractions;
     using Views.Abstractions;
 
     public class WinMenuPresenter : IPresenter<IWinMenuView>

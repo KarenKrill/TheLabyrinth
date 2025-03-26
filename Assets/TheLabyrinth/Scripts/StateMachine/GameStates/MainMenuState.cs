@@ -1,10 +1,7 @@
-﻿using UnityEngine;
-using Zenject;
-using KarenKrill.TheLabyrinth.StateMachine;
+﻿using Zenject;
 using KarenKrill.Common.UI.Views.Abstractions;
 using KarenKrill.TheLabyrinth.UI.Views.Abstractions;
 using KarenKrill.TheLabyrinth.StateMachine.Abstractions;
-using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
 using KarenKrill.Common.UI.Presenters.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.GameStates
@@ -14,7 +11,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
         [Inject]
         IPresenter<IMainMenuView> _mainMenuPresenter;
         [Inject]
-        IUserInterfaceFactory _viewFactory;
+        IViewFactory _viewFactory;
         public void Enter()
         {
             _mainMenuPresenter.View ??= _viewFactory.Create<IMainMenuView>();

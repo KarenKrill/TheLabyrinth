@@ -7,7 +7,7 @@ namespace KarenKrill.TheLabyrinth.UI.Views
 {
     using Abstractions;
 
-    public class PauseMenuView : UiViewBehaviour, IPauseMenuView
+    public class PauseMenuView : ViewBehaviour, IPauseMenuView
     {
         [SerializeField]
         private Button _resumeButton;

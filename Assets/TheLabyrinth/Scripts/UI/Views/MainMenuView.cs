@@ -7,7 +7,7 @@ namespace KarenKrill.TheLabyrinth.UI.Views
 {
     using Abstractions;
 
-    public class MainMenuView : UiViewBehaviour, IMainMenuView
+    public class MainMenuView : ViewBehaviour, IMainMenuView
     {
         [SerializeField]
         private Button _newGameButton;

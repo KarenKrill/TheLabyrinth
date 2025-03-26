@@ -5,16 +5,16 @@ using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.UI
 {
-    public class WindowManager
+    public class PresenterManager
     {
         IGameFlow _gameFlow;
-        IUserInterfaceFactory _userInterfaceFactory;
+        IViewFactory _viewFactory;
         IPresenter<IMainMenuView> _mainMenuPresenter;
         IPresenter<IPauseMenuView> _pauseMenuPresenter;
         IPresenter<IWinMenuView> _winMenuPresenter;
         IPresenter<ILooseMenuView> _looseMenuPresenter;
         IPresenter<IILevelInfoView> _levelInfoPresenter;
-        public WindowManager(IUserInterfaceFactory userInterfaceFactory,
+        public PresenterManager(IViewFactory viewFactory,
             IPresenter<IMainMenuView> mainMenuPresenter,
             IPresenter<IPauseMenuView> pauseMenuPresenter,
             IPresenter<IWinMenuView> winMenuPresenter,
@@ -22,7 +22,7 @@ namespace KarenKrill.TheLabyrinth.UI
             IPresenter<IILevelInfoView> levelInfoPresenter,
             IGameFlow gameFlow)
         {
-            _userInterfaceFactory = userInterfaceFactory;
+            _viewFactory = viewFactory;
             _mainMenuPresenter = mainMenuPresenter;
             _pauseMenuPresenter = pauseMenuPresenter;
             _winMenuPresenter = winMenuPresenter;
@@ -37,31 +37,32 @@ namespace KarenKrill.TheLabyrinth.UI
             _gameFlow.PlayerLoose += OnPlayerLoose;
             _gameFlow.LevelLoad += OnLevelLoad;
         }
+        private void OnMainMenuLoad()
+        {
+            _mainMenuPresenter.View ??= _viewFactory.Create<IMainMenuView>();
+            _looseMenuPresenter.View ??= _viewFactory.Create<ILooseMenuView>();
+            _levelInfoPresenter.View ??= _viewFactory.Create<IILevelInfoView>();
+            _pauseMenuPresenter.View ??= _viewFactory.Create<IPauseMenuView>();
+            _winMenuPresenter.View ??= _viewFactory.Create<IWinMenuView>();
+            _mainMenuPresenter.Enable();
+        }
 
         private void OnLevelLoad()
         {
             _levelInfoPresenter.Enable();
         }
-        private void OnMainMenuLoad()
-        {
-            _mainMenuPresenter.View ??= _userInterfaceFactory.Create<IMainMenuView>();
-            _looseMenuPresenter.View ??= _userInterfaceFactory.Create<ILooseMenuView>();
-            _levelInfoPresenter.View ??= _userInterfaceFactory.Create<IILevelInfoView>();
-            _pauseMenuPresenter.View ??= _userInterfaceFactory.Create<IPauseMenuView>();
-            _winMenuPresenter.View ??= _userInterfaceFactory.Create<IWinMenuView>();
-            _mainMenuPresenter.Enable();
-        }
-        bool _isPaused = false;
+
+        bool _itWasPaused = false;
         private void OnLevelPlay()
         {
-            if (_isPaused)
+            if (_itWasPaused)
             {
                 _pauseMenuPresenter.Disable();
             }
         }
         private void OnLevelPause()
         {
-            _isPaused = true;
+            _itWasPaused = true;
             _pauseMenuPresenter.Enable();
         }
         private void OnPlayerLoose()

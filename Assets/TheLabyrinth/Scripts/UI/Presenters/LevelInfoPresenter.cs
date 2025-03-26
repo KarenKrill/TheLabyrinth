@@ -6,20 +6,20 @@ using KarenKrill.Common.UI.Presenters.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.UI.Presenters
 {
-    using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
+    using GameFlow.Abstractions;
     using Views.Abstractions;
 
     public class LevelInfoPresenter : IPresenter<IILevelInfoView>
     {
         public IILevelInfoView View { get; set; }
-        ITimeLimitedLevelController _levelController;
-        IGameController _gameController;
+        private ITimeLimitedLevelController _levelController;
+        private IGameController _gameController;
         public LevelInfoPresenter(ITimeLimitedLevelController levelController, IGameController gameController)
         {
             _levelController = levelController;
             _gameController = gameController;
         }
-        void UpdateRemainingTimeTextColor()
+        private void UpdateRemainingTimeTextColor()
         {
             float relativeRemainingTime = _levelController.RemainingTime / _levelController.MaxCompleteTime;
             if (relativeRemainingTime < _levelController.WarningTime)
@@ -40,7 +40,7 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
         }
         private void OnWarningTimeChanged(float _) => UpdateRemainingTimeTextColor();
         private void OnMaxCompleteTimeChanged(float _) => UpdateRemainingTimeTextColor();
-        void OnRemainingTimeChanged(float remainingTime)
+        private void OnRemainingTimeChanged(float remainingTime)
         {
             string prefix = "Time left";
             View.RemainingTimeText = string.Format("{0}: {1} s", prefix, remainingTime.ToString("0.0", CultureInfo.InvariantCulture));
