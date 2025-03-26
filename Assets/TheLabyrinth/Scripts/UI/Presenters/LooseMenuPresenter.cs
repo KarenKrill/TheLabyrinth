@@ -5,9 +5,9 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
     using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
     using Views.Abstractions;
 
-    public class LooseMenuPresenter : IPresenter
+    public class LooseMenuPresenter : IPresenter<ILooseMenuView>
     {
-        readonly ILooseMenuView _view;
+        public ILooseMenuView View { get; }
         readonly IGameFlow _gameFlow;
         void OnRestart()
         {
@@ -17,20 +17,20 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
         void OnExit() => _gameFlow.EndGame();
         public LooseMenuPresenter(ILooseMenuView view, IGameFlow gameFlow)
         {
-            _view = view;
+            View = view;
             _gameFlow = gameFlow;
         }
         public void Enable()
         {
-            _view.Restart += OnRestart;
-            _view.Exit += OnExit;
-            _view.Show();
+            View.Restart += OnRestart;
+            View.Exit += OnExit;
+            View.Show();
         }
         public void Disable()
         {
-            _view.Close();
-            _view.Restart -= OnRestart;
-            _view.Exit -= OnExit;
+            View.Close();
+            View.Restart -= OnRestart;
+            View.Exit -= OnExit;
         }
     }
 }

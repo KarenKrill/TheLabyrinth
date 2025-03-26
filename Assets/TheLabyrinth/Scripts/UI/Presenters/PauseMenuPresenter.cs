@@ -6,9 +6,9 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
     using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
     using Views.Abstractions;
 
-    public class PauseMenuPresenter : IPresenter
+    public class PauseMenuPresenter : IPresenter<IPauseMenuView>
     {
-        readonly IPauseMenuView _view;
+        public IPauseMenuView View { get; }
         readonly ILogger _logger;
         readonly IGameFlow _gameFlow;
         void OnRestart()
@@ -30,25 +30,25 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
         void OnExit() => _gameFlow.EndGame();
         public PauseMenuPresenter(IPauseMenuView view, ILogger logger, IGameFlow gameFlow)
         {
-            _view = view;
+            View = view;
             _logger = logger;
             _gameFlow = gameFlow;
         }
         public void Enable()
         {
-            _view.Resume += OnResume;
-            _view.Restart += OnRestart;
-            _view.Settings += OnSettings;
-            _view.Exit += OnExit;
-            _view.Show();
+            View.Resume += OnResume;
+            View.Restart += OnRestart;
+            View.Settings += OnSettings;
+            View.Exit += OnExit;
+            View.Show();
         }
         public void Disable()
         {
-            _view.Close();
-            _view.Resume -= OnResume;
-            _view.Restart -= OnRestart;
-            _view.Settings -= OnSettings;
-            _view.Exit -= OnExit;
+            View.Close();
+            View.Resume -= OnResume;
+            View.Restart -= OnRestart;
+            View.Settings -= OnSettings;
+            View.Exit -= OnExit;
         }
     }
 }
