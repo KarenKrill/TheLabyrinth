@@ -10,6 +10,7 @@ using KarenKrill.TheLabyrinth.StateMachine.Abstractions;
 using KarenKrill.TheLabyrinth.GameFlow;
 using KarenKrill.TheLabyrinth.Input;
 using KarenKrill.TheLabyrinth.Input.Abstractions;
+using KarenKrill.TheLabyrinth.UI;
 
 namespace KarenKrill.TheLabyrinth
 {
