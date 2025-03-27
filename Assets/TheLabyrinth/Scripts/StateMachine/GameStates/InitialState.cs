@@ -1,19 +1,27 @@
 ﻿using UnityEngine;
-using Zenject;
-using KarenKrill.TheLabyrinth.StateMachine.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.GameStates
 {
-    public class InitialState : IGameState
+    using GameFlow.Abstractions;
+    using StateMachine.Abstractions;
+
+    public class InitialState : IStateHandler<GameState>
     {
-        [Inject]
-        ILogger _logger;
+        public GameState State => GameState.Initial;
+
+        public InitialState(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public void Enter()
         {
-
         }
+
         public void Exit()
         {
         }
+
+        private readonly ILogger _logger;
     }
 }
