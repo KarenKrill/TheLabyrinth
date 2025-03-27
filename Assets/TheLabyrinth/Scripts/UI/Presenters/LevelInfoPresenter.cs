@@ -1,11 +1,11 @@
 ﻿using System.Globalization;
 using UnityEngine;
-using KarenKrill.Common.GameLevel;
-using KarenKrill.Common.Utilities;
-using KarenKrill.Common.UI.Presenters.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.UI.Presenters
 {
+    using Common.GameLevel.Abstractions;
+    using Common.UI.Presenters.Abstractions;
+    using Common.Utilities;
     using GameFlow.Abstractions;
     using Views.Abstractions;
 

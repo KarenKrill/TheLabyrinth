@@ -2,12 +2,13 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
-using KarenKrill.Common.Logging;
-using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
-using KarenKrill.TheLabyrinth.Input.Abstractions;
 
 namespace KarenKrill.TheLabyrinth
 {
+    using Common.Logging;
+    using GameFlow.Abstractions;
+    using Input.Abstractions;
+
     public class PlayerController : MonoBehaviour
     {
         [Inject]

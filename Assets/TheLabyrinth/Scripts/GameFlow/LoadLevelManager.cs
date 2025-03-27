@@ -1,11 +1,11 @@
 using System.Collections;
 using UnityEngine;
 using Zenject;
-using KarenKrill.TheLabyrinth.MazeGeneration;
 
 namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
+    using MazeGeneration;
 
     public class LoadLevelManager : MonoBehaviour
     {

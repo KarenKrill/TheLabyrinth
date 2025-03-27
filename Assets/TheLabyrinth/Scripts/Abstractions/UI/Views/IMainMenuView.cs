@@ -1,10 +1,11 @@
 ﻿#nullable enable
 
 using System;
-using KarenKrill.Common.UI.Views.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
 {
+    using Common.UI.Views.Abstractions;
+
     public interface IMainMenuView : IView
     {
         public event Action? NewGame;

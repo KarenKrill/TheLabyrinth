@@ -1,12 +1,13 @@
 using System;
 using UnityEngine;
 using Zenject;
-using KarenKrill.Common.Logging;
-using KarenKrill.TheLabyrinth.StateMachine.Abstractions;
-using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.GameFlow
 {
+    using Common.Logging;
+    using Abstractions;
+    using StateMachine.Abstractions;
+
     public class GameFlow : IGameFlow, IDisposable
     {
         [Inject]

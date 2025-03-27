@@ -1,22 +1,23 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 using Zenject;
-using KarenKrill.Common.Logging;
-using KarenKrill.TheLabyrinth.GameStates;
-using KarenKrill.TheLabyrinth.StateMachine;
-using KarenKrill.Common.UI.Views;
-using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
-using KarenKrill.TheLabyrinth.StateMachine.Abstractions;
-using KarenKrill.TheLabyrinth.GameFlow;
-using KarenKrill.TheLabyrinth.Input;
-using KarenKrill.TheLabyrinth.Input.Abstractions;
-using KarenKrill.Common.UI.Presenters.Abstractions;
-using KarenKrill.TheLabyrinth.UI;
-using System.Linq;
 
 namespace KarenKrill.TheLabyrinth
 {
+    using Common.Logging;
+    using Common.UI.Presenters.Abstractions;
+    using Common.UI.Views;
+    using GameFlow.Abstractions;
+    using StateMachine.Abstractions;
+    using Input.Abstractions;
+    using GameFlow;
+    using StateMachine;
+    using GameStates;
+    using Input;
+    using UI;
+
     public class ProjectInstaller : MonoInstaller
     {
         [SerializeField]

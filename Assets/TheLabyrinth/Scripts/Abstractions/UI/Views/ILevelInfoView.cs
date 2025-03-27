@@ -1,10 +1,11 @@
 #nullable enable
 
 using System.Drawing;
-using KarenKrill.Common.UI.Views.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
 {
+    using Common.UI.Views.Abstractions;
+
     public interface IILevelInfoView : IView
     {
         public string Title { set; }

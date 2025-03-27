@@ -1,11 +1,12 @@
 using System;
 using UnityEngine;
-using TMPro;
 using Zenject;
-using KarenKrill.TheLabyrinth.Input.Abstractions;
+using TMPro;
 
 namespace KarenKrill.TheLabyrinth
 {
+    using Input.Abstractions;
+
     public class RigidBodyMovement : MonoBehaviour
     {
         [Inject]

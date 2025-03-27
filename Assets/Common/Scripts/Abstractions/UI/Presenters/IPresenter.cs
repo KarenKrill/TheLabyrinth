@@ -1,7 +1,7 @@
-﻿using KarenKrill.Common.UI.Views.Abstractions;
-
-namespace KarenKrill.Common.UI.Presenters.Abstractions
+﻿namespace KarenKrill.Common.UI.Presenters.Abstractions
 {
+    using Views.Abstractions;
+
     public interface IPresenter
     {
         void Enable();

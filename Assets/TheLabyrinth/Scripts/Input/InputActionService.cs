@@ -1,11 +1,11 @@
+using System;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using Zenject;
 
 namespace KarenKrill.TheLabyrinth.Input
 {
     using Abstractions;
-    using System;
-    using UnityEngine;
-    using Zenject;
 
     public class InputActionService : IInputActionService, PlayerControls.IInGameActions, PlayerControls.IUIActions
     {

@@ -1,10 +1,10 @@
-using KarenKrill.Common.UI.Views.Abstractions;
-using KarenKrill.Common.UI.Presenters.Abstractions;
-using KarenKrill.TheLabyrinth.UI.Views.Abstractions;
-using KarenKrill.TheLabyrinth.GameFlow.Abstractions;
-
 namespace KarenKrill.TheLabyrinth.UI
 {
+    using Common.UI.Presenters.Abstractions;
+    using Common.UI.Views.Abstractions;
+    using GameFlow.Abstractions;
+    using Views.Abstractions;
+
     public class PresenterManager
     {
         IGameFlow _gameFlow;

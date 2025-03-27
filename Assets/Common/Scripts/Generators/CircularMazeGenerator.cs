@@ -2,13 +2,13 @@
 using System.Linq;
 using UnityEngine;
 
-using KarenKrill.Common.Logging;
-
 #nullable enable
 
 namespace KarenKrill.Common.Generators.MazeGeneration
 {
+    using Logging;
     using PathFinding.DepthFirstSearch;
+
     public class CircularMazeCell
     {
         private List<bool> _frontWalls;

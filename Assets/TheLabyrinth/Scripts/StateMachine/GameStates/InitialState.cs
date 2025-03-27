@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using Zenject;
-using KarenKrill.TheLabyrinth.StateMachine.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.GameStates
 {
+    using StateMachine.Abstractions;
+
     public class InitialState : IGameState
     {
         [Inject]

@@ -1,11 +1,12 @@
 ﻿using Zenject;
-using KarenKrill.Common.UI.Views.Abstractions;
-using KarenKrill.TheLabyrinth.UI.Views.Abstractions;
-using KarenKrill.TheLabyrinth.StateMachine.Abstractions;
-using KarenKrill.Common.UI.Presenters.Abstractions;
 
 namespace KarenKrill.TheLabyrinth.GameStates
 {
+    using Common.UI.Presenters.Abstractions;
+    using Common.UI.Views.Abstractions;
+    using StateMachine.Abstractions;
+    using UI.Views.Abstractions;
+
     public class MainMenuState : IGameState
     {
         [Inject]

@@ -2,7 +2,7 @@
 
 using System;
 
-namespace KarenKrill.Common.GameLevel
+namespace KarenKrill.Common.GameLevel.Abstractions
 {
     public interface ITimeLimitedLevelController : ILevelController
     {

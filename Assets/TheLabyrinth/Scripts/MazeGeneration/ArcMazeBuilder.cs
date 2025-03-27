@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
+using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.ProBuilder;
 using Zenject;
-using KarenKrill.Common.Generators.MazeGeneration;
 
 namespace KarenKrill.TheLabyrinth.MazeGeneration
 {
+    using Common.Generators.MazeGeneration;
+
     public class ArcMazeBuilder : MonoBehaviour
     {
         [Inject]

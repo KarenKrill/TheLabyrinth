@@ -1,14 +1,15 @@
 #if UNITY_EDITOR
 using System.Linq;
 using UnityEngine;
+using UnityEngine.UIElements;
 using UnityEditor;
 using Unity.EditorCoroutines.Editor;
-using UnityEngine.UIElements;
 using Zenject;
 
 namespace KarenKrill.TheLabyrinth.MazeGeneration
 {
     using Common.Logging;
+
     [CustomEditor(typeof(ArcMazeBuilder))]
     public class ArcMazeBuilderEditor : Editor
     {

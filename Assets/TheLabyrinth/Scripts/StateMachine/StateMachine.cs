@@ -1,9 +1,10 @@
-﻿using KarenKrill.TheLabyrinth.StateMachine.Abstractions;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace KarenKrill.TheLabyrinth.StateMachine
 {
+    using Abstractions;
+
     internal class StateMachine<T> : IStateMachine<T> where T : Enum
     {
         private IDictionary<T, IList<T>> _stateTransitions;
