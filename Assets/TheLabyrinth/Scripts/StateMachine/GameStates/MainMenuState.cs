@@ -17,5 +17,9 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _mainMenuPresenter.View ??= _viewFactory.Create<IMainMenuView>();
             _mainMenuPresenter.Enable();
         }
+        public void Exit()
+        {
+            _mainMenuPresenter.Disable();
+        }
     }
 }

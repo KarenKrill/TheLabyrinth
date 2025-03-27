@@ -12,5 +12,8 @@ namespace KarenKrill.TheLabyrinth.GameStates
         {
 
         }
+        public void Exit()
+        {
+        }
     }
 }
