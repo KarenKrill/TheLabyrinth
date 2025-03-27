@@ -4,7 +4,6 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEditor;
 using Unity.EditorCoroutines.Editor;
-using Zenject;
 
 namespace KarenKrill.TheLabyrinth.MazeGeneration
 {
@@ -17,8 +16,7 @@ namespace KarenKrill.TheLabyrinth.MazeGeneration
         {
             var type = typeof(ArcMazeBuilder);
             var loggerField = type.GetFields(System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
-                .Where(field => field.FieldType == typeof(ILogger) &&
-                    field.CustomAttributes.Select(attr => attr.AttributeType).Contains(typeof(InjectAttribute)))
+                .Where(field => field.FieldType == typeof(ILogger))
                 .FirstOrDefault();
             loggerField?.SetValue((ArcMazeBuilder)target, new Logger(new DebugLogHandler()));
             return base.CreateInspectorGUI();

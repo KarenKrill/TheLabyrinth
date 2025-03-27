@@ -9,10 +9,16 @@ namespace KarenKrill.TheLabyrinth
 
     public class RigidBodyMovement : MonoBehaviour
     {
-        [Inject]
         ILogger _logger;
+        private IInputActionService _inputActionService;
+
         [Inject]
-        private IInputActionService _inputActionSevice;
+        public void Initialize(ILogger logger, IInputActionService inputActionService)
+        {
+            _logger = logger;
+            _inputActionService = inputActionService;
+        }
+
         [SerializeField]
         private Rigidbody _rigidbody;
         [SerializeField]
@@ -24,9 +30,9 @@ namespace KarenKrill.TheLabyrinth
         private TextMeshProUGUI _debugText;
         private void Awake()
         {
-            _inputActionSevice.Move += OnMoved;
-            _inputActionSevice.Jump += () => OnJumped(true);
-            _inputActionSevice.JumpCancel += () => OnJumped(false);
+            _inputActionService.Move += OnMoved;
+            _inputActionService.Jump += () => OnJumped(true);
+            _inputActionService.JumpCancel += () => OnJumped(false);
         }
 
         private void OnJumped(bool isButtonClicked)
@@ -42,7 +48,7 @@ namespace KarenKrill.TheLabyrinth
         }
         private void FixedUpdate()
         {
-            var velocity = new Vector3(_inputActionSevice.LastMoveDelta.x, 0, _inputActionSevice.LastMoveDelta.y);
+            var velocity = new Vector3(_inputActionService.LastMoveDelta.x, 0, _inputActionService.LastMoveDelta.y);
             velocity *= _speed;
             velocity.y = _rigidbody.velocity.y;
             _isGrounded = Mathf.Abs(velocity.y) <= Mathf.Epsilon;

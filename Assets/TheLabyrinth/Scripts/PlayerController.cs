@@ -6,15 +6,20 @@ using Zenject;
 namespace KarenKrill.TheLabyrinth
 {
     using Common.Logging;
-    using GameFlow.Abstractions;
     using Input.Abstractions;
 
     public class PlayerController : MonoBehaviour
     {
-        [Inject]
         ILogger _logger;
-        [Inject]
         private IInputActionService _inputActionService;
+
+        [Inject]
+        public void Initialize(ILogger logger, IInputActionService inputActionService)
+        {
+            _logger = logger;
+            _inputActionService = inputActionService;
+        }
+
         [SerializeField]
         private CharacterController _characterController;
         [SerializeField]
@@ -62,9 +67,6 @@ namespace KarenKrill.TheLabyrinth
         {
             _isRunModeEnabled = false;
         }
-
-        [Inject]
-        IGameFlow _gameFlow;
 
         bool _isJumpPressed = false;
         private void OnJump()

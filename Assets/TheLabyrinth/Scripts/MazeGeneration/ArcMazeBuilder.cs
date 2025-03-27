@@ -13,8 +13,14 @@ namespace KarenKrill.TheLabyrinth.MazeGeneration
 
     public class ArcMazeBuilder : MonoBehaviour
     {
-        [Inject]
         ILogger _logger;
+
+        [Inject]
+        public void Initialize(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         [SerializeField]
         private float _radius = 10, _internalRadius = 2;
         [SerializeField]

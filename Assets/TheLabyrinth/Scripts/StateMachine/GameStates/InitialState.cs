@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Zenject;
 
 namespace KarenKrill.TheLabyrinth.GameStates
 {
@@ -7,8 +6,13 @@ namespace KarenKrill.TheLabyrinth.GameStates
 
     public class InitialState : IGameState
     {
-        [Inject]
         ILogger _logger;
+
+        public InitialState(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public void Enter()
         {
 

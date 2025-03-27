@@ -8,8 +8,13 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
     public class GameFlowBehaviour : MonoBehaviour, IGameFlow
     {
-        [Inject]
         IGameFlow _gameFlow;
+
+        [Inject]
+        public void Initialize(IGameFlow gameFlow)
+        {
+            _gameFlow = gameFlow;
+        }
 
         public GameState State => _gameFlow.State;
 

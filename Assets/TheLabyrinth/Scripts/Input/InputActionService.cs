@@ -1,7 +1,6 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
-using Zenject;
 
 namespace KarenKrill.TheLabyrinth.Input
 {
@@ -22,8 +21,6 @@ namespace KarenKrill.TheLabyrinth.Input
         public event Action? Pause;
         public event Action? AutoPlayCheat;
         public event Action? Back;
-        [Inject]
-        ILogger _logger;
         public void SetActionMap(ActionMap actionMap)
         {
             switch (actionMap)
@@ -48,14 +45,15 @@ namespace KarenKrill.TheLabyrinth.Input
         }
 
 #nullable restore
-        public InputActionService()
+        ILogger _logger;
+        public InputActionService(ILogger logger)
         {
+            _logger = logger;
             if (_playerControls == null)
             {
                 _playerControls = new();
                 _playerControls.InGame.SetCallbacks(this);
                 _playerControls.UI.SetCallbacks(this);
-
             }
         }
 

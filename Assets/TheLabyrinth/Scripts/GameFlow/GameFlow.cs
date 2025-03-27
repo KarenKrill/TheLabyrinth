@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using Zenject;
 
 namespace KarenKrill.TheLabyrinth.GameFlow
 {
@@ -10,10 +9,16 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
     public class GameFlow : IGameFlow, IDisposable
     {
-        [Inject]
         ILogger _logger;
-        [Inject]
         IStateMachine<GameState> _stateMachine;
+        public GameFlow(ILogger logger, IStateMachine<GameState> stateMachine)
+        {
+            _logger = logger;
+            _stateMachine = stateMachine;
+            _stateMachine.StateEnter += OnStateEnter;
+            _stateMachine.StateExit += OnStateExit;
+            _logger.Log($"GameFlow()");
+        }
         public GameState State => _stateMachine.State;
         public event Action LevelFinish;
         public event Action GameStart;
@@ -75,13 +80,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         public void WinGame() => _stateMachine.TransitTo(GameState.WinMenu);
         public void LooseGame() => _stateMachine.TransitTo(GameState.LooseMenu);
         public void PlayLevel() => _stateMachine.TransitTo(GameState.LevelPlay);
-        [Inject]
-        private void Initialize()
-        {
-            _stateMachine.StateEnter += OnStateEnter;
-            _stateMachine.StateExit += OnStateExit;
-            _logger.Log($"GameFlow()");
-        }
         public void Dispose()
         {
             _stateMachine.StateEnter -= OnStateEnter;

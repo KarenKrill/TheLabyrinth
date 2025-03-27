@@ -1,6 +1,4 @@
-﻿using Zenject;
-
-namespace KarenKrill.TheLabyrinth.GameStates
+﻿namespace KarenKrill.TheLabyrinth.GameStates
 {
     using Common.UI.Presenters.Abstractions;
     using Common.UI.Views.Abstractions;
@@ -9,10 +7,15 @@ namespace KarenKrill.TheLabyrinth.GameStates
 
     public class MainMenuState : IGameState
     {
-        [Inject]
         IPresenter<IMainMenuView> _mainMenuPresenter;
-        [Inject]
         IViewFactory _viewFactory;
+
+        public MainMenuState(IPresenter<IMainMenuView> mainMenuPresenter, IViewFactory viewFactory)
+        {
+            _mainMenuPresenter = mainMenuPresenter;
+            _viewFactory = viewFactory;
+        }
+
         public void Enter()
         {
             _mainMenuPresenter.View ??= _viewFactory.Create<IMainMenuView>();

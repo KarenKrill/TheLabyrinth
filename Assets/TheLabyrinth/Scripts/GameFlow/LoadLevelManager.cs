@@ -9,10 +9,16 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
     public class LoadLevelManager : MonoBehaviour
     {
-        [Inject]
-        IGameFlow _gameFlow;
-        [Inject]
         ILogger _logger;
+        IGameFlow _gameFlow;
+
+        [Inject]
+        public void Initialize(ILogger logger,
+            IGameFlow gameFlow)
+        {
+            _logger = logger;
+            _gameFlow = gameFlow;
+        }
 
         [SerializeField]
         private PlayerController _playerController;
