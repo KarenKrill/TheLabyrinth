@@ -5,8 +5,9 @@ using Zenject;
 namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
-    using Common.GameLevel.Abstractions;
+    using Common.GameLevel;
     using Input.Abstractions;
+    using StateMachine.Abstractions;
 
     public class GameplayController : MonoBehaviour, ITimeLimitedLevelController, IGameController
     {
@@ -48,22 +49,8 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         ILogger _logger;
         IGameFlow _gameFlow;
         IInputActionService _inputActionService;
-        //InitialState _initialState;
-        //MainMenuState _mainMenuState;
-
         [Inject]
-        public void Initialize(ILogger logger,
-            IGameFlow gameFlow,
-            IInputActionService inputActionService/*,
-            InitialState initialState,
-            MainMenuState mainMenuState*/)
-        {
-            _logger = logger;
-            _gameFlow = gameFlow;
-            _inputActionService = inputActionService;
-            //_initialState = initialState;
-            //_mainMenuState = mainMenuState;
-        }
+        IManagedStateMachine<GameState> _managedStateMachine;
         [SerializeField]
         private PlayerController _playerController;
         [SerializeField]
@@ -117,22 +104,10 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
         public void Awake()
         {
-            _gameFlow.LoadMainMenu();
-            //_initialState.Enter();
-            //_mainMenuState.Enter();
-            _gameFlow.GameStart += OnGameStart;
-            _gameFlow.LevelFinish += OnLevelFinish;
-            _gameFlow.LevelLoad += OnLevelLoad;
-            _gameFlow.PlayerWin += OnPlayerWin;
-            _gameFlow.PlayerLoose += OnPlayerLoose;
-            _gameFlow.LevelPlay += OnLevelPlay;
-            _gameFlow.LevelPause += OnLevelPause;
-            _gameFlow.GameEnd += OnGameEnd;
+            _managedStateMachine.Start();
             _inputActionService.AutoPlayCheat += OnAutoPlayCheat;
             _inputActionService.Pause += OnPaused;
             _inputActionService.Back += OnResumed;
-            //_gameFlow.LoadMainMenu();
-            //_gameFlow.StartGame();
         }
         bool _autoPlayCheatEnabled = false;
         private void OnAutoPlayCheat()
@@ -156,12 +131,12 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             OnCurrentLevelChanged();
         }
 
-        private void OnGameStart()
+        public void OnGameStart()
         {
             ResetToDefaults();
             _inputActionService.Disable();
         }
-        private void OnGameEnd()
+        public void OnGameEnd()
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -170,12 +145,12 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 #endif
         }
         bool _isLevelWasPaused = false;
-        private void OnLevelLoad()
+        public void OnLevelLoad()
         {
             _isLevelWasPaused = false;
             _inputActionService.Disable();
         }
-        private void OnLevelPlay()
+        public void OnLevelPlay()
         {
             if (_isLevelWasPaused)
             {
@@ -194,7 +169,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _inputActionService.SetActionMap(ActionMap.InGame);
             //Time.timeScale = 1;
         }
-        private void OnLevelPause()
+        public void OnLevelPause()
         {
             _isLevelWasPaused = true;
             _playerController.LockMovement();
@@ -202,7 +177,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _inputActionService.SetActionMap(ActionMap.UI);
             //Time.timeScale = 0;
         }
-        private void OnLevelFinish()
+        public void OnLevelFinish()
         {
             if (_PassedLevels < _gameLevelsCount)
             {
@@ -215,14 +190,14 @@ namespace KarenKrill.TheLabyrinth.GameFlow
                 _gameFlow.WinGame();
             }
         }
-        private void OnPlayerLoose()
+        public void OnPlayerLoose()
         {
             UpdateAiPlayingMode();
             //Time.timeScale = 0;
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
             _inputActionService.Disable();
         }
-        private void OnPlayerWin()
+        public void OnPlayerWin()
         {
             UpdateAiPlayingMode();
             //Time.timeScale = 0;

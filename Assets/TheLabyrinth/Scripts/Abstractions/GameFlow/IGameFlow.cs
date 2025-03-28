@@ -18,15 +18,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow.Abstractions
     public interface IGameFlow
     {
         GameState State { get; }
-        event Action GameStart;
-        event Action MainMenuLoad;
-        event Action LevelLoad;
-        event Action LevelPlay;
-        event Action LevelFinish;
-        event Action LevelPause;
-        event Action PlayerWin;
-        event Action PlayerLoose;
-        event Action GameEnd;
+
         void LoadMainMenu();
         void LoadLevel();
         void PlayLevel();
