@@ -46,11 +46,18 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
 #nullable restore
 
-        ILogger _logger;
         IGameFlow _gameFlow;
         IInputActionService _inputActionService;
-        [Inject]
         IManagedStateMachine<GameState> _managedStateMachine;
+
+        [Inject]
+        public void Initialize(IGameFlow gameFlow, IInputActionService inputActionService, IManagedStateMachine<GameState> managedStateMachine)
+        {
+            _gameFlow = gameFlow;
+            _inputActionService = inputActionService;
+            _managedStateMachine = managedStateMachine;
+        }
+
         [SerializeField]
         private PlayerController _playerController;
         [SerializeField]
