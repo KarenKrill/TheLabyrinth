@@ -1,13 +1,14 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using Zenject;
-using KarenKrill.TheLabyrinth.MazeGeneration;
 
 namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
+    using MazeGeneration;
 
-    public class LoadLevelManager : MonoBehaviour
+    public class LoadLevelManager : MonoBehaviour, ILevelManager
     {
         [Inject]
         IGameFlow _gameFlow;
@@ -57,6 +58,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             yield return new WaitUntil(() => _playerController.IsGrounded);// wait until player isn't grounded
             _logger.Log($"{nameof(LoadLevelManager)}.{nameof(LoadLevelCoroutine)} ends, now level plays");
             _gameFlow.PlayLevel();
+            LevelLoaded?.Invoke();
         }
         private IEnumerator FinishLevelCoroutine()
         {
@@ -71,7 +73,16 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             ResetToDefaults();
             _gameFlow.LoadLevel();
         }
-        private void OnLevelLoad() => StartCoroutine(LoadLevelCoroutine());
+#nullable enable
+
+        public event Action? LevelLoaded;
+
+        public void Reset()
+        {
+            ResetToDefaults();
+        }
+        public void OnLevelLoad() => StartCoroutine(LoadLevelCoroutine());
         private void OnLevelFinish() => StartCoroutine(FinishLevelCoroutine());
+        public void OnLevelEnd() => StartCoroutine(FinishLevelCoroutine());
     }
 }
