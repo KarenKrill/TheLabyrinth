@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace KarenKrill.TheLabyrinth.StateMachine.Abstractions
+namespace KarenKrill.Common.StateSystem.Abstractions
 {
     public interface IStateSwitcher<T> where T : Enum
     {

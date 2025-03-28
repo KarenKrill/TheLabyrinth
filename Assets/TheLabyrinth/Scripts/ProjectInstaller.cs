@@ -9,10 +9,10 @@ namespace KarenKrill.TheLabyrinth
     using Common.Logging;
     using Common.UI.Presenters.Abstractions;
     using Common.UI.Views;
-    using StateMachine.Abstractions;
+    using Common.StateSystem.Abstractions;
     using GameFlow.Abstractions;
     using Input.Abstractions;
-    using StateMachine;
+    using Common.StateSystem;
     using GameFlow;
     using Input;
 

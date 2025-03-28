@@ -2,8 +2,8 @@
 
 namespace KarenKrill.TheLabyrinth.GameStates
 {
+    using Common.StateSystem.Abstractions;
     using GameFlow.Abstractions;
-    using StateMachine.Abstractions;
 
     public class InitialState : IStateHandler<GameState>
     {

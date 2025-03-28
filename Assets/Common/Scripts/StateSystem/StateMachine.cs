@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace KarenKrill.TheLabyrinth.StateMachine
+namespace KarenKrill.Common.StateSystem
 {
     using Abstractions;
 

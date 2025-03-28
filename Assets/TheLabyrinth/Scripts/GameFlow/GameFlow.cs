@@ -1,7 +1,7 @@
 namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
-    using StateMachine.Abstractions;
+    using Common.StateSystem.Abstractions;
 
     public class GameFlow : IGameFlow
     {

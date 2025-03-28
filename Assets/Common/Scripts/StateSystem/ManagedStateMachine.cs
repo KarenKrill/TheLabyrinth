@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KarenKrill.TheLabyrinth.StateMachine
+namespace KarenKrill.Common.StateSystem
 {
     using Abstractions;
 

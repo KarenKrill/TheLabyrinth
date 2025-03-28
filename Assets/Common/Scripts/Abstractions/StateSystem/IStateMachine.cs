@@ -2,7 +2,7 @@
 
 using System;
 
-namespace KarenKrill.TheLabyrinth.StateMachine.Abstractions
+namespace KarenKrill.Common.StateSystem.Abstractions
 {
     public delegate void StateTransitionDelegate<T>(T state) where T : Enum;
 

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KarenKrill.TheLabyrinth.StateMachine
+namespace KarenKrill.Common.StateSystem
 {
     public class InvalidStateMachineTransitionException<T> : Exception
     {

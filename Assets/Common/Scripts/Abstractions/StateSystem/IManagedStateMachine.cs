@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KarenKrill.TheLabyrinth.StateMachine.Abstractions
+namespace KarenKrill.Common.StateSystem.Abstractions
 {
     public interface IManagedStateMachine<T> where T : Enum
     {

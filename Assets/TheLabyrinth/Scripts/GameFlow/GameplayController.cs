@@ -5,9 +5,9 @@ using Zenject;
 namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
+    using Common.StateSystem.Abstractions;
     using Common.GameLevel.Abstractions;
     using Input.Abstractions;
-    using StateMachine.Abstractions;
 
     public class GameplayController : MonoBehaviour, ITimeLimitedLevelController, IGameController
     {

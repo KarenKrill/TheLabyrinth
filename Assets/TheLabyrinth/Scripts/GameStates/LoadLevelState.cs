@@ -1,6 +1,6 @@
 ﻿namespace KarenKrill.TheLabyrinth.GameStates
 {
-    using StateMachine.Abstractions;
+    using Common.StateSystem.Abstractions;
     using GameFlow.Abstractions;
     using KarenKrill.TheLabyrinth.UI.Presenters;
     using KarenKrill.TheLabyrinth.UI.Views.Abstractions;
