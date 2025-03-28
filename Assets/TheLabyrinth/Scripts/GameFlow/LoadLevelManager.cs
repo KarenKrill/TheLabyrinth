@@ -11,8 +11,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
     public class LoadLevelManager : MonoBehaviour, ILevelManager
     {
         [Inject]
-        IGameFlow _gameFlow;
-        [Inject]
         ILogger _logger;
 
         [SerializeField]
@@ -29,12 +27,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
         public int TotalMazeCellsCount => _mazeBuilder.TotalCellsCount;
 
-        private void Awake()
-        {
-            _gameFlow.GameStart += OnGameStart;
-            _gameFlow.LevelFinish += OnLevelFinish;
-            _gameFlow.LevelLoad += OnLevelLoad;
-        }
         void ResetToDefaults()
         {
             _mazeLevelsCount = _mazeMinLevelsCount;
@@ -57,7 +49,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             yield return new WaitForSeconds(0.5f); // wait while player isn't fall (stucks in air)
             yield return new WaitUntil(() => _playerController.IsGrounded);// wait until player isn't grounded
             _logger.Log($"{nameof(LoadLevelManager)}.{nameof(LoadLevelCoroutine)} ends, now level plays");
-            _gameFlow.PlayLevel();
             LevelLoaded?.Invoke();
         }
         private IEnumerator FinishLevelCoroutine()
@@ -68,11 +59,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _mazeBuilder.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? ++_mazeLevelsCount : _mazeMaxLevelsCount;
         }
 
-        private void OnGameStart()
-        {
-            ResetToDefaults();
-            _gameFlow.LoadLevel();
-        }
 #nullable enable
 
         public event Action? LevelLoaded;
@@ -82,7 +68,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             ResetToDefaults();
         }
         public void OnLevelLoad() => StartCoroutine(LoadLevelCoroutine());
-        private void OnLevelFinish() => StartCoroutine(FinishLevelCoroutine());
         public void OnLevelEnd() => StartCoroutine(FinishLevelCoroutine());
     }
 }

@@ -6,7 +6,8 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
     using Common.GameLevel;
-    using KarenKrill.TheLabyrinth.Input.Abstractions;
+    using Input.Abstractions;
+    using StateMachine.Abstractions;
 
     public class GameplayController : MonoBehaviour, ITimeLimitedLevelController, IGameController
     {
@@ -51,10 +52,8 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         ILogger _logger;
         [Inject]
         IInputActionService _inputActionService;
-        /*[Inject]
-        InitialState _initialState;
         [Inject]
-        MainMenuState _mainMenuState;*/
+        IManagedStateMachine<GameState> _managedStateMachine;
         [SerializeField]
         private PlayerController _playerController;
         [SerializeField]
@@ -108,22 +107,10 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
         public void Awake()
         {
-            _gameFlow.LoadMainMenu();
-            //_initialState.Enter();
-            //_mainMenuState.Enter();
-            _gameFlow.GameStart += OnGameStart;
-            _gameFlow.LevelFinish += OnLevelFinish;
-            _gameFlow.LevelLoad += OnLevelLoad;
-            _gameFlow.PlayerWin += OnPlayerWin;
-            _gameFlow.PlayerLoose += OnPlayerLoose;
-            _gameFlow.LevelPlay += OnLevelPlay;
-            _gameFlow.LevelPause += OnLevelPause;
-            _gameFlow.GameEnd += OnGameEnd;
+            _managedStateMachine.Start();
             _inputActionService.AutoPlayCheat += OnAutoPlayCheat;
             _inputActionService.Pause += OnPaused;
             _inputActionService.Back += OnResumed;
-            //_gameFlow.LoadMainMenu();
-            //_gameFlow.StartGame();
         }
         bool _autoPlayCheatEnabled = false;
         private void OnAutoPlayCheat()

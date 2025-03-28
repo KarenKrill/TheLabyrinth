@@ -13,18 +13,15 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
         readonly IGameFlow _gameFlow;
         void OnRestart()
         {
-            Disable();
             _gameFlow.StartGame();
         }
         void OnResume()
         {
-            Disable();
             _gameFlow.PlayLevel();
         }
         void OnSettings()
         {
             _logger.Log("Settings shown");
-            Disable();
             _gameFlow.PlayLevel();
         }
         void OnExit() => _gameFlow.EndGame();
