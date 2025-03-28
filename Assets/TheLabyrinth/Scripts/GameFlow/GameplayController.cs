@@ -5,7 +5,7 @@ using Zenject;
 namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
-    using Common.GameLevel;
+    using Common.GameLevel.Abstractions;
     using Input.Abstractions;
     using StateMachine.Abstractions;
 
