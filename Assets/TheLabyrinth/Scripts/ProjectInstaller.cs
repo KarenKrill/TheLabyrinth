@@ -1,5 +1,4 @@
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
@@ -15,6 +14,7 @@ namespace KarenKrill.TheLabyrinth
     using Input.Abstractions;
     using GameFlow;
     using Input;
+    using KarenKrill.Common.Utilities;
 
     public class ProjectInstaller : MonoInstaller
     {
@@ -43,26 +43,6 @@ namespace KarenKrill.TheLabyrinth
         [SerializeField]
         List<GameObject> _uiPrefabs;
 
-        private static List<Type> GetImplementationTypes(Type interfaceType, Type[] excludeTypes)
-        {
-            List<Type> implementationTypes = new();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
-            {
-                if (assembly.FullName.StartsWith(nameof(KarenKrill)))
-                {
-                    var assemblyTypes = assembly.GetTypes();
-                    foreach (var type in assemblyTypes)
-                    {
-                        if (interfaceType.IsAssignableFrom(type) && !excludeTypes.Contains(type))
-                        {
-                            implementationTypes.Add(type);
-                        }
-                    }
-                }
-            }
-            return implementationTypes;
-        }
         private void InstallGameStateMachine()
         {
             Dictionary<GameState, IList<GameState>> validTransitions = new()
@@ -91,7 +71,7 @@ namespace KarenKrill.TheLabyrinth
                 })
                 .NonLazy();
             Container.BindInterfacesTo<GameApp>().AsSingle();
-            var stateTypes = GetImplementationTypes(typeof(IStateHandler<GameState>), Type.EmptyTypes);
+            var stateTypes = ReflectionUtilities.GetInheritorTypes(typeof(IStateHandler<GameState>), Type.EmptyTypes);
             foreach (var stateType in stateTypes)
             {
                 Container.BindInterfacesTo(stateType).AsSingle();
@@ -100,7 +80,7 @@ namespace KarenKrill.TheLabyrinth
         }
         private void InstallPresenterBindings()
         {
-            var presenterTypes = GetImplementationTypes(typeof(IPresenter), new Type[] { typeof(IPresenter), typeof(IPresenter<>) });
+            var presenterTypes = ReflectionUtilities.GetInheritorTypes(typeof(IPresenter), new Type[] { typeof(IPresenter), typeof(IPresenter<>) });
             foreach (var presenterType in presenterTypes)
             {
                 Container.BindInterfacesTo(presenterType).FromNew().AsSingle();
