@@ -10,6 +10,7 @@ namespace KarenKrill.Common.GameLevel.Abstractions
         float RemainingTime { get; }
         float WarningTime { get; }
         float LastWarningTime { get; }
+
         event Action<float>? MaxCompleteTimeChanged;
         event Action<float>? RemainingTimeChanged;
         event Action<float>? WarningTimeChanged;

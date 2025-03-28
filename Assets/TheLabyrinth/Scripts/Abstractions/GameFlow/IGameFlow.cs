@@ -13,6 +13,7 @@
         LooseMenu,
         GameEnd
     }
+
     public interface IGameFlow
     {
         GameState State { get; }

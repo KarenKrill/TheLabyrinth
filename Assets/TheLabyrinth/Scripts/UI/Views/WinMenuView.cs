@@ -9,16 +9,16 @@ namespace KarenKrill.TheLabyrinth.UI.Views
 
     public class WinMenuView : ViewBehaviour, IWinMenuView
     {
-        [SerializeField]
-        Button _restartButton;
-        [SerializeField]
-        Button _exitButton;
 #nullable enable
         public event Action? Restart;
         public event Action? Exit;
-        private void OnRestartButtonClicked() => Restart?.Invoke();
-        private void OnExitButtonClicked() => Exit?.Invoke();
 #nullable restore
+
+        [SerializeField]
+        private Button _restartButton;
+        [SerializeField]
+        private Button _exitButton;
+
         private void OnEnable()
         {
             _restartButton.onClick.AddListener(OnRestartButtonClicked);
@@ -29,5 +29,8 @@ namespace KarenKrill.TheLabyrinth.UI.Views
             _restartButton.onClick.RemoveListener(OnRestartButtonClicked);
             _exitButton.onClick.RemoveListener(OnExitButtonClicked);
         }
+
+        private void OnRestartButtonClicked() => Restart?.Invoke();
+        private void OnExitButtonClicked() => Exit?.Invoke();
     }
 }

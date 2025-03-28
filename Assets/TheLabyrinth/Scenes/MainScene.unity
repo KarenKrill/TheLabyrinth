@@ -496,13 +496,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d3b0d3af4a2009a488ed2aad398a4382, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _radius: 30
-  _internalRadius: 4
-  _height: 4
-  _minArcSegmentLength: 50
   Levels: 15
-  _wallWidth: 0.5
-  _material: {fileID: 2100000, guid: 3ea4e0c3e52eb6d499d1947b6aaa7b7d, type: 2}
   MazeGenerationFinished:
     m_PersistentCalls:
       m_Calls:
@@ -518,6 +512,12 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+  _material: {fileID: 2100000, guid: 3ea4e0c3e52eb6d499d1947b6aaa7b7d, type: 2}
+  _radius: 30
+  _internalRadius: 4
+  _height: 4
+  _minArcSegmentLength: 50
+  _wallWidth: 0.5
 --- !u!114 &120555841
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1139,12 +1139,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _playerController: {fileID: 2073521855}
+  _loadLevelManager: {fileID: 1539480200}
   _gameLevelsCount: 5
   _aiPlayerModeMaxSpeed: 500
   _levelTimeFactor: 4
-  _lastWarningLeftTime: 0.1
   _warningLeftTime: 0.3
-  _loadLevelManager: {fileID: 1539480200}
+  _lastWarningLeftTime: 0.1
 --- !u!1 &1103324766
 GameObject:
   m_ObjectHideFlags: 3
@@ -2165,31 +2165,31 @@ PrefabInstance:
       value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
-      propertyPath: TriggerEnter.m_PersistentCalls.m_Calls.Array.size
+      propertyPath: _triggerEnter.m_PersistentCalls.m_Calls.Array.size
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
-      propertyPath: TriggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
+      propertyPath: _triggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Mode
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
-      propertyPath: TriggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      propertyPath: _triggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 107664035}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
-      propertyPath: TriggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
+      propertyPath: _triggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
-      propertyPath: TriggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      propertyPath: _triggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: FinishLevel
       objectReference: {fileID: 0}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
-      propertyPath: TriggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: KarenKrill.Core.GameFlowBehaviour, Assembly-CSharp
+      propertyPath: _triggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
+      value: KarenKrill.TheLabyrinth.GameFlow.GameFlowBehaviour, KarenKrill.TheLabyrinth
       objectReference: {fileID: 0}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
-      propertyPath: TriggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
+      propertyPath: _triggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName
       value: UnityEngine.Object, UnityEngine
       objectReference: {fileID: 0}
     m_RemovedComponents: []

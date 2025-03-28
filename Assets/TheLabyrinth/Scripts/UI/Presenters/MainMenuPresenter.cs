@@ -9,18 +9,7 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
     public class MainMenuPresenter : IPresenter<IMainMenuView>
     {
         public IMainMenuView View { get; set; }
-        readonly ILogger _logger;
-        readonly IGameFlow _gameFlow;
-        void OnNewGame()
-        {
-            Disable();
-            _gameFlow.StartGame();
-        }
-        void OnSettings()
-        {
-            _logger.Log("Settings shown");
-        }
-        void OnExit() => _gameFlow.EndGame();
+
         public MainMenuPresenter(ILogger logger, IGameFlow gameFlow)
         {
             _logger = logger;
@@ -40,5 +29,15 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
             View.Settings -= OnSettings;
             View.Exit -= OnExit;
         }
+
+        private readonly ILogger _logger;
+        private readonly IGameFlow _gameFlow;
+
+        private void OnNewGame() => _gameFlow.StartGame();
+        private void OnSettings()
+        {
+            _logger.Log("Settings shown");
+        }
+        private void OnExit() => _gameFlow.EndGame();
     }
 }

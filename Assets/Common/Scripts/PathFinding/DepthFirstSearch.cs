@@ -11,6 +11,7 @@ namespace KarenKrill.Common.PathFinding.DepthFirstSearch
         public T Data { get; private set; }
         public bool IsVisited { get; private set; } = false;
         public List<TreeNode<T>> Neighbours { get; private set; } = new();
+
         public TreeNode(T data)
         {
             Data = data;
@@ -22,13 +23,13 @@ namespace KarenKrill.Common.PathFinding.DepthFirstSearch
         }
         public void Visit() => IsVisited = true;
     }
+
     public delegate TreeNode<T> NextUnvisitedNodeStrategy<T>(IEnumerable<TreeNode<T>> unvisitedNodes);
+
     public class Tree<T>
     {
-#warning Unremoved debug feature
-        Action<TreeNode<T>>? _debugDfsIteration;
-        NextUnvisitedNodeStrategy<T>? _nextUnvisitedNodeStrategy;
         public TreeNode<T> RootNode { get; private set; }
+
         public Tree(T data, NextUnvisitedNodeStrategy<T>? nextUnvisitedNodeStrategy = null, Action<TreeNode<T>>? debugDfsIteration = null)
         {
             RootNode = new(data);
@@ -40,21 +41,6 @@ namespace KarenKrill.Common.PathFinding.DepthFirstSearch
             RootNode = rootNode;
             _nextUnvisitedNodeStrategy = nextUnvisitedNodeStrategy;
             _debugDfsIteration = debugDfsIteration;
-        }
-        private IEnumerable<TreeNode<T>> GetUnvisitedCells(TreeNode<T> cell)
-        {
-            foreach (var neighbour in cell.Neighbours)
-            {
-                if (!neighbour.IsVisited)
-                {
-                    yield return neighbour;
-                }
-            }
-        }
-        private TreeNode<T> GetNextUnvisitedCell(TreeNode<T> node)
-        {
-            var unvisitedCells = GetUnvisitedCells(node);
-            return _nextUnvisitedNodeStrategy?.Invoke(unvisitedCells) ?? unvisitedCells.FirstOrDefault();
         }
         public void DepthFirstSearch(TreeNode<T> currCell, ref List<T> values)
         {
@@ -77,6 +63,26 @@ namespace KarenKrill.Common.PathFinding.DepthFirstSearch
             List<T> path = new();
             DepthFirstSearch(RootNode, ref path);
             return path;
+        }
+
+#warning Unremoved debug feature
+        private readonly Action<TreeNode<T>>? _debugDfsIteration;
+        private readonly NextUnvisitedNodeStrategy<T>? _nextUnvisitedNodeStrategy;
+
+        private IEnumerable<TreeNode<T>> GetUnvisitedCells(TreeNode<T> cell)
+        {
+            foreach (var neighbour in cell.Neighbours)
+            {
+                if (!neighbour.IsVisited)
+                {
+                    yield return neighbour;
+                }
+            }
+        }
+        private TreeNode<T> GetNextUnvisitedCell(TreeNode<T> node)
+        {
+            var unvisitedCells = GetUnvisitedCells(node);
+            return _nextUnvisitedNodeStrategy?.Invoke(unvisitedCells) ?? unvisitedCells.FirstOrDefault();
         }
     }
 }

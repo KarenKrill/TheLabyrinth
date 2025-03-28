@@ -6,7 +6,8 @@ namespace KarenKrill.TheLabyrinth
     public class EnterTrigger : MonoBehaviour
     {
         [SerializeField]
-        private UnityEvent<Collider> TriggerEnter = new();
-        private void OnTriggerEnter(Collider other) => TriggerEnter.Invoke(other);
+        private UnityEvent<Collider> _triggerEnter = new();
+
+        private void OnTriggerEnter(Collider other) => _triggerEnter.Invoke(other);
     }
 }

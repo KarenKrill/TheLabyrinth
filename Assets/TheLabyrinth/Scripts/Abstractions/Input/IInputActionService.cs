@@ -10,10 +10,13 @@ namespace KarenKrill.TheLabyrinth.Input.Abstractions
         InGame,
         UI
     }
+
     public delegate void MoveDelegate(Vector2 moveDelta);
+
     public interface IInputActionService
     {
         public Vector2 LastMoveDelta { get; }
+
         public event MoveDelegate? Move;
         public event Action? Run;
         public event Action? RunCancel;

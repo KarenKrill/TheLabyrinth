@@ -10,14 +10,38 @@ namespace KarenKrill.TheLabyrinth
 
     public class PlayerController : MonoBehaviour
     {
-        ILogger _logger;
-        private IInputActionService _inputActionService;
+        public float MaximumSpeed { get => _maximumSpeed; set => _maximumSpeed = value; }
+        public bool IsGrounded => _characterController.isGrounded;
+        public bool UseAiNavigation { get => _useAiNavigation; set => _useAiNavigation = value; }
+        public float AiMinSpeed { get => _aiMinSpeed; set => _aiMinSpeed = value; }
 
         [Inject]
         public void Initialize(ILogger logger, IInputActionService inputActionService)
         {
             _logger = logger;
             _inputActionService = inputActionService;
+        }
+        public IEnumerator Move(Vector3 dest)
+        {
+            _IsMoveLocked = true;
+            yield return new WaitForSeconds(0.1f);
+            _characterController.transform.position = dest;
+            yield return new WaitForSeconds(0.1f);
+            _IsMoveLocked = false;
+        }
+        public void LockMovement(bool xAxis = true, bool yAxis = true, bool zAxis = true)
+        {
+            _xAxisLocked = xAxis;
+            _yAxisLocked = yAxis;
+            _zAxisLocked = zAxis;
+            _logger.LogWarning($"Move locked: ({xAxis},{yAxis},{zAxis})");
+        }
+        public void UnlockMovement()
+        {
+            _xAxisLocked = false;
+            _yAxisLocked = false;
+            _zAxisLocked = false;
+            _logger.LogWarning("Move unlocked");
         }
 
         [SerializeField]
@@ -26,8 +50,6 @@ namespace KarenKrill.TheLabyrinth
         private Animator _animator = null;
         [SerializeField]
         private float _maximumSpeed = 5f, _rotationDegreeSpeed = 360.0f;
-        public float MaximumSpeed { get => _maximumSpeed; set => _maximumSpeed = value; }
-        public bool IsGrounded => _characterController.isGrounded;
         [SerializeField]
         private float _jumpHeight = 2.0f, _jumpHorizontalSpeed = 3.0f, _gravityMultiplier = 1.5f;
         [SerializeField]
@@ -37,16 +59,37 @@ namespace KarenKrill.TheLabyrinth
         [Header("AI Navigation")]
         [SerializeField]
         private bool _useAiNavigation = true;
-        public bool UseAiNavigation { get => _useAiNavigation; set => _useAiNavigation = value; }
         [SerializeField]
-        public float _aiMinSpeed = 5f;
-        public float AiMinSpeed { get => _aiMinSpeed; set => _aiMinSpeed = value; }
+        private float _aiMinSpeed = 5f;
         [SerializeField]
         private NavMeshAgent _playerNavAgent;
         [SerializeField]
         private Transform _aiDestination;
-        private float _fallSpeed;
+
+        private bool _IsMoveLocked
+        {
+            get => _isMoveLocked;
+            set
+            {
+                if (value)
+                {
+                    _playerNavAgent.enabled = false;
+                }
+                else
+                {
+                }
+                _isMoveLocked = value;
+            }
+        }
+
+        private ILogger _logger;
+        private IInputActionService _inputActionService;
+        private bool _xAxisLocked = false, _yAxisLocked = false, _zAxisLocked = false;
+        private bool _isMoveLocked = false;
         private bool _isJumping = false, _isSliding = false, _isGrounded = false;
+        private bool _isRunModeEnabled = false;
+        private bool _isJumpPressed = false;
+        private float _fallSpeed;
         private Vector3 _slopeSlideVelocity;
         private float _characterControllerStepOffset;
         private float? _lastGroundedTime, _jumpButtonPressedTime;
@@ -58,25 +101,38 @@ namespace KarenKrill.TheLabyrinth
             _inputActionService.Jump += OnJump;
             _inputActionService.JumpCancel += OnJumpCancel;
         }
-        bool _isRunModeEnabled = false;
-        private void OnRun()
+        private void Update()
         {
-            _isRunModeEnabled = true;
+            if (!_IsMoveLocked)
+            {
+                if (_useAiNavigation && (_characterController.isGrounded && _characterController.transform.position.y <= 2))
+                {
+                    if (_playerNavAgent.destination != _aiDestination.position && !(_xAxisLocked && _yAxisLocked && _zAxisLocked))
+                    {
+                        var dest = _aiDestination.position;
+                        var prevDest = _playerNavAgent.destination;
+                        var newDest = new Vector3(_xAxisLocked ? prevDest.x : dest.x, _yAxisLocked ? prevDest.y : dest.y, _zAxisLocked ? prevDest.z : dest.z);
+                        _playerNavAgent.enabled = true;
+                        _playerNavAgent.destination = newDest;
+                        _playerNavAgent.acceleration = Random.Range(_aiMinSpeed, _maximumSpeed);
+                        _playerNavAgent.speed = Random.Range(_aiMinSpeed, _maximumSpeed);
+                    }
+                }
+                else
+                {
+                    _playerNavAgent.enabled = false;
+                    UpdateMovement();
+                }
+            }
         }
-        private void OnRunCancel()
+        private void OnAnimatorMove()
         {
-            _isRunModeEnabled = false;
-        }
-
-        bool _isJumpPressed = false;
-        private void OnJump()
-        {
-            _jumpButtonPressedTime = Time.time;
-            _isJumpPressed = true;
-        }
-        private void OnJumpCancel()
-        {
-            _isJumpPressed = false;
+            if (_useRootMotion && _isGrounded && !_isSliding && _animator != null)
+            {
+                Vector3 velocity = _animator.deltaPosition;
+                velocity.y = _fallSpeed * Time.deltaTime;
+                _characterController.Move(velocity);
+            }
         }
 
         private void UpdateSlopeSlideVelocity()
@@ -199,77 +255,22 @@ namespace KarenKrill.TheLabyrinth
                 _animator.SetBool("IsMoving", isMoving);
             }
         }
-        private void OnAnimatorMove()
+        private void OnRun()
         {
-            if (_useRootMotion && _isGrounded && !_isSliding && _animator != null)
-            {
-                Vector3 velocity = _animator.deltaPosition;
-                velocity.y = _fallSpeed * Time.deltaTime;
-                _characterController.Move(velocity);
-            }
+            _isRunModeEnabled = true;
         }
-        private bool _isMoveLocked = false;
-        private bool _IsMoveLocked
+        private void OnRunCancel()
         {
-            get => _isMoveLocked;
-            set
-            {
-                if (value)
-                {
-                    _playerNavAgent.enabled = false;
-                }
-                else
-                {
-                }
-                _isMoveLocked = value;
-            }
+            _isRunModeEnabled = false;
         }
-        private void Update()
+        private void OnJump()
         {
-            if (!_IsMoveLocked)
-            {
-                if (_useAiNavigation && (_characterController.isGrounded && _characterController.transform.position.y <= 2))
-                {
-                    if (_playerNavAgent.destination != _aiDestination.position && !(_xAxisLocked && _yAxisLocked && _zAxisLocked))
-                    {
-                        var dest = _aiDestination.position;
-                        var prevDest = _playerNavAgent.destination;
-                        var newDest = new Vector3(_xAxisLocked ? prevDest.x : dest.x, _yAxisLocked ? prevDest.y : dest.y, _zAxisLocked ? prevDest.z : dest.z);
-                        _playerNavAgent.enabled = true;
-                        _playerNavAgent.destination = newDest;
-                        _playerNavAgent.acceleration = Random.Range(_aiMinSpeed, _maximumSpeed);
-                        _playerNavAgent.speed = Random.Range(_aiMinSpeed, _maximumSpeed);
-                    }
-                }
-                else
-                {
-                    _playerNavAgent.enabled = false;
-                    UpdateMovement();
-                }
-            }
+            _jumpButtonPressedTime = Time.time;
+            _isJumpPressed = true;
         }
-        public IEnumerator Move(Vector3 dest)
+        private void OnJumpCancel()
         {
-            _IsMoveLocked = true;
-            yield return new WaitForSeconds(0.1f);
-            _characterController.transform.position = dest;
-            yield return new WaitForSeconds(0.1f);
-            _IsMoveLocked = false;
-        }
-        bool _xAxisLocked = false, _yAxisLocked = false, _zAxisLocked = false;
-        public void LockMovement(bool xAxis = true, bool yAxis = true, bool zAxis = true)
-        {
-            _xAxisLocked = xAxis;
-            _yAxisLocked = yAxis;
-            _zAxisLocked = zAxis;
-            _logger.LogWarning($"Move locked: ({xAxis},{yAxis},{zAxis})");
-        }
-        public void UnlockMovement()
-        {
-            _xAxisLocked = false;
-            _yAxisLocked = false;
-            _zAxisLocked = false;
-            _logger.LogWarning("Move unlocked");
+            _isJumpPressed = false;
         }
     }
 }

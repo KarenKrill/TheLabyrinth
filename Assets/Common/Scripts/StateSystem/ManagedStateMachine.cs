@@ -15,17 +15,14 @@ namespace KarenKrill.Common.StateSystem
             StateMachine = stateMachine;
             _stateHandlers = stateHandlers.ToDictionary(stateHandler => stateHandler.State, stateHandler => stateHandler);
         }
-
         public void AddStateHandler(IStateHandler<T> stateHandler)
         {
             _stateHandlers[stateHandler.State] = stateHandler;
         }
-
         public void RemoveStateHandler(T state)
         {
             _stateHandlers.Remove(state);
         }
-
         public void Start()
         {
             StateMachine.StateEnter += OnStateEnter;
@@ -39,7 +36,6 @@ namespace KarenKrill.Common.StateSystem
         {
             _stateHandlers[state].Enter();
         }
-
         private void OnStateExit(T state)
         {
             _stateHandlers[state].Exit();

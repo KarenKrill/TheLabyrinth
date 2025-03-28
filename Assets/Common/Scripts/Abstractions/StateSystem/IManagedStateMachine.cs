@@ -7,9 +7,7 @@ namespace KarenKrill.Common.StateSystem.Abstractions
         IStateMachine<T> StateMachine { get; }
 
         void AddStateHandler(IStateHandler<T> stateHandler);
-
         void RemoveStateHandler(T state);
-
         void Start();
     }
 }

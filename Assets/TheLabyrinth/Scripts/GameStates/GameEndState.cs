@@ -15,20 +15,18 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _gameFlow = gameFlow;
             _gameController = gameController;
         }
-
         public void Enter()
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _gameController.OnGameEnd();
         }
-
         public void Exit()
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
         }
 
         private readonly ILogger _logger;
-        IGameFlow _gameFlow;
-        IGameController _gameController;
+        private readonly IGameFlow _gameFlow;
+        private readonly IGameController _gameController;
     }
 }

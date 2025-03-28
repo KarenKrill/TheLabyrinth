@@ -11,44 +11,20 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
     public class GameplayController : MonoBehaviour, ITimeLimitedLevelController, IGameController
     {
+#nullable enable
+        public int CurrentLevelNumber => _PassedLevels;
+        public string? CurrentLevelName => null;
         public float MaxCompleteTime => _timeOnCurrentLevel;
         public float RemainingTime => _TimeLeft;
-        public int CurrentLevelNumber => _PassedLevels;
         public float WarningTime => _warningLeftTime;
         public float LastWarningTime => _lastWarningLeftTime;
-#nullable enable
-        public string? CurrentLevelName => null;
+
         public event Action? CurrentLevelChanged;
         public event Action<float>? MaxCompleteTimeChanged;
         public event Action<float>? RemainingTimeChanged;
         public event Action<float>? WarningTimeChanged;
         public event Action<float>? LastWarningTimeChanged;
-        private void OnMaxCompleteTimeChanged()
-        {
-            MaxCompleteTimeChanged?.Invoke(MaxCompleteTime);
-        }
-        private void OnRemainingTimeChanged()
-        {
-            RemainingTimeChanged?.Invoke(RemainingTime);
-        }
-        private void OnCurrentLevelChanged()
-        {
-            CurrentLevelChanged?.Invoke();
-        }
-        private void OnWarningTimeChanged()
-        {
-            WarningTimeChanged?.Invoke(_warningLeftTime);
-        }
-        private void OnLastWarningTimeChanged()
-        {
-            LastWarningTimeChanged?.Invoke(_lastWarningLeftTime);
-        }
-
 #nullable restore
-
-        IGameFlow _gameFlow;
-        IInputActionService _inputActionService;
-        IManagedStateMachine<GameState> _managedStateMachine;
 
         [Inject]
         public void Initialize(IGameFlow gameFlow, IInputActionService inputActionService, IManagedStateMachine<GameState> managedStateMachine)
@@ -57,87 +33,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _inputActionService = inputActionService;
             _managedStateMachine = managedStateMachine;
         }
-
-        [SerializeField]
-        private PlayerController _playerController;
-        [SerializeField]
-        private int _gameLevelsCount = 13;
-        [SerializeField]
-        private float _aiPlayerModeMaxSpeed = 50;
-        [SerializeField]
-        float _levelTimeFactor = 5f;
-        float _timeOnCurrentLevel;
-        [SerializeField, Range(0, 1)]
-        float _lastWarningLeftTime = 0.1f;
-        [SerializeField, Range(0, 1)]
-        float _warningLeftTime = 0.3f;
-        [SerializeField]
-        LoadLevelManager _loadLevelManager;
-
-        private float _timeLeft;
-        private float _TimeLeft
-        {
-            get => _timeLeft;
-            set
-            {
-                if (_timeLeft != value)
-                {
-                    if (MathF.Round(value, 1) != MathF.Round(_timeLeft, 1))
-                    {
-                        _timeLeft = value;
-                        OnRemainingTimeChanged();
-                    }
-                    else
-                    {
-                        _timeLeft = value;
-                    }
-                }
-            }
-        }
-
-        private int _passedLevels = 0;
-        private int _PassedLevels
-        {
-            get => _passedLevels;
-            set
-            {
-                if (value == 0 || _passedLevels != value)
-                {
-                    _passedLevels = value;
-                }
-            }
-        }
-        private float _humanPlayerModePlayerSpeed = 0;
-
-        public void Awake()
-        {
-            _managedStateMachine.Start();
-            _inputActionService.AutoPlayCheat += OnAutoPlayCheat;
-            _inputActionService.Pause += OnPaused;
-            _inputActionService.Back += OnResumed;
-        }
-        bool _autoPlayCheatEnabled = false;
-        private void OnAutoPlayCheat()
-        {
-            _autoPlayCheatEnabled = !_autoPlayCheatEnabled;
-        }
-        private void OnPaused()
-        {
-            _gameFlow.PauseLevel();
-        }
-        private void OnResumed()
-        {
-            _gameFlow.PlayLevel();
-        }
-
-        void ResetToDefaults()
-        {
-            UpdateAiPlayingMode(false);
-            _TimeLeft = 0;
-            _PassedLevels = 1;
-            OnCurrentLevelChanged();
-        }
-
         public void OnGameStart()
         {
             ResetToDefaults();
@@ -151,7 +46,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             Application.Quit();
 #endif
         }
-        bool _isLevelWasPaused = false;
         public void OnLevelLoad()
         {
             _isLevelWasPaused = false;
@@ -211,6 +105,89 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
             _inputActionService.Disable();
         }
+
+        [SerializeField]
+        private PlayerController _playerController;
+        [SerializeField]
+        private LoadLevelManager _loadLevelManager;
+        [SerializeField]
+        private int _gameLevelsCount = 13;
+        [SerializeField]
+        private float _aiPlayerModeMaxSpeed = 50;
+        [SerializeField]
+        private float _levelTimeFactor = 5f;
+        [SerializeField, Range(0, 1)]
+        private float _warningLeftTime = 0.3f;
+        [SerializeField, Range(0, 1)]
+        private float _lastWarningLeftTime = 0.1f;
+
+        private IGameFlow _gameFlow;
+        private IInputActionService _inputActionService;
+        private IManagedStateMachine<GameState> _managedStateMachine;
+
+        private float _timeOnCurrentLevel;
+        private bool _isLevelWasPaused = false;
+        private bool _autoPlayCheatEnabled = false;
+        private float _humanPlayerModePlayerSpeed = 0;
+
+        private float _timeLeft;
+        private float _TimeLeft
+        {
+            get => _timeLeft;
+            set
+            {
+                if (_timeLeft != value)
+                {
+                    if (MathF.Round(value, 1) != MathF.Round(_timeLeft, 1))
+                    {
+                        _timeLeft = value;
+                        OnRemainingTimeChanged();
+                    }
+                    else
+                    {
+                        _timeLeft = value;
+                    }
+                }
+            }
+        }
+        private int _passedLevels = 0;
+        private int _PassedLevels
+        {
+            get => _passedLevels;
+            set
+            {
+                if (value == 0 || _passedLevels != value)
+                {
+                    _passedLevels = value;
+                }
+            }
+        }
+
+        private void Awake()
+        {
+            _managedStateMachine.Start();
+            _inputActionService.AutoPlayCheat += OnAutoPlayCheat;
+            _inputActionService.Pause += OnPaused;
+            _inputActionService.Back += OnResumed;
+        }
+        private void Update()
+        {
+            if (_gameFlow.State == GameState.LevelPlay)
+            {
+                UpdateAiPlayingMode(_autoPlayCheatEnabled);
+                UpdateLeftLevelTime();
+            }
+        }
+        private void OnValidate()
+        {
+            if (_warningLeftTime < _lastWarningLeftTime)
+            {
+                _warningLeftTime = _lastWarningLeftTime;
+            }
+            OnWarningTimeChanged();
+            OnLastWarningTimeChanged();
+        }
+
         private void UpdateAiPlayingMode(bool turnOn = true)
         {
             if (_playerController.UseAiNavigation != turnOn)
@@ -243,22 +220,45 @@ namespace KarenKrill.TheLabyrinth.GameFlow
                 _gameFlow.LooseGame();
             }
         }
-        public void Update()
+        private void ResetToDefaults()
         {
-            if (_gameFlow.State == GameState.LevelPlay)
-            {
-                UpdateAiPlayingMode(_autoPlayCheatEnabled);
-                UpdateLeftLevelTime();
-            }
+            UpdateAiPlayingMode(false);
+            _TimeLeft = 0;
+            _PassedLevels = 1;
+            OnCurrentLevelChanged();
         }
-        private void OnValidate()
+
+        private void OnAutoPlayCheat()
         {
-            if (_warningLeftTime < _lastWarningLeftTime)
-            {
-                _warningLeftTime = _lastWarningLeftTime;
-            }
-            OnWarningTimeChanged();
-            OnLastWarningTimeChanged();
+            _autoPlayCheatEnabled = !_autoPlayCheatEnabled;
+        }
+        private void OnPaused()
+        {
+            _gameFlow.PauseLevel();
+        }
+        private void OnResumed()
+        {
+            _gameFlow.PlayLevel();
+        }
+        private void OnMaxCompleteTimeChanged()
+        {
+            MaxCompleteTimeChanged?.Invoke(MaxCompleteTime);
+        }
+        private void OnRemainingTimeChanged()
+        {
+            RemainingTimeChanged?.Invoke(RemainingTime);
+        }
+        private void OnCurrentLevelChanged()
+        {
+            CurrentLevelChanged?.Invoke();
+        }
+        private void OnWarningTimeChanged()
+        {
+            WarningTimeChanged?.Invoke(_warningLeftTime);
+        }
+        private void OnLastWarningTimeChanged()
+        {
+            LastWarningTimeChanged?.Invoke(_lastWarningLeftTime);
         }
     }
 }

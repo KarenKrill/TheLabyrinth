@@ -18,14 +18,12 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _mainMenuPresenter = mainMenuPresenter;
             _viewFactory = viewFactory;
         }
-
         public void Enter()
         {
             _logger.Log($"{nameof(MainMenuState)}.{nameof(Enter)}()");
             _mainMenuPresenter.View ??= _viewFactory.Create<IMainMenuView>();
             _mainMenuPresenter.Enable();
         }
-
         public void Exit()
         {
             _logger.Log($"{nameof(MainMenuState)}.{nameof(Exit)}()");

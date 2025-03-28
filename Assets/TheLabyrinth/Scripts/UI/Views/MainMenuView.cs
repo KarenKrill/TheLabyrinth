@@ -9,20 +9,19 @@ namespace KarenKrill.TheLabyrinth.UI.Views
 
     public class MainMenuView : ViewBehaviour, IMainMenuView
     {
+#nullable enable
+        public event Action? NewGame;
+        public event Action? Settings;
+        public event Action? Exit;
+#nullable restore
+
         [SerializeField]
         private Button _newGameButton;
         [SerializeField]
         private Button _settingsButton;
         [SerializeField]
         private Button _exitButton;
-#nullable enable
-        public event Action? NewGame;
-        public event Action? Settings;
-        public event Action? Exit;
-        private void OnNewGameButtonClicked() => NewGame?.Invoke();
-        private void OnSettingsButtonClicked() => Settings?.Invoke();
-        private void OnExitButtonClicked() => Exit?.Invoke();
-#nullable restore
+
         private void OnEnable()
         {
             _newGameButton.onClick.AddListener(OnNewGameButtonClicked);
@@ -35,5 +34,9 @@ namespace KarenKrill.TheLabyrinth.UI.Views
             _settingsButton.onClick.RemoveListener(OnSettingsButtonClicked);
             _exitButton.onClick.RemoveListener(OnExitButtonClicked);
         }
+
+        private void OnNewGameButtonClicked() => NewGame?.Invoke();
+        private void OnSettingsButtonClicked() => Settings?.Invoke();
+        private void OnExitButtonClicked() => Exit?.Invoke();
     }
 }

@@ -9,7 +9,6 @@ namespace KarenKrill.Common.Logging
         {
             Debug.LogException(exception, context);
         }
-
         public void LogFormat(LogType logType, UnityEngine.Object context, string format, params object[] args)
         {
             Debug.LogFormat(logType, LogOption.None, context, format, args);

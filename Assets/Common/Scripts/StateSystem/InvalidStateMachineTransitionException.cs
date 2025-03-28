@@ -6,6 +6,7 @@ namespace KarenKrill.Common.StateSystem
     {
         public T FromState { get; }
         public T ToState { get; }
+
         public InvalidStateMachineTransitionException(T fromState, T toState) :
             base(string.Format("Invalid state transition {0} -> {1}", fromState, toState))
         {

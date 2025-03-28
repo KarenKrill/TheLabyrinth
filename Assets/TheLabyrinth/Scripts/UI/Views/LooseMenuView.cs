@@ -9,16 +9,16 @@ namespace KarenKrill.TheLabyrinth.UI.Views
 
     public class LooseMenuView : ViewBehaviour, ILooseMenuView
     {
+#nullable enable
+        public event Action? Restart;
+        public event Action? Exit;
+#nullable restore
+
         [SerializeField]
         private Button _restartButton;
         [SerializeField]
         private Button _exitButton;
-#nullable enable
-        public event Action? Restart;
-        public event Action? Exit;
-        private void OnRestartButtonClicked() => Restart?.Invoke();
-        private void OnExitButtonClicked() => Exit?.Invoke();
-#nullable restore
+
         private void OnEnable()
         {
             _restartButton.onClick.AddListener(OnRestartButtonClicked);
@@ -29,5 +29,8 @@ namespace KarenKrill.TheLabyrinth.UI.Views
             _restartButton.onClick.RemoveListener(OnRestartButtonClicked);
             _exitButton.onClick.RemoveListener(OnExitButtonClicked);
         }
+
+        private void OnRestartButtonClicked() => Restart?.Invoke();
+        private void OnExitButtonClicked() => Exit?.Invoke();
     }
 }

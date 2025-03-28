@@ -9,6 +9,13 @@ namespace KarenKrill.TheLabyrinth.UI.Views
 
     public class PauseMenuView : ViewBehaviour, IPauseMenuView
     {
+#nullable enable
+        public event Action? Resume;
+        public event Action? Restart;
+        public event Action? Settings;
+        public event Action? Exit;
+#nullable restore
+
         [SerializeField]
         private Button _resumeButton;
         [SerializeField]
@@ -16,17 +23,8 @@ namespace KarenKrill.TheLabyrinth.UI.Views
         [SerializeField]
         private Button _settingsButton;
         [SerializeField]
-        Button _exitButton;
-#nullable enable
-        public event Action? Resume;
-        public event Action? Restart;
-        public event Action? Settings;
-        public event Action? Exit;
-        private void OnResumeButtonClicked() => Resume?.Invoke();
-        private void OnRestartButtonClicked() => Restart?.Invoke();
-        private void OnSettingsButtonClicked() => Settings?.Invoke();
-        private void OnExitButtonClicked() => Exit?.Invoke();
-#nullable restore
+        private Button _exitButton;
+
         private void OnEnable()
         {
             _resumeButton.onClick.AddListener(OnResumeButtonClicked);
@@ -41,5 +39,10 @@ namespace KarenKrill.TheLabyrinth.UI.Views
             _settingsButton.onClick.RemoveListener(OnSettingsButtonClicked);
             _exitButton.onClick.RemoveListener(OnExitButtonClicked);
         }
+
+        private void OnResumeButtonClicked() => Resume?.Invoke();
+        private void OnRestartButtonClicked() => Restart?.Invoke();
+        private void OnSettingsButtonClicked() => Settings?.Invoke();
+        private void OnExitButtonClicked() => Exit?.Invoke();
     }
 }

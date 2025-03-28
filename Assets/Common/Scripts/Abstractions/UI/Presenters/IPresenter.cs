@@ -7,6 +7,7 @@
         void Enable();
         void Disable();
     }
+
     public interface IPresenter<T> : IPresenter where T : IView
     {
         /// <summary>

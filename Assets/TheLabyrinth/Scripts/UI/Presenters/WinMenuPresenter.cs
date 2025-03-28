@@ -7,13 +7,7 @@
     public class WinMenuPresenter : IPresenter<IWinMenuView>
     {
         public IWinMenuView View { get; set; }
-        readonly IGameFlow _gameFlow;
-        void OnRestart()
-        {
-            Disable();
-            _gameFlow.StartGame();
-        }
-        void OnExit() => _gameFlow.EndGame();
+
         public WinMenuPresenter(IGameFlow gameFlow)
         {
             _gameFlow = gameFlow;
@@ -30,5 +24,10 @@
             View.Restart -= OnRestart;
             View.Exit -= OnExit;
         }
+
+        private readonly IGameFlow _gameFlow;
+
+        private void OnRestart() => _gameFlow.StartGame();
+        private void OnExit() => _gameFlow.EndGame();
     }
 }

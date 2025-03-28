@@ -16,7 +16,6 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _levelManager = levelManager;
             _gameController = gameController;
         }
-
         public void Enter()
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
@@ -24,12 +23,11 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _gameFlow.LoadLevel();
             _gameController.OnGameStart();
         }
-
         public void Exit() { _logger.Log($"{GetType().Name}.{nameof(Exit)}()"); }
 
         private readonly ILogger _logger;
-        IGameFlow _gameFlow;
-        ILevelManager _levelManager;
-        IGameController _gameController;
+        private readonly IGameFlow _gameFlow;
+        private readonly ILevelManager _levelManager;
+        private readonly IGameController _gameController;
     }
 }

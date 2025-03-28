@@ -8,9 +8,8 @@ namespace KarenKrill.TheLabyrinth.Input
 
     public class InputActionService : IInputActionService, PlayerControls.IInGameActions, PlayerControls.IUIActions
     {
-        private PlayerControls _playerControls;
-
         public Vector2 LastMoveDelta { get; private set; }
+
 #nullable enable
         public event MoveDelegate? Move;
         public event Action? Run;
@@ -21,6 +20,18 @@ namespace KarenKrill.TheLabyrinth.Input
         public event Action? Pause;
         public event Action? AutoPlayCheat;
         public event Action? Back;
+#nullable restore
+
+        public InputActionService(ILogger logger)
+        {
+            _logger = logger;
+            if (_playerControls == null)
+            {
+                _playerControls = new();
+                _playerControls.InGame.SetCallbacks(this);
+                _playerControls.UI.SetCallbacks(this);
+            }
+        }
         public void SetActionMap(ActionMap actionMap)
         {
             switch (actionMap)
@@ -42,19 +53,6 @@ namespace KarenKrill.TheLabyrinth.Input
         {
             _playerControls.InGame.Disable();
             _playerControls.UI.Disable();
-        }
-
-#nullable restore
-        ILogger _logger;
-        public InputActionService(ILogger logger)
-        {
-            _logger = logger;
-            if (_playerControls == null)
-            {
-                _playerControls = new();
-                _playerControls.InGame.SetCallbacks(this);
-                _playerControls.UI.SetCallbacks(this);
-            }
         }
 
         #region InGame Actions
@@ -85,7 +83,6 @@ namespace KarenKrill.TheLabyrinth.Input
                 MoveCancel?.Invoke();
             }
         }
-
         public void OnRun(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -97,7 +94,6 @@ namespace KarenKrill.TheLabyrinth.Input
                 RunCancel?.Invoke();
             }
         }
-
         public void OnPause(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -105,7 +101,6 @@ namespace KarenKrill.TheLabyrinth.Input
                 Pause?.Invoke();
             }
         }
-
         public void OnAutoPlayCheat(InputAction.CallbackContext context)
         {
             if (context.performed)
@@ -127,5 +122,8 @@ namespace KarenKrill.TheLabyrinth.Input
         }
 
         #endregion
+
+        private readonly ILogger _logger;
+        private readonly PlayerControls _playerControls;
     }
 }

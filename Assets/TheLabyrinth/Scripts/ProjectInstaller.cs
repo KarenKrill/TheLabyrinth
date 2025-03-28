@@ -18,8 +18,51 @@ namespace KarenKrill.TheLabyrinth
 
     public class ProjectInstaller : MonoInstaller
     {
+        public override void InstallBindings()
+        {
+            Container.Bind<IInputActionService>().To<InputActionService>().FromNew().AsSingle().NonLazy();
+#if DEBUG
+            Container.Bind<ILogger>().To<Logger>().FromNew().AsSingle().WithArguments(new DebugLogHandler());
+#else
+            Container.Bind<ILogger>().To<StubLogger>().FromNew().AsSingle();
+#endif
+            InstallGameStateMachine();
+            Container.BindInterfacesAndSelfTo<ViewFactory>().AsSingle().WithArguments(_uiPrefabs);
+            Container.BindInterfacesAndSelfTo<LoadLevelManager>().FromMethod(context =>
+            {
+                return GameObject.FindFirstObjectByType<LoadLevelManager>(FindObjectsInactive.Exclude);
+            }).AsSingle();
+            Container.BindInterfacesAndSelfTo<GameplayController>().FromMethod(context =>
+            {
+                return GameObject.FindFirstObjectByType<GameplayController>(FindObjectsInactive.Exclude);
+            }).AsSingle();
+            Container.Bind<IGameFlow>().To<GameFlow.GameFlow>().FromNew().AsSingle();
+            InstallPresenterBindings();
+        }
+
         [SerializeField]
         List<GameObject> _uiPrefabs;
+
+        private static List<Type> GetImplementationTypes(Type interfaceType, Type[] excludeTypes)
+        {
+            List<Type> implementationTypes = new();
+            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
+            foreach (var assembly in assemblies)
+            {
+                if (assembly.FullName.StartsWith(nameof(KarenKrill)))
+                {
+                    var assemblyTypes = assembly.GetTypes();
+                    foreach (var type in assemblyTypes)
+                    {
+                        if (interfaceType.IsAssignableFrom(type) && !excludeTypes.Contains(type))
+                        {
+                            implementationTypes.Add(type);
+                        }
+                    }
+                }
+            }
+            return implementationTypes;
+        }
         private void InstallGameStateMachine()
         {
             Dictionary<GameState, IList<GameState>> validTransitions = new()
@@ -55,26 +98,6 @@ namespace KarenKrill.TheLabyrinth
             }
             Container.BindInterfacesTo<ManagedStateMachine<GameState>>().AsSingle();
         }
-        List<Type> GetImplementationTypes(Type interfaceType, Type[] excludeTypes)
-        {
-            List<Type> implementationTypes = new();
-            var assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (var assembly in assemblies)
-            {
-                if (assembly.FullName.StartsWith(nameof(KarenKrill)))
-                {
-                    var assemblyTypes = assembly.GetTypes();
-                    foreach (var type in assemblyTypes)
-                    {
-                        if (interfaceType.IsAssignableFrom(type) && !excludeTypes.Contains(type))
-                        {
-                            implementationTypes.Add(type);
-                        }
-                    }
-                }
-            }
-            return implementationTypes;
-        }
         private void InstallPresenterBindings()
         {
             var presenterTypes = GetImplementationTypes(typeof(IPresenter), new Type[] { typeof(IPresenter), typeof(IPresenter<>) });
@@ -82,27 +105,6 @@ namespace KarenKrill.TheLabyrinth
             {
                 Container.BindInterfacesTo(presenterType).FromNew().AsSingle();
             }
-        }
-        public override void InstallBindings()
-        {
-            Container.Bind<IInputActionService>().To<InputActionService>().FromNew().AsSingle().NonLazy();
-#if DEBUG
-            Container.Bind<ILogger>().To<Logger>().FromNew().AsSingle().WithArguments(new DebugLogHandler());
-#else
-            Container.Bind<ILogger>().To<StubLogger>().FromNew().AsSingle();
-#endif
-            InstallGameStateMachine();
-            Container.BindInterfacesAndSelfTo<ViewFactory>().AsSingle().WithArguments(_uiPrefabs);
-            Container.BindInterfacesAndSelfTo<LoadLevelManager>().FromMethod(context =>
-            {
-                return GameObject.FindFirstObjectByType<LoadLevelManager>(FindObjectsInactive.Exclude);
-            }).AsSingle();
-            Container.BindInterfacesAndSelfTo<GameplayController>().FromMethod(context =>
-            {
-                return GameObject.FindFirstObjectByType<GameplayController>(FindObjectsInactive.Exclude);
-            }).AsSingle();
-            Container.Bind<IGameFlow>().To<GameFlow.GameFlow>().FromNew().AsSingle();
-            InstallPresenterBindings();
         }
     }
 }

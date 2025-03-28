@@ -7,7 +7,6 @@ namespace KarenKrill.Common.UI.Views
 
     public class ViewFactory : IViewFactory
     {
-        List<GameObject> _viewPrefabs = new();
         public ViewFactory(List<GameObject> viewPrefabs)
         {
             _viewPrefabs = viewPrefabs;
@@ -27,5 +26,7 @@ namespace KarenKrill.Common.UI.Views
             }
             throw new System.InvalidOperationException($"There is no prefab for \"{typeof(ViewType).Name}\" view");
         }
+
+        private readonly List<GameObject> _viewPrefabs = new();
     }
 }

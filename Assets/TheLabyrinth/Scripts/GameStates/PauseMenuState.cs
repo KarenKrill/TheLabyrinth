@@ -24,7 +24,6 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _pauseMenuPresenter = pauseMenuPresenter;
             _gameController = gameController;
         }
-
         public void Enter()
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
@@ -32,7 +31,6 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _pauseMenuPresenter.Enable();
             _gameController.OnLevelPause();
         }
-
         public void Exit()
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
@@ -40,9 +38,9 @@ namespace KarenKrill.TheLabyrinth.GameStates
         }
 
         private readonly ILogger _logger;
-        IGameFlow _gameFlow;
-        IViewFactory _viewFactory;
-        IPresenter<IPauseMenuView> _pauseMenuPresenter;
-        IGameController _gameController;
+        private readonly IGameFlow _gameFlow;
+        private readonly IViewFactory _viewFactory;
+        private readonly IPresenter<IPauseMenuView> _pauseMenuPresenter;
+        private readonly IGameController _gameController;
     }
 }

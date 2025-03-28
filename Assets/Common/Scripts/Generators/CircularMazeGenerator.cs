@@ -11,13 +11,13 @@ namespace KarenKrill.Common.Generators.MazeGeneration
 
     public class CircularMazeCell
     {
-        private List<bool> _frontWalls;
         public IReadOnlyList<bool> FrontWalls => _frontWalls;
         public bool LeftWall { get; private set; } = true;
         public bool RightWall { get; private set; } = true;
         public bool BackWall { get; private set; } = true;
         public int Level { get; private set; }
         public int Cell { get; private set; }
+
         public CircularMazeCell(int level, int cell, int frontWallsCount)
         {
             Level = level;
@@ -32,26 +32,30 @@ namespace KarenKrill.Common.Generators.MazeGeneration
         public void BreakLeftWall() => LeftWall = false;
         public void BreakRightWall() => RightWall = false;
         public void BreakBackWall() => BackWall = false;
+
+        private readonly List<bool> _frontWalls;
     }
+
     public class CircularMaze
     {
         public CircularMazeCell[][] Cells { get; set; }
         public CircularMazeCell ExitCell { get; set; }
+
         public CircularMaze(CircularMazeCell[][] cells, CircularMazeCell exitCell)
         {
             Cells = cells;
             ExitCell = exitCell;
         }
     }
+
     public class CircularMazeGenerator
     {
-        ILogger _logger;
+        public static int CellsOnLevel(int level) => level == 0 ? 1 : (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(level + 1, 2)) + 2);
+
         public CircularMazeGenerator(ILogger logger)
         {
             _logger = logger;
         }
-
-        public static int CellsOnLevel(int level) => level == 0 ? 1 : (int)Mathf.Pow(2, Mathf.Floor(Mathf.Log(level + 1, 2)) + 2);
         public CircularMaze Generate(int levels)
         {
             // Caching
@@ -209,5 +213,7 @@ namespace KarenKrill.Common.Generators.MazeGeneration
 
             return new(cells, uniquePath[^1]);
         }
+
+        private readonly ILogger _logger;
     }
 }

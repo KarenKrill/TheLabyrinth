@@ -12,17 +12,8 @@ namespace KarenKrill.TheLabyrinth.MazeGeneration
 
     public class MazeCell : MonoBehaviour
     {
-        [SerializeField]
-        private GameObject _leftWall;
-        [SerializeField]
-        private GameObject _rightWall;
-        [SerializeField]
-        private GameObject _backWall;
-        [SerializeField]
-        private GameObject _frontWall;
-        [SerializeField]
-        private GameObject _fillWall;
         public bool IsVisited { get; private set; }
+
         public void Visit()
         {
             _fillWall.SetActive(false);
@@ -46,5 +37,16 @@ namespace KarenKrill.TheLabyrinth.MazeGeneration
                     break;
             }
         }
+
+        [SerializeField]
+        private GameObject _leftWall;
+        [SerializeField]
+        private GameObject _rightWall;
+        [SerializeField]
+        private GameObject _backWall;
+        [SerializeField]
+        private GameObject _frontWall;
+        [SerializeField]
+        private GameObject _fillWall;
     }
 }

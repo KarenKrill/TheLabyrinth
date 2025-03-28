@@ -12,13 +12,36 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
     public class LevelInfoPresenter : IPresenter<IILevelInfoView>
     {
         public IILevelInfoView View { get; set; }
-        private ITimeLimitedLevelController _levelController;
-        private IGameController _gameController;
+
         public LevelInfoPresenter(ITimeLimitedLevelController levelController, IGameController gameController)
         {
             _levelController = levelController;
             _gameController = gameController;
         }
+        public void Enable()
+        {
+            _levelController.RemainingTimeChanged += OnRemainingTimeChanged;
+            _levelController.MaxCompleteTimeChanged += OnMaxCompleteTimeChanged;
+            _levelController.WarningTimeChanged += OnWarningTimeChanged;
+            _levelController.LastWarningTimeChanged += OnWarningTimeChanged;
+            _gameController.CurrentLevelChanged += OnCurrentLevelChanged;
+            OnMaxCompleteTimeChanged(_levelController.MaxCompleteTime);
+            OnCurrentLevelChanged();
+            View.Show();
+        }
+        public void Disable()
+        {
+            View.Close();
+            _levelController.RemainingTimeChanged -= OnRemainingTimeChanged;
+            _levelController.MaxCompleteTimeChanged -= OnMaxCompleteTimeChanged;
+            _levelController.WarningTimeChanged -= OnWarningTimeChanged;
+            _levelController.LastWarningTimeChanged -= OnWarningTimeChanged;
+            _gameController.CurrentLevelChanged -= OnCurrentLevelChanged;
+        }
+
+        private readonly ITimeLimitedLevelController _levelController;
+        private readonly IGameController _gameController;
+
         private void UpdateRemainingTimeTextColor()
         {
             float relativeRemainingTime = _levelController.RemainingTime / _levelController.MaxCompleteTime;
@@ -57,26 +80,6 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
             {
                 View.Title = _gameController.CurrentLevelName;
             }
-        }
-        public void Enable()
-        {
-            _levelController.RemainingTimeChanged += OnRemainingTimeChanged;
-            _levelController.MaxCompleteTimeChanged += OnMaxCompleteTimeChanged;
-            _levelController.WarningTimeChanged += OnWarningTimeChanged;
-            _levelController.LastWarningTimeChanged += OnWarningTimeChanged;
-            _gameController.CurrentLevelChanged += OnCurrentLevelChanged;
-            OnMaxCompleteTimeChanged(_levelController.MaxCompleteTime);
-            OnCurrentLevelChanged();
-            View.Show();
-        }
-        public void Disable()
-        {
-            View.Close();
-            _levelController.RemainingTimeChanged -= OnRemainingTimeChanged;
-            _levelController.MaxCompleteTimeChanged -= OnMaxCompleteTimeChanged;
-            _levelController.WarningTimeChanged -= OnWarningTimeChanged;
-            _levelController.LastWarningTimeChanged -= OnWarningTimeChanged;
-            _gameController.CurrentLevelChanged -= OnCurrentLevelChanged;
         }
     }
 }

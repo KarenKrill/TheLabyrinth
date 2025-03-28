@@ -10,24 +10,26 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
     public class LoadLevelManager : MonoBehaviour, ILevelManager
     {
-        [Inject]
-        ILogger _logger;
-
-        [SerializeField]
-        private PlayerController _playerController;
-        [SerializeReference]
-        private ArcMazeBuilder _mazeBuilder;
-        [SerializeField]
-        private Transform _exitPointTransform;
-        [SerializeField]
-        private int _mazeMinLevelsCount = 4;
-        [SerializeField]
-        private int _mazeMaxLevelsCount = 13;
-        private int _mazeLevelsCount = 0;
-
         public int TotalMazeCellsCount => _mazeBuilder.TotalCellsCount;
 
-        void ResetToDefaults()
+#nullable enable
+        public event Action? LevelLoaded;
+#nullable restore
+
+        [Inject]
+        public void Initialize(ILogger logger)
+        {
+            _logger = logger;
+        }
+
+        public void Reset()
+        {
+            ResetToDefaults();
+        }
+        public void OnLevelLoad() => StartCoroutine(LoadLevelCoroutine());
+        public void OnLevelEnd() => StartCoroutine(FinishLevelCoroutine());
+
+        private void ResetToDefaults()
         {
             _mazeLevelsCount = _mazeMinLevelsCount;
             _mazeBuilder.Levels = _mazeLevelsCount;
@@ -59,15 +61,18 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _mazeBuilder.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? ++_mazeLevelsCount : _mazeMaxLevelsCount;
         }
 
-#nullable enable
+        [SerializeField]
+        private PlayerController _playerController;
+        [SerializeReference]
+        private ArcMazeBuilder _mazeBuilder;
+        [SerializeField]
+        private Transform _exitPointTransform;
+        [SerializeField]
+        private int _mazeMinLevelsCount = 4;
+        [SerializeField]
+        private int _mazeMaxLevelsCount = 13;
 
-        public event Action? LevelLoaded;
-
-        public void Reset()
-        {
-            ResetToDefaults();
-        }
-        public void OnLevelLoad() => StartCoroutine(LoadLevelCoroutine());
-        public void OnLevelEnd() => StartCoroutine(FinishLevelCoroutine());
+        private ILogger _logger;
+        private int _mazeLevelsCount = 0;
     }
 }

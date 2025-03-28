@@ -13,7 +13,22 @@ namespace KarenKrill.TheLabyrinth.MazeGeneration
         private int _mazeWidth, _mazeDepth;
         [SerializeField, Min(1f)]
         private float _buildSpeed = 10f;
+
         private MazeCell[,] _mazeCells;
+
+        private IEnumerator Start()
+        {
+            _mazeCells = new MazeCell[_mazeWidth, _mazeDepth];
+            for (int x = 0; x < _mazeWidth; x++)
+            {
+                for (int z = 0; z < _mazeDepth; z++)
+                {
+                    _mazeCells[x, z] = Instantiate(_mazeCellPrefab, new Vector3(x, 0, z), Quaternion.identity, transform);
+                }
+            }
+            yield return GenerateMaze(null, _mazeCells[0, 0]);
+        }
+
         private IEnumerable<MazeCell> GetUnvisitedCells(MazeCell cell)
         {
             var x = (int)cell.transform.position.x;
@@ -99,18 +114,6 @@ namespace KarenKrill.TheLabyrinth.MazeGeneration
             }
             while (nextCell != null);
             yield return new WaitForSeconds(1 / _buildSpeed);
-        }
-        private IEnumerator Start()
-        {
-            _mazeCells = new MazeCell[_mazeWidth, _mazeDepth];
-            for (int x = 0; x < _mazeWidth; x++)
-            {
-                for (int z = 0; z < _mazeDepth; z++)
-                {
-                    _mazeCells[x, z] = Instantiate(_mazeCellPrefab, new Vector3(x, 0, z), Quaternion.identity, transform);
-                }
-            }
-            yield return GenerateMaze(null, _mazeCells[0, 0]);
         }
     }
 }

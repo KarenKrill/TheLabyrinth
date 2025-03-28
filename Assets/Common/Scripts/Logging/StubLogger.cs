@@ -8,6 +8,7 @@ namespace KarenKrill.Common.Logging
         public ILogHandler logHandler { get; set; }
         public bool logEnabled { get; set; }
         public LogType filterLogType { get; set; }
+
         public bool IsLogTypeAllowed(LogType logType) => false;
         public void Log(LogType logType, object message) { }
         public void Log(LogType logType, object message, UnityEngine.Object context) { }
