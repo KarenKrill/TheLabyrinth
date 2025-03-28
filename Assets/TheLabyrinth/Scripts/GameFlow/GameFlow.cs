@@ -25,7 +25,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         public event Action PlayerLoose;
         public event Action LevelPlay;
 
-        private void OnStateEnter(IStateMachine<GameState> stateMachine, GameState state)
         private void OnStateEnter(GameState state)
         {
             _logger.Log($"{nameof(GameFlow)} Entered to {state} state");
