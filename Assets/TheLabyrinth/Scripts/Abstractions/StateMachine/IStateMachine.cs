@@ -1,24 +1,19 @@
-﻿using System;
-using System.Collections.Generic;
+﻿#nullable enable
+
+using System;
 
 namespace KarenKrill.TheLabyrinth.StateMachine.Abstractions
 {
-    public delegate void StateTransitionDelegate<T>(IStateMachine<T> stateMachine, T state) where T : Enum;
+    public delegate void StateTransitionDelegate<T>(T state) where T : Enum;
+
     public interface IStateMachine<T> where T : Enum
     {
         T State { get; }
+        IStateSwitcher<T> StateSwitcher { get; }
 
-        public event StateTransitionDelegate<T> StateEnter;
 
-        public event StateTransitionDelegate<T> StateExit;
+        public event StateTransitionDelegate<T>? StateEnter;
 
-        IEnumerable<T> ValidStateTransitions(T state);
-
-        bool IsCanTransitTo(T state);
-
-        /// <exception cref="InvalidStateMachineTransitionException"></exception>
-        void TransitTo(T state);
-
-        bool TryTransitTo(T state);
+        public event StateTransitionDelegate<T>? StateExit;
     }
 }

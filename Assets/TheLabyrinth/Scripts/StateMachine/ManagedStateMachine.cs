@@ -10,10 +10,9 @@ namespace KarenKrill.TheLabyrinth.StateMachine
     {
         public IStateMachine<T> StateMachine { get; }
 
-        public ManagedStateMachine(IStateMachine<T> stateMachine, IEnumerable<IStateHandler<T>> stateHandlers, T initialState)
+        public ManagedStateMachine(IStateMachine<T> stateMachine, IEnumerable<IStateHandler<T>> stateHandlers)
         {
             StateMachine = stateMachine;
-            _initialState = initialState;
             _stateHandlers = stateHandlers.ToDictionary(stateHandler => stateHandler.State, stateHandler => stateHandler);
         }
 
@@ -31,21 +30,19 @@ namespace KarenKrill.TheLabyrinth.StateMachine
         {
             StateMachine.StateEnter += OnStateEnter;
             StateMachine.StateExit += OnStateExit;
-            StateMachine.TransitTo(_initialState);
+            StateMachine.StateSwitcher.TransitToInitial();
         }
 
-        private void OnStateEnter(IStateMachine<T> stateMachine, T state)
+        private Dictionary<T, IStateHandler<T>> _stateHandlers;
+
+        private void OnStateEnter(T state)
         {
             _stateHandlers[state].Enter();
         }
 
-        private void OnStateExit(IStateMachine<T> stateMachine, T state)
+        private void OnStateExit(T state)
         {
             _stateHandlers[state].Exit();
         }
-
-        private T _initialState;
-
-        private Dictionary<T, IStateHandler<T>> _stateHandlers;
     }
 }

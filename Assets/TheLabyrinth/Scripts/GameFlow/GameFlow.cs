@@ -14,6 +14,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         [Inject]
         IStateMachine<GameState> _stateMachine;
         public GameState State => _stateMachine.State;
+        IStateSwitcher<GameState> _stateSwitcher => _stateMachine.StateSwitcher;
         public event Action LevelFinish;
         public event Action GameStart;
         public event Action LevelPause;
@@ -25,6 +26,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         public event Action LevelPlay;
 
         private void OnStateEnter(IStateMachine<GameState> stateMachine, GameState state)
+        private void OnStateEnter(GameState state)
         {
             _logger.Log($"{nameof(GameFlow)} Entered to {state} state");
             switch (state)
@@ -61,19 +63,19 @@ namespace KarenKrill.TheLabyrinth.GameFlow
                     break;
             }
         }
-        private void OnStateExit(IStateMachine<GameState> stateMachine, GameState state)
+        private void OnStateExit(GameState state)
         {
             //throw new NotImplementedException();
         }
-        public void FinishLevel() => _stateMachine.TransitTo(GameState.LevelFinish);
-        public void LoadMainMenu() => _stateMachine.TransitTo(GameState.MainMenu);
-        public void LoadLevel() => _stateMachine.TransitTo(GameState.LevelLoad);
-        public void PauseLevel() => _stateMachine.TransitTo(GameState.PauseMenu);
-        public void StartGame() => _stateMachine.TransitTo(GameState.GameStart);
-        public void EndGame() => _stateMachine.TransitTo(GameState.GameEnd);
-        public void WinGame() => _stateMachine.TransitTo(GameState.WinMenu);
-        public void LooseGame() => _stateMachine.TransitTo(GameState.LooseMenu);
-        public void PlayLevel() => _stateMachine.TransitTo(GameState.LevelPlay);
+        public void FinishLevel() => _stateSwitcher.TransitTo(GameState.LevelFinish);
+        public void LoadMainMenu() => _stateSwitcher.TransitTo(GameState.MainMenu);
+        public void LoadLevel() => _stateSwitcher.TransitTo(GameState.LevelLoad);
+        public void PauseLevel() => _stateSwitcher.TransitTo(GameState.PauseMenu);
+        public void StartGame() => _stateSwitcher.TransitTo(GameState.GameStart);
+        public void EndGame() => _stateSwitcher.TransitTo(GameState.GameEnd);
+        public void WinGame() => _stateSwitcher.TransitTo(GameState.WinMenu);
+        public void LooseGame() => _stateSwitcher.TransitTo(GameState.LooseMenu);
+        public void PlayLevel() => _stateSwitcher.TransitTo(GameState.LevelPlay);
         [Inject]
         private void Initialize()
         {
@@ -87,6 +89,5 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _stateMachine.StateExit -= OnStateExit;
             _logger.Log($"GameFlow.Dispose()");
         }
-
     }
 }

@@ -8,6 +8,7 @@ namespace KarenKrill.TheLabyrinth.StateMachine.Abstractions
         /// Processable state
         /// </summary>
         public StateEnumType State { get; }
+
         void Enter();
         void Exit();
     }
