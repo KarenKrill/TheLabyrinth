@@ -147,12 +147,12 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             OnCurrentLevelChanged();
         }
 
-        private void OnGameStart()
+        public void OnGameStart()
         {
             ResetToDefaults();
             _inputActionService.Disable();
         }
-        private void OnGameEnd()
+        public void OnGameEnd()
         {
 #if UNITY_EDITOR
             UnityEditor.EditorApplication.isPlaying = false;
@@ -161,12 +161,12 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 #endif
         }
         bool _isLevelWasPaused = false;
-        private void OnLevelLoad()
+        public void OnLevelLoad()
         {
             _isLevelWasPaused = false;
             _inputActionService.Disable();
         }
-        private void OnLevelPlay()
+        public void OnLevelPlay()
         {
             if (_isLevelWasPaused)
             {
@@ -185,7 +185,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _inputActionService.SetActionMap(ActionMap.InGame);
             //Time.timeScale = 1;
         }
-        private void OnLevelPause()
+        public void OnLevelPause()
         {
             _isLevelWasPaused = true;
             _playerController.LockMovement();
@@ -193,7 +193,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _inputActionService.SetActionMap(ActionMap.UI);
             //Time.timeScale = 0;
         }
-        private void OnLevelFinish()
+        public void OnLevelFinish()
         {
             if (_PassedLevels < _gameLevelsCount)
             {
@@ -206,14 +206,14 @@ namespace KarenKrill.TheLabyrinth.GameFlow
                 _gameFlow.WinGame();
             }
         }
-        private void OnPlayerLoose()
+        public void OnPlayerLoose()
         {
             UpdateAiPlayingMode();
             //Time.timeScale = 0;
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
             _inputActionService.Disable();
         }
-        private void OnPlayerWin()
+        public void OnPlayerWin()
         {
             UpdateAiPlayingMode();
             //Time.timeScale = 0;
