@@ -1,11 +1,12 @@
-﻿namespace KarenKrill.TheLabyrinth.GameStates
+﻿using UnityEngine;
+
+namespace KarenKrill.TheLabyrinth.GameStates
 {
     using Common.StateSystem.Abstractions;
+    using Common.UI.Presenters.Abstractions;
+    using Common.UI.Views.Abstractions;
     using GameFlow.Abstractions;
-    using KarenKrill.Common.UI.Presenters.Abstractions;
-    using KarenKrill.Common.UI.Views.Abstractions;
-    using KarenKrill.TheLabyrinth.UI.Views.Abstractions;
-    using UnityEngine;
+    using UI.Views.Abstractions;
 
     public class WinMenuState : IStateHandler<GameState>
     {

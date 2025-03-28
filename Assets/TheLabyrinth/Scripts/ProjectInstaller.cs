@@ -7,12 +7,12 @@ using Zenject;
 namespace KarenKrill.TheLabyrinth
 {
     using Common.Logging;
-    using Common.UI.Presenters.Abstractions;
-    using Common.UI.Views;
     using Common.StateSystem.Abstractions;
+    using Common.UI.Presenters.Abstractions;
+    using Common.StateSystem;
+    using Common.UI.Views;
     using GameFlow.Abstractions;
     using Input.Abstractions;
-    using Common.StateSystem;
     using GameFlow;
     using Input;
 

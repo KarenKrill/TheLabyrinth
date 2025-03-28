@@ -1,8 +1,9 @@
-﻿namespace KarenKrill.TheLabyrinth.GameStates
+﻿using UnityEngine;
+
+namespace KarenKrill.TheLabyrinth.GameStates
 {
     using Common.StateSystem.Abstractions;
     using GameFlow.Abstractions;
-    using UnityEngine;
 
     public class LevelFinishState : IStateHandler<GameState>
     {

@@ -1,9 +1,10 @@
-﻿namespace KarenKrill.TheLabyrinth.GameStates
+﻿using UnityEngine;
+
+namespace KarenKrill.TheLabyrinth.GameStates
 {
     using Common.StateSystem.Abstractions;
     using GameFlow.Abstractions;
-    using UnityEngine;
-
+    
     public class GameStartState : IStateHandler<GameState>
     {
         public GameState State => GameState.GameStart;

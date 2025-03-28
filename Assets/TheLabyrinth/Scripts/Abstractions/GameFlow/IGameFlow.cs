@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace KarenKrill.TheLabyrinth.GameFlow.Abstractions
+﻿namespace KarenKrill.TheLabyrinth.GameFlow.Abstractions
 {
     public enum GameState
     {
