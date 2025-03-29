@@ -10,11 +10,11 @@ namespace KarenKrill.TheLabyrinth
     using Common.UI.Presenters.Abstractions;
     using Common.StateSystem;
     using Common.UI.Views;
+    using Common.Utilities;
     using GameFlow.Abstractions;
     using Input.Abstractions;
     using GameFlow;
     using Input;
-    using KarenKrill.Common.Utilities;
 
     public class ProjectInstaller : MonoInstaller
     {
