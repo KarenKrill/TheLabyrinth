@@ -8,7 +8,18 @@ namespace KarenKrill.TheLabyrinth
     using Common.Logging;
     using Input.Abstractions;
 
-    public class PlayerController : MonoBehaviour
+    /// <summary>
+    /// Controls player movement (with CharacterController):
+    /// <list type="bullet">
+    /// <item>Controls player ai move (with NavMeshAgent)</item>
+    /// <item>Controls manual move</item>
+    /// <item>Controls player animation move</item>
+    /// <item>Controls player run</item>
+    /// <item>Controls player sloping</item>
+    /// <item>Controls player jumping</item>
+    /// </list>
+    /// </summary>
+    public class CharacterMoveController : MonoBehaviour
     {
         public float MaximumSpeed { get => _maximumSpeed; set => _maximumSpeed = value; }
         public bool IsGrounded => _characterController.isGrounded;
@@ -21,13 +32,13 @@ namespace KarenKrill.TheLabyrinth
             _logger = logger;
             _inputActionService = inputActionService;
         }
-        public IEnumerator Move(Vector3 dest)
+        public IEnumerator ForcedMove(Vector3 dest)
         {
-            _IsMoveLocked = true;
+            _IsForcedMoveActive = true;
             yield return new WaitForSeconds(0.1f);
             _characterController.transform.position = dest;
             yield return new WaitForSeconds(0.1f);
-            _IsMoveLocked = false;
+            _IsForcedMoveActive = false;
         }
         public void LockMovement(bool xAxis = true, bool yAxis = true, bool zAxis = true)
         {
@@ -55,6 +66,8 @@ namespace KarenKrill.TheLabyrinth
         [SerializeField]
         private float _jumpButtonGracePeriod = 0.2f;
         [SerializeField]
+        private float _slidingDecelerationFactor = 3f;
+        [SerializeField]
         private bool _useRootMotion = false;
         [Header("AI Navigation")]
         [SerializeField]
@@ -66,9 +79,10 @@ namespace KarenKrill.TheLabyrinth
         [SerializeField]
         private Transform _aiDestination;
 
-        private bool _IsMoveLocked
+        private bool _isForcedMoveActive = false;
+        private bool _IsForcedMoveActive
         {
-            get => _isMoveLocked;
+            get => _isForcedMoveActive;
             set
             {
                 if (value)
@@ -78,14 +92,17 @@ namespace KarenKrill.TheLabyrinth
                 else
                 {
                 }
-                _isMoveLocked = value;
+                _isForcedMoveActive = value;
             }
         }
+        private bool _IsRealyGrounded => (_characterController.isGrounded && _characterController.transform.position.y <= 2);
+        private bool _IsAiMovementAvailable => _IsRealyGrounded; // NavMeshAgent can move only if agents placed on navmesh (i.e. is grounded)
+        private bool _IsAiMovementActive => _useAiNavigation && _IsAiMovementAvailable;
+
 
         private ILogger _logger;
         private IInputActionService _inputActionService;
         private bool _xAxisLocked = false, _yAxisLocked = false, _zAxisLocked = false;
-        private bool _isMoveLocked = false;
         private bool _isJumping = false, _isSliding = false, _isGrounded = false;
         private bool _isRunModeEnabled = false;
         private bool _isJumpPressed = false;
@@ -94,40 +111,41 @@ namespace KarenKrill.TheLabyrinth
         private float _characterControllerStepOffset;
         private float? _lastGroundedTime, _jumpButtonPressedTime;
 
-        private void Awake()
+        private void OnEnable()
         {
             _inputActionService.Run += OnRun;
             _inputActionService.RunCancel += OnRunCancel;
             _inputActionService.Jump += OnJump;
             _inputActionService.JumpCancel += OnJumpCancel;
         }
+        private void OnDisable()
+        {
+            _inputActionService.Run -= OnRun;
+            _inputActionService.RunCancel -= OnRunCancel;
+            _inputActionService.Jump -= OnJump;
+            _inputActionService.JumpCancel -= OnJumpCancel;
+        }
+        private void Awake()
+        {
+            _characterControllerStepOffset = _characterController.stepOffset;
+        }
         private void Update()
         {
-            if (!_IsMoveLocked)
+            if (!_IsForcedMoveActive)
             {
-                if (_useAiNavigation && (_characterController.isGrounded && _characterController.transform.position.y <= 2))
+                if (_IsAiMovementActive)
                 {
-                    if (_playerNavAgent.destination != _aiDestination.position && !(_xAxisLocked && _yAxisLocked && _zAxisLocked))
-                    {
-                        var dest = _aiDestination.position;
-                        var prevDest = _playerNavAgent.destination;
-                        var newDest = new Vector3(_xAxisLocked ? prevDest.x : dest.x, _yAxisLocked ? prevDest.y : dest.y, _zAxisLocked ? prevDest.z : dest.z);
-                        _playerNavAgent.enabled = true;
-                        _playerNavAgent.destination = newDest;
-                        _playerNavAgent.acceleration = Random.Range(_aiMinSpeed, _maximumSpeed);
-                        _playerNavAgent.speed = Random.Range(_aiMinSpeed, _maximumSpeed);
-                    }
+                    UpdateAiMovement();
                 }
                 else
                 {
-                    _playerNavAgent.enabled = false;
                     UpdateMovement();
                 }
             }
         }
         private void OnAnimatorMove()
         {
-            if (_useRootMotion && _isGrounded && !_isSliding && _animator != null)
+            if (_useRootMotion && _animator != null && _isGrounded && !_isSliding)
             {
                 Vector3 velocity = _animator.deltaPosition;
                 velocity.y = _fallSpeed * Time.deltaTime;
@@ -143,92 +161,85 @@ namespace KarenKrill.TheLabyrinth
                 if (slopeAngle >= _characterController.slopeLimit)
                 {
                     _slopeSlideVelocity = Vector3.ProjectOnPlane(new Vector3(0, _fallSpeed, 0), hitInfo.normal);
+                    _isSliding = true;
                     return;
                 }
             }
             if (_isSliding)
             {
-                _slopeSlideVelocity -= _slopeSlideVelocity * Time.deltaTime * 3;
+                _slopeSlideVelocity -= _slidingDecelerationFactor * Time.deltaTime * _slopeSlideVelocity;
                 if (_slopeSlideVelocity.magnitude > 1)
                 {
                     return;
                 }
             }
             _slopeSlideVelocity = Vector3.zero;
+            _isSliding = false;
         }
         private void UpdateMovement()
         {
-            _isGrounded = _characterController.isGrounded;
-            bool isFalling = !_isGrounded;
-            var moveDelta = _inputActionService.LastMoveDelta;
-            Vector3 direction = new(_xAxisLocked ? 0 : moveDelta.x, 0, _zAxisLocked ? 0 : moveDelta.y);
-            var quat = Quaternion.AngleAxis(Camera.main.transform.rotation.eulerAngles.y, Vector3.up);
-            direction = quat * direction;
-            float inputMagnitude = (_isRunModeEnabled) ? 1 : 0.5f;
-            // Only if InputAction mode is not DigitalNormalized
-            //inputMagnitude = Mathf.Clamp(direction.magnitude, 0, inputMagnitude);
-            //direction.Normalize();
+            _playerNavAgent.enabled = false;
+
             float gravity = Physics.gravity.y * _gravityMultiplier;
-            if (_isJumping && _fallSpeed > 0 && !_isJumpPressed) // если короткое нажатие
+            if (_isJumping && !_isJumpPressed && _fallSpeed > 0) // если короткое нажатие
             {
                 gravity *= 2; // ускоряем прыжок
             }
             _fallSpeed += gravity * Time.deltaTime;
-            UpdateSlopeSlideVelocity();
-            if (_slopeSlideVelocity == Vector3.zero)
-            {
-                _isSliding = false;
-            }
 
+            UpdateSlopeSlideVelocity();
+
+            _isGrounded = _characterController.isGrounded;
             if (_isGrounded)
             {
                 _lastGroundedTime = Time.time;
             }
-            else
+
+            // Check on falling
+            bool isFalling = !_isGrounded;
+            if (Time.time - _lastGroundedTime <= _jumpButtonGracePeriod) // grounded recently
             {
-                _characterControllerStepOffset = _characterController.stepOffset;
-                _characterController.stepOffset = 0;
-            }
-            if (Time.time - _lastGroundedTime <= _jumpButtonGracePeriod)
-            {
-                if (_slopeSlideVelocity != Vector3.zero)
-                {
-                    _isSliding = true;
-                }
                 _characterController.stepOffset = _characterControllerStepOffset;
-                if (!_isSliding)
-                {
-                    _fallSpeed = -0.5f;
-                }
                 _isGrounded = true;
                 isFalling = false;
                 _isJumping = false;
-                if (Time.time - _jumpButtonPressedTime <= _jumpButtonGracePeriod && !_isSliding)
+                if (!_isSliding)
                 {
-                    _isJumping = true;
-                    _fallSpeed = Mathf.Sqrt(_jumpHeight * -3 * gravity);
-                    _jumpButtonPressedTime = null;
-                    _lastGroundedTime = null;
+                    if (Time.time - _jumpButtonPressedTime <= _jumpButtonGracePeriod) // jump pressed recently
+                    {
+                        _isJumping = true;
+                        _jumpButtonPressedTime = null;
+                        _lastGroundedTime = null;
+                        _fallSpeed = Mathf.Sqrt(_jumpHeight * -3 * gravity);
+                    }
+                    else
+                    {
+                        _fallSpeed = -0.5f; // to prevent isGrounded false positives
+                    }
                 }
             }
             else
             {
-                _isGrounded = false;
+                _characterController.stepOffset = 0; // fix stuck in the wall while jumping
                 if ((_isJumping && _fallSpeed < 0) || _fallSpeed < -2)
                 {
                     isFalling = true;
                 }
             }
+
+            // Direction & DirectionInputMagnitude usings
+            var cameraRelativeQuaternion = Quaternion.AngleAxis(Camera.main.transform.rotation.eulerAngles.y, Vector3.up);
+            var moveDelta = _inputActionService.LastMoveDelta;
+            var direction = cameraRelativeQuaternion * new Vector3(_xAxisLocked ? 0 : moveDelta.x, 0, _zAxisLocked ? 0 : moveDelta.y);
+            var directionMagnitudeMax = _isRunModeEnabled ? 1 : 0.5f;
+            if (direction.magnitude > 1)
+            {
+                direction.Normalize();
+            }
+            var directionMagnitude = Mathf.Clamp(direction.magnitude, 0, directionMagnitudeMax);
             if (!_useRootMotion)
             {
-                float speed = inputMagnitude * _maximumSpeed;
-                Vector3 velocity = speed * direction;
-                velocity.y = _fallSpeed;
-                _characterController.Move(velocity * Time.deltaTime);
-            }
-            if (!_isGrounded && !_isSliding)
-            {
-                float speed = inputMagnitude * _jumpHorizontalSpeed;
+                float speed = directionMagnitude * _maximumSpeed;
                 Vector3 velocity = speed * direction;
                 velocity.y = _fallSpeed;
                 _characterController.Move(velocity * Time.deltaTime);
@@ -239,6 +250,15 @@ namespace KarenKrill.TheLabyrinth
                 velocity.y = _fallSpeed;
                 _characterController.Move(velocity * Time.deltaTime);
             }
+            else if (!_isGrounded) // jumping
+            {
+                float speed = directionMagnitude * _jumpHorizontalSpeed;
+                Vector3 velocity = speed * direction;
+                velocity.y = _fallSpeed;
+                _characterController.Move(velocity * Time.deltaTime);
+            }
+
+            // Direction usings
             bool isMoving = direction != Vector3.zero;
             if (isMoving)
             {
@@ -248,11 +268,24 @@ namespace KarenKrill.TheLabyrinth
 
             if (_animator != null)
             {
-                _animator.SetFloat("Input Magnitude", inputMagnitude, 0.5f, Time.deltaTime);
+                _animator.SetFloat("Input Magnitude", directionMagnitude, 0.5f, Time.deltaTime);
                 _animator.SetBool("IsGrounded", _isGrounded);
                 _animator.SetBool("IsJumping", _isJumping);
                 _animator.SetBool("IsFalling", isFalling);
                 _animator.SetBool("IsMoving", isMoving);
+            }
+        }
+        private void UpdateAiMovement()
+        {
+            if (_playerNavAgent.destination != _aiDestination.position && !(_xAxisLocked && _yAxisLocked && _zAxisLocked))
+            {
+                var dest = _aiDestination.position;
+                var prevDest = _playerNavAgent.destination;
+                var newDest = new Vector3(_xAxisLocked ? prevDest.x : dest.x, _yAxisLocked ? prevDest.y : dest.y, _zAxisLocked ? prevDest.z : dest.z);
+                _playerNavAgent.enabled = true;
+                _playerNavAgent.destination = newDest;
+                _playerNavAgent.acceleration = Random.Range(_aiMinSpeed, _maximumSpeed);
+                _playerNavAgent.speed = Random.Range(_aiMinSpeed, _maximumSpeed);
             }
         }
         private void OnRun()

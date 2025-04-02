@@ -107,7 +107,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         }
 
         [SerializeField]
-        private PlayerController _playerController;
+        private CharacterMoveController _playerController;
         [SerializeField]
         private LoadLevelManager _loadLevelManager;
         [SerializeField]

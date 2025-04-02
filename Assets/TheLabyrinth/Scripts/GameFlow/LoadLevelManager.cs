@@ -42,7 +42,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             yield return _mazeBuilder.RebuildCoroutine();
             var playerSpawnPoint = _mazeBuilder.GetCellCenter(_mazeBuilder.Levels - 1, 0);
             _playerController.LockMovement(xAxis: true, yAxis: false, zAxis: true);
-            yield return _playerController.Move(new Vector3(playerSpawnPoint.x, 100, playerSpawnPoint.y));
+            yield return _playerController.ForcedMove(new Vector3(playerSpawnPoint.x, 100, playerSpawnPoint.y));
             if (_exitPointTransform != null)
             {
                 var exitCellCenter = _mazeBuilder.GetCellCenter(0, 0);
@@ -57,12 +57,12 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         {
             //Time.timeScale = 0;
             _playerController.LockMovement();
-            yield return _playerController.Move(new Vector3(0, 1, 60));
+            yield return _playerController.ForcedMove(new Vector3(0, 1, 60));
             _mazeBuilder.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? ++_mazeLevelsCount : _mazeMaxLevelsCount;
         }
 
         [SerializeField]
-        private PlayerController _playerController;
+        private CharacterMoveController _playerController;
         [SerializeReference]
         private ArcMazeBuilder _mazeBuilder;
         [SerializeField]
