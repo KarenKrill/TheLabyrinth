@@ -14,6 +14,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
 #nullable enable
         public event Action? LevelLoaded;
+        public event Action? LevelUnloaded;
 #nullable restore
 
         [Inject]
@@ -59,6 +60,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _playerController.LockMovement();
             yield return _playerController.ForcedMove(new Vector3(0, 1, 60));
             _mazeBuilder.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? ++_mazeLevelsCount : _mazeMaxLevelsCount;
+            LevelUnloaded?.Invoke();
         }
 
         [SerializeField]

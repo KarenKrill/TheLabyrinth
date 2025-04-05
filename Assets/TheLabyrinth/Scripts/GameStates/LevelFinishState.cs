@@ -19,17 +19,23 @@ namespace KarenKrill.TheLabyrinth.GameStates
         public void Enter()
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
+            _levelManager.LevelUnloaded += OnLevelUnloaded;
             _levelManager.OnLevelEnd();
-            _gameController.OnLevelFinish();
         }
         public void Exit()
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
+            _levelManager.LevelUnloaded -= OnLevelUnloaded;
         }
 
         private readonly ILogger _logger;
         private readonly IGameFlow _gameFlow;
         private readonly ILevelManager _levelManager;
         private readonly IGameController _gameController;
+
+        private void OnLevelUnloaded()
+        {
+            _gameController.OnLevelFinish();
+        }
     }
 }
