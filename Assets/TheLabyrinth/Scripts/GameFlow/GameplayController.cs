@@ -61,7 +61,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             {
                 _timeOnCurrentLevel = Mathf.Round(_levelTimeFactor * Mathf.Sqrt(_loadLevelManager.TotalMazeCellsCount) / 5) * 5;
                 OnMaxCompleteTimeChanged();
-                if (_PassedLevels < _gameLevelsCount) // game not ended
+                if (_PassedLevels <= _gameLevelsCount) // game not ended
                 {
                     _TimeLeft = _timeOnCurrentLevel;
                 }
