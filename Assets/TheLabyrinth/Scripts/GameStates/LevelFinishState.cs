@@ -9,15 +9,17 @@ namespace KarenKrill.TheLabyrinth.GameStates
     {
         public GameState State => GameState.LevelFinish;
 
-        public LevelFinishState(ILogger logger, IGameFlow gameFlow, IGameController gameController)
+        public LevelFinishState(ILogger logger, IGameFlow gameFlow, ILevelManager levelManager, IGameController gameController)
         {
             _logger = logger;
             _gameFlow = gameFlow;
+            _levelManager = levelManager;
             _gameController = gameController;
         }
         public void Enter()
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
+            _levelManager.OnLevelEnd();
             _gameController.OnLevelFinish();
         }
         public void Exit()
@@ -27,6 +29,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
 
         private readonly ILogger _logger;
         private readonly IGameFlow _gameFlow;
+        private readonly ILevelManager _levelManager;
         private readonly IGameController _gameController;
     }
 }
