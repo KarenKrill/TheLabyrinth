@@ -407,6 +407,50 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d144ad9f205368438eb00f265383350, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &19104587
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 19104588}
+  - component: {fileID: 19104589}
+  m_Layer: 0
+  m_Name: PlayerMoveController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &19104588
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19104587}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 996450251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &19104589
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 19104587}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 8c7c0fe6907f2484fa524092143557aa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &107664033
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,6 +753,56 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac0b09e7857660247b1477e93731de29, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &641361182
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 641361183}
+  - component: {fileID: 641361184}
+  m_Layer: 0
+  m_Name: AiMoveController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &641361183
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 641361182}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 996450251}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &641361184
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 641361182}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf31b9e7b63205b4799ba2fd2ab71996, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _usePhysics: 0
+  _maximumSpeed: 500
+  _minimumSpeed: 5
+  _navAgent: {fileID: 1911650157}
+  _destination: {fileID: 1542953278}
+  _showPath: 1
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1090,6 +1184,8 @@ Transform:
   - {fileID: 1539480199}
   - {fileID: 1083239798}
   - {fileID: 2073521853}
+  - {fileID: 641361183}
+  - {fileID: 19104588}
   - {fileID: 120555839}
   - {fileID: 2105699661}
   m_Father: {fileID: 0}
@@ -1141,7 +1237,6 @@ MonoBehaviour:
   _playerController: {fileID: 2073521855}
   _loadLevelManager: {fileID: 1539480200}
   _gameLevelsCount: 5
-  _aiPlayerModeMaxSpeed: 500
   _levelTimeFactor: 4
   _warningLeftTime: 0.3
   _lastWarningLeftTime: 0.1
@@ -2010,7 +2105,7 @@ GameObject:
   - component: {fileID: 2073521853}
   - component: {fileID: 2073521855}
   m_Layer: 0
-  m_Name: PlayerController
+  m_Name: InputMoveController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2038,11 +2133,12 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2073521852}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 549c1250ea1b8a94ea86c7569b7127fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _usePhysics: 0
   _characterController: {fileID: 1911650152}
   _animator: {fileID: 0}
   _maximumSpeed: 50
@@ -2051,11 +2147,8 @@ MonoBehaviour:
   _jumpHorizontalSpeed: 3
   _gravityMultiplier: 3
   _jumpButtonGracePeriod: 0.1
+  _slidingDecelerationFactor: 3
   _useRootMotion: 0
-  _useAiNavigation: 0
-  _aiMinSpeed: 5
-  _playerNavAgent: {fileID: 1911650157}
-  _aiDestination: {fileID: 1542953278}
 --- !u!1 &2105699660
 GameObject:
   m_ObjectHideFlags: 0
