@@ -24,8 +24,6 @@ namespace KarenKrill.TheLabyrinth.Movement
     {
         public float MaximumSpeed { get => _maximumSpeed; set => _maximumSpeed = value; }
         public bool IsGrounded => _characterController.isGrounded;
-        public bool UseAiNavigation { get => _useAiNavigation; set => _useAiNavigation = value; }
-        public float AiMinSpeed { get => _aiMinSpeed; set => _aiMinSpeed = value; }
 
         [Inject]
         public void Initialize(ILogger logger, IInputActionService inputActionService)
@@ -35,11 +33,13 @@ namespace KarenKrill.TheLabyrinth.Movement
         }
         public IEnumerator ForcedMove(Vector3 dest)
         {
+            _logger.LogWarning($"ForceMoveStart from {_characterController.transform.position} to {dest}");
             _IsForcedMoveActive = true;
             yield return new WaitForSeconds(0.1f);
             _characterController.transform.position = dest;
             yield return new WaitForSeconds(0.1f);
             _IsForcedMoveActive = false;
+            _logger.LogWarning($"ForceMoveEnd to {_characterController.transform.position}");
         }
         public void LockMovement(bool xAxis = true, bool yAxis = true, bool zAxis = true)
         {
@@ -70,36 +70,13 @@ namespace KarenKrill.TheLabyrinth.Movement
         private float _slidingDecelerationFactor = 3f;
         [SerializeField]
         private bool _useRootMotion = false;
-        [Header("AI Navigation")]
-        [SerializeField]
-        private bool _useAiNavigation = true;
-        [SerializeField]
-        private float _aiMinSpeed = 5f;
-        [SerializeField]
-        private NavMeshAgent _playerNavAgent;
-        [SerializeField]
-        private Transform _aiDestination;
 
         private bool _isForcedMoveActive = false;
         private bool _IsForcedMoveActive
         {
             get => _isForcedMoveActive;
-            set
-            {
-                if (value)
-                {
-                    _playerNavAgent.enabled = false;
-                }
-                else
-                {
-                }
-                _isForcedMoveActive = value;
-            }
+            set => _isForcedMoveActive = value;
         }
-        private bool _IsRealyGrounded => (_characterController.isGrounded && _characterController.transform.position.y <= 2);
-        private bool _IsAiMovementAvailable => _IsRealyGrounded; // NavMeshAgent can move only if agents placed on navmesh (i.e. is grounded)
-        private bool _IsAiMovementActive => _useAiNavigation && _IsAiMovementAvailable;
-
 
         private ILogger _logger;
         private IInputActionService _inputActionService;
@@ -112,8 +89,14 @@ namespace KarenKrill.TheLabyrinth.Movement
         private float _characterControllerStepOffset;
         private float? _lastGroundedTime, _jumpButtonPressedTime;
 
+        private void Awake()
+        {
+            _characterControllerStepOffset = _characterController.stepOffset;
+            _characterController.enabled = false;
+        }
         private void OnEnable()
         {
+            _characterController.enabled = true;
             _inputActionService.Run += OnRun;
             _inputActionService.RunCancel += OnRunCancel;
             _inputActionService.Jump += OnJump;
@@ -125,23 +108,13 @@ namespace KarenKrill.TheLabyrinth.Movement
             _inputActionService.RunCancel -= OnRunCancel;
             _inputActionService.Jump -= OnJump;
             _inputActionService.JumpCancel -= OnJumpCancel;
-        }
-        private void Awake()
-        {
-            _characterControllerStepOffset = _characterController.stepOffset;
+            _characterController.enabled = false;
         }
         private void Update()
         {
             if (!_IsForcedMoveActive)
             {
-                if (_IsAiMovementActive)
-                {
-                    UpdateAiMovement();
-                }
-                else
-                {
-                    UpdateMovement();
-                }
+                UpdateMovement();
             }
         }
         private void OnAnimatorMove()
@@ -179,8 +152,6 @@ namespace KarenKrill.TheLabyrinth.Movement
         }
         private void UpdateMovement()
         {
-            _playerNavAgent.enabled = false;
-
             float gravity = Physics.gravity.y * _gravityMultiplier;
             if (_isJumping && !_isJumpPressed && _fallSpeed > 0) // если короткое нажатие
             {
@@ -274,19 +245,6 @@ namespace KarenKrill.TheLabyrinth.Movement
                 _animator.SetBool("IsJumping", _isJumping);
                 _animator.SetBool("IsFalling", isFalling);
                 _animator.SetBool("IsMoving", isMoving);
-            }
-        }
-        private void UpdateAiMovement()
-        {
-            if (_playerNavAgent.destination != _aiDestination.position && !(_xAxisLocked && _yAxisLocked && _zAxisLocked))
-            {
-                var dest = _aiDestination.position;
-                var prevDest = _playerNavAgent.destination;
-                var newDest = new Vector3(_xAxisLocked ? prevDest.x : dest.x, _yAxisLocked ? prevDest.y : dest.y, _zAxisLocked ? prevDest.z : dest.z);
-                _playerNavAgent.enabled = true;
-                _playerNavAgent.destination = newDest;
-                _playerNavAgent.acceleration = Random.Range(_aiMinSpeed, _maximumSpeed);
-                _playerNavAgent.speed = Random.Range(_aiMinSpeed, _maximumSpeed);
             }
         }
         private void OnRun()
