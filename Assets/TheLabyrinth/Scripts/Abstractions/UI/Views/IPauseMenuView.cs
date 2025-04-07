@@ -11,6 +11,7 @@ namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
         public event Action? Resume;
         public event Action? Settings;
         public event Action? Restart;
+        public event Action? MainMenuExit;
         public event Action? Exit;
     }
 }

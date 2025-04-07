@@ -9,6 +9,7 @@ namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
     public interface ILooseMenuView : IView
     {
         public event Action? Restart;
+        public event Action? MainMenuExit;
         public event Action? Exit;
     }
 }

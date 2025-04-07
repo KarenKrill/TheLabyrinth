@@ -20,6 +20,7 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
             View.Resume += OnResume;
             View.Restart += OnRestart;
             View.Settings += OnSettings;
+            View.MainMenuExit += OnMainMenuExit;
             View.Exit += OnExit;
             View.Show();
         }
@@ -29,6 +30,7 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
             View.Resume -= OnResume;
             View.Restart -= OnRestart;
             View.Settings -= OnSettings;
+            View.MainMenuExit -= OnMainMenuExit;
             View.Exit -= OnExit;
         }
 
@@ -41,6 +43,7 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
         {
             _logger.Log("Settings shown");
         }
+        private void OnMainMenuExit() => _gameFlow.LoadMainMenu();
         private void OnExit() => _gameFlow.EndGame();
     }
 }

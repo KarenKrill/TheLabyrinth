@@ -15,6 +15,7 @@
         public void Enable()
         {
             View.Restart += OnRestart;
+            View.MainMenuExit += OnMainMenuExit;
             View.Exit += OnExit;
             View.Show();
         }
@@ -22,12 +23,14 @@
         {
             View.Close();
             View.Restart -= OnRestart;
+            View.MainMenuExit -= OnMainMenuExit;
             View.Exit -= OnExit;
         }
 
         private readonly IGameFlow _gameFlow;
 
         private void OnRestart() => _gameFlow.StartGame();
+        private void OnMainMenuExit() => _gameFlow.LoadMainMenu();
         private void OnExit() => _gameFlow.EndGame();
     }
 }
