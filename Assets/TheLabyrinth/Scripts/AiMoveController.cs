@@ -48,7 +48,10 @@ namespace KarenKrill.TheLabyrinth.Movement
         {
             if (!_navAgent.IsNullOrDestroyed())
             {
-                _navAgent.isStopped = true;
+                if (_navAgent.isOnNavMesh)
+                {
+                    _navAgent.isStopped = true;
+                }
                 _navAgent.enabled = false;
             }
         }
