@@ -7,6 +7,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
     using MazeGeneration;
+    using Movement;
 
     public class LoadLevelManager : MonoBehaviour, ILevelManager
     {
