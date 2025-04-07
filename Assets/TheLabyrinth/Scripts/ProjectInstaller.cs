@@ -15,6 +15,7 @@ namespace KarenKrill.TheLabyrinth
     using Input.Abstractions;
     using GameFlow;
     using Input;
+    using Movement;
 
     public class ProjectInstaller : MonoInstaller
     {
@@ -35,6 +36,18 @@ namespace KarenKrill.TheLabyrinth
             Container.BindInterfacesAndSelfTo<GameplayController>().FromMethod(context =>
             {
                 return GameObject.FindFirstObjectByType<GameplayController>(FindObjectsInactive.Exclude);
+            }).AsSingle();
+            Container.BindInterfacesAndSelfTo<AiMoveController>().FromMethod(context =>
+            {
+                return GameObject.FindFirstObjectByType<AiMoveController>(FindObjectsInactive.Exclude);
+            }).AsSingle();
+            Container.BindInterfacesAndSelfTo<CharacterMoveController>().FromMethod(context =>
+            {
+                return GameObject.FindFirstObjectByType<CharacterMoveController>(FindObjectsInactive.Exclude);
+            }).AsSingle();
+            Container.BindInterfacesAndSelfTo<PlayerMoveController>().FromMethod(context =>
+            {
+                return GameObject.FindFirstObjectByType<PlayerMoveController>(FindObjectsInactive.Exclude);
             }).AsSingle();
             Container.Bind<IGameFlow>().To<GameFlow.GameFlow>().FromNew().AsSingle();
             InstallPresenterBindings();
