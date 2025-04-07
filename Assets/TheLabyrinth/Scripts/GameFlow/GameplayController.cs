@@ -8,6 +8,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
     using Common.StateSystem.Abstractions;
     using Common.GameLevel.Abstractions;
     using Input.Abstractions;
+    using Movement;
 
     public class GameplayController : MonoBehaviour, ITimeLimitedLevelController, IGameController
     {
@@ -74,7 +75,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         {
             _isLevelWasPaused = true;
             _playerController.LockMovement();
-            UpdateAiPlayingMode(false);
             _inputActionService.SetActionMap(ActionMap.UI);
             //Time.timeScale = 0;
         }
@@ -93,14 +93,12 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         }
         public void OnPlayerLoose()
         {
-            UpdateAiPlayingMode();
             //Time.timeScale = 0;
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
             _inputActionService.Disable();
         }
         public void OnPlayerWin()
         {
-            UpdateAiPlayingMode();
             //Time.timeScale = 0;
             _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
             _inputActionService.Disable();
@@ -112,8 +110,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private LoadLevelManager _loadLevelManager;
         [SerializeField]
         private int _gameLevelsCount = 13;
-        [SerializeField]
-        private float _aiPlayerModeMaxSpeed = 50;
         [SerializeField]
         private float _levelTimeFactor = 5f;
         [SerializeField, Range(0, 1)]
@@ -127,8 +123,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
         private float _timeOnCurrentLevel;
         private bool _isLevelWasPaused = false;
-        private bool _autoPlayCheatEnabled = false;
-        private float _humanPlayerModePlayerSpeed = 0;
 
         private float _timeLeft;
         private float _TimeLeft
@@ -166,7 +160,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private void Awake()
         {
             _managedStateMachine.Start();
-            _inputActionService.AutoPlayCheat += OnAutoPlayCheat;
             _inputActionService.Pause += OnPaused;
             _inputActionService.Back += OnResumed;
         }
@@ -174,7 +167,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         {
             if (_gameFlow.State == GameState.LevelPlay)
             {
-                UpdateAiPlayingMode(_autoPlayCheatEnabled);
                 UpdateLeftLevelTime();
             }
         }
@@ -188,30 +180,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             OnLastWarningTimeChanged();
         }
 
-        private void UpdateAiPlayingMode(bool turnOn = true)
-        {
-            if (_playerController.UseAiNavigation != turnOn)
-            {
-                _playerController.UseAiNavigation = turnOn;
-                if (turnOn)
-                {
-                    _humanPlayerModePlayerSpeed = _playerController.MaximumSpeed;
-                    _playerController.MaximumSpeed = _aiPlayerModeMaxSpeed;
-                    _playerController.AiMinSpeed = _aiPlayerModeMaxSpeed / 10;
-                }
-                else
-                {
-                    if (_humanPlayerModePlayerSpeed == 0) // first time
-                    {
-                        _humanPlayerModePlayerSpeed = _playerController.MaximumSpeed;
-                    }
-                    else
-                    {
-                        _playerController.MaximumSpeed = _humanPlayerModePlayerSpeed;
-                    }
-                }
-            }
-        }
         private void UpdateLeftLevelTime()
         {
             _TimeLeft = _TimeLeft > Time.deltaTime ? _TimeLeft - Time.deltaTime : 0;
@@ -222,15 +190,9 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         }
         private void ResetToDefaults()
         {
-            UpdateAiPlayingMode(false);
             _TimeLeft = 0;
             _PassedLevels = 1;
             OnCurrentLevelChanged();
-        }
-
-        private void OnAutoPlayCheat()
-        {
-            _autoPlayCheatEnabled = !_autoPlayCheatEnabled;
         }
         private void OnPaused()
         {
