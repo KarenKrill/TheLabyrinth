@@ -32,6 +32,10 @@ namespace KarenKrill.TheLabyrinth.Movement
         private NavMeshPath _activePath;
 #endif
 
+        private void Awake()
+        {
+            _navAgent.enabled = false;
+        }
         private void OnEnable()
         {
             if (_navAgent.isOnNavMesh)
