@@ -3,8 +3,9 @@ using UnityEngine;
 using UnityEngine.AI;
 using Zenject;
 
-namespace KarenKrill.TheLabyrinth
+namespace KarenKrill.TheLabyrinth.Movement
 {
+    using Abstractions;
     using Common.Logging;
     using Input.Abstractions;
 
@@ -19,7 +20,7 @@ namespace KarenKrill.TheLabyrinth
     /// <item>Controls player jumping</item>
     /// </list>
     /// </summary>
-    public class CharacterMoveController : MonoBehaviour
+    public class CharacterMoveController : OrdinaryMoveBehaviour, IPlayerInputMoveStrategy
     {
         public float MaximumSpeed { get => _maximumSpeed; set => _maximumSpeed = value; }
         public bool IsGrounded => _characterController.isGrounded;
