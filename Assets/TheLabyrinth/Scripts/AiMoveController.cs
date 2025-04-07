@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace KarenKrill.TheLabyrinth
+namespace KarenKrill.TheLabyrinth.Movement
 {
+    using Abstractions;
     using Common.Utilities;
 
     /// <summary>
@@ -11,7 +12,7 @@ namespace KarenKrill.TheLabyrinth
     /// <remarks>
     /// To start/stop <see cref="NavMeshAgent"/> moving use Enable/Disable
     /// </remarks>
-    public class AiMoveController : MonoBehaviour
+    public class AiMoveController : OrdinaryMoveBehaviour, IAiMoveStrategy
     {
         public float MaximumSpeed { get => _maximumSpeed; set => _maximumSpeed = value; }
         public float MinimumSpeed { get => _minimumSpeed; set => _minimumSpeed = value; }
