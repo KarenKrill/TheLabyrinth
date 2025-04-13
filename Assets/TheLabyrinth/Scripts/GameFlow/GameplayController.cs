@@ -67,14 +67,12 @@ namespace KarenKrill.TheLabyrinth.GameFlow
                     _TimeLeft = _timeOnCurrentLevel;
                 }
             }
-            _playerController.UnlockMovement();
             _inputActionService.SetActionMap(ActionMap.InGame);
             //Time.timeScale = 1;
         }
         public void OnLevelPause()
         {
             _isLevelWasPaused = true;
-            _playerController.LockMovement();
             _inputActionService.SetActionMap(ActionMap.UI);
             //Time.timeScale = 0;
         }
@@ -94,14 +92,12 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         public void OnPlayerLoose()
         {
             //Time.timeScale = 0;
-            _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
-            _inputActionService.Disable();
+            _inputActionService.SetActionMap(ActionMap.UI);// Disable();
         }
         public void OnPlayerWin()
         {
             //Time.timeScale = 0;
-            _playerController.LockMovement(xAxis: true, yAxis: true, zAxis: true);
-            _inputActionService.Disable();
+            _inputActionService.SetActionMap(ActionMap.UI); //_inputActionService.Disable();
         }
 
         [SerializeField]
