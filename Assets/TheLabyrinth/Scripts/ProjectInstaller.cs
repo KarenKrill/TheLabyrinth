@@ -45,6 +45,10 @@ namespace KarenKrill.TheLabyrinth
             {
                 return GameObject.FindFirstObjectByType<CharacterMoveController>(FindObjectsInactive.Exclude);
             }).AsSingle();
+            Container.BindInterfacesAndSelfTo<PhysicMoveBehaviour>().FromMethod(context =>
+            {
+                return GameObject.FindFirstObjectByType<PhysicMoveBehaviour>(FindObjectsInactive.Exclude);
+            }).AsSingle();
             Container.BindInterfacesAndSelfTo<ManualMoveController>().FromMethod(context =>
             {
                 return GameObject.FindFirstObjectByType<ManualMoveController>(FindObjectsInactive.Exclude);
