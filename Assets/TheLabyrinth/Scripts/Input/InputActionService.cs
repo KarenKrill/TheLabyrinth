@@ -53,6 +53,7 @@ namespace KarenKrill.TheLabyrinth.Input
         {
             _playerControls.InGame.Disable();
             _playerControls.UI.Disable();
+            _logger.Log($"{nameof(ActionMap)}s disabled");
         }
 
         #region InGame Actions
