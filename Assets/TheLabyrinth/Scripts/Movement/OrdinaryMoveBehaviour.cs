@@ -1,5 +1,4 @@
 ﻿using UnityEngine;
-using Zenject;
 
 namespace KarenKrill.TheLabyrinth.Movement
 {
@@ -20,14 +19,7 @@ namespace KarenKrill.TheLabyrinth.Movement
         public bool IsPulsedUp => _isPulsedUp;
 
         public bool EnableCharController { get => _characterController.enabled; set => _characterController.enabled = value; }
-
-        [Inject]
-        public void Initialize(ILogger logger)
-        {
-            _logger = logger;
-        }
-
-        public void Move(Vector3 direction) => _moveDirection = direction;
+        public Vector3 MoveDirection { get => _moveDirection; set => _moveDirection = value; }
 
         [SerializeField]
         private CharacterController _characterController;
@@ -46,7 +38,6 @@ namespace KarenKrill.TheLabyrinth.Movement
         [SerializeField]
         private bool _useRootMotion = false;
 
-        private ILogger _logger;
         private bool _isPulsedUp = false, _isSliding = false, _isGrounded = false;
         private bool _isGroundedRecently = false;
         private Vector3 _moveDirection = Vector3.zero;

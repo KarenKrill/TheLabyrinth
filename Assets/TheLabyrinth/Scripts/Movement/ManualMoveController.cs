@@ -1,10 +1,8 @@
 using UnityEngine;
-using Zenject;
 
 namespace KarenKrill.TheLabyrinth.Movement
 {
     using Abstractions;
-    using Common.Logging;
 
     public class ManualMoveController : MoveBehaviour, IManualMoveStrategy
     {
