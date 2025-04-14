@@ -48,6 +48,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private IEnumerator LoadLevelCoroutine()
         {
             _logger.Log($"{nameof(LoadLevelManager)}.{nameof(LoadLevelCoroutine)}");
+            var previousMoveStrategy = _playerMoveController.MoveStrategy;
             //Time.timeScale = 0;
             _playerMoveController.MoveStrategy = _manualMoveStrategy;
             yield return _mazeBuilder.RebuildCoroutine();
@@ -61,16 +62,18 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             }
             yield return null; // wait frame for CharacterController.IsGrounded
             yield return new WaitUntil(() => _playerController.IsGrounded);// wait until player isn't grounded
-            _playerMoveController.MoveStrategy = _playerInputMoveStrategy;
+            _playerMoveController.MoveStrategy = previousMoveStrategy;
             LevelLoaded?.Invoke();
         }
         private IEnumerator FinishLevelCoroutine()
         {
+            var previousMoveStrategy = _playerMoveController.MoveStrategy;
             //Time.timeScale = 0;
             _playerMoveController.MoveStrategy = _manualMoveStrategy;
             _manualMoveStrategy.Move(new Vector3(0, 1, 60));
             yield return null;
             _mazeBuilder.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? ++_mazeLevelsCount : _mazeMaxLevelsCount;
+            _playerMoveController.MoveStrategy = previousMoveStrategy;
             LevelUnloaded?.Invoke();
         }
 
