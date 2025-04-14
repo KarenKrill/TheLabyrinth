@@ -6,6 +6,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
     using Common.UI.Presenters.Abstractions;
     using Common.UI.Views.Abstractions;
     using GameFlow.Abstractions;
+    using Input.Abstractions;
     using Movement.Abstractions;
     using UI.Views.Abstractions;
 
@@ -19,6 +20,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             IViewFactory viewFactory,
             IPresenter<IILevelInfoView> levelInfoPresenter,
             IGameController gameController,
+            IInputActionService inputActionService,
             IPlayerMoveController playerMoveController,
             IPlayerInputMoveStrategy playerInputMoveStrategy)
         {
@@ -28,6 +30,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _viewFactory = viewFactory;
             _levelInfoPresenter = levelInfoPresenter;
             _gameController = gameController;
+            _inputActionService = inputActionService;
             _playerMoveController = playerMoveController;
             _playerInputMoveStrategy = playerInputMoveStrategy;
         }
@@ -40,6 +43,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _levelManager.OnLevelLoad();
             _levelInfoPresenter.View ??= _viewFactory.Create<IILevelInfoView>();
             _levelInfoPresenter.Enable();
+            _inputActionService.Disable();
             _gameController.OnLevelLoad();
         }
         public void Exit()
@@ -55,6 +59,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
         private readonly IViewFactory _viewFactory;
         private readonly IPresenter<IILevelInfoView> _levelInfoPresenter;
         private readonly IGameController _gameController;
+        private readonly IInputActionService _inputActionService;
         private readonly IPlayerMoveController _playerMoveController;
         private readonly IPlayerInputMoveStrategy _playerInputMoveStrategy;
         private IMoveStrategy _previousPlayerMoveStrategy;
