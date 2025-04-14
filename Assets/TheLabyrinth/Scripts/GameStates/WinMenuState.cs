@@ -6,6 +6,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
     using Common.UI.Presenters.Abstractions;
     using Common.UI.Views.Abstractions;
     using GameFlow.Abstractions;
+    using Movement.Abstractions;
     using UI.Views.Abstractions;
 
     public class WinMenuState : IStateHandler<GameState>
@@ -16,17 +17,20 @@ namespace KarenKrill.TheLabyrinth.GameStates
             IViewFactory viewFactory,
             IPresenter<IWinMenuView> winMenuPresenter,
             IPresenter<IILevelInfoView> levelInfoPresenter,
-            IGameController gameController)
+            IGameController gameController,
+            IPlayerMoveController playerMoveController)
         {
             _logger = logger;
             _viewFactory = viewFactory;
             _winMenuPresenter = winMenuPresenter;
             _levelInfoPresenter = levelInfoPresenter;
             _gameController = gameController;
+            _playerMoveController = playerMoveController;
         }
         public void Enter()
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
+            _playerMoveController.MoveStrategy = null;
             _winMenuPresenter.View ??= _viewFactory.Create<IWinMenuView>();
             _winMenuPresenter.Enable();
             if (_levelInfoPresenter.View is not null)
@@ -46,5 +50,6 @@ namespace KarenKrill.TheLabyrinth.GameStates
         private readonly IPresenter<IWinMenuView> _winMenuPresenter;
         private readonly IPresenter<IILevelInfoView> _levelInfoPresenter;
         private readonly IGameController _gameController;
+        private readonly IPlayerMoveController _playerMoveController;
     }
 }
