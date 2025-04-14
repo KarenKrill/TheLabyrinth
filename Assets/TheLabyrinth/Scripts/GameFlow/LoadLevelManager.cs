@@ -8,7 +8,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
     using Abstractions;
     using Movement.Abstractions;
     using MazeGeneration;
-    using Movement;
 
     public class LoadLevelManager : MonoBehaviour, ILevelManager
     {
@@ -23,14 +22,12 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         public void Initialize(ILogger logger,
             IPlayerMoveController playerMoveController,
             IManualMoveStrategy manualMoveStrategy,
-            IPhysicMoveStrategy physicMoveStrategy,
-            IPlayerInputMoveStrategy playerInputMoveStrategy)
+            IPhysicMoveStrategy physicMoveStrategy)
         {
             _logger = logger;
             _playerMoveController = playerMoveController;
             _manualMoveStrategy = manualMoveStrategy;
             _physicMoveStrategy = physicMoveStrategy;
-            _playerInputMoveStrategy = playerInputMoveStrategy;
         }
 
         public void Reset()
@@ -61,7 +58,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
                 _exitPointTransform.position = new Vector3(exitCellCenter.x, _exitPointTransform.position.y, exitCellCenter.y);
             }
             yield return null; // wait frame for CharacterController.IsGrounded
-            yield return new WaitUntil(() => _playerController.IsGrounded);// wait until player isn't grounded
+            yield return new WaitUntil(() => _physicMoveStrategy.IsGrounded);// wait until player isn't grounded
             _playerMoveController.MoveStrategy = previousMoveStrategy;
             LevelLoaded?.Invoke();
         }
@@ -77,8 +74,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             LevelUnloaded?.Invoke();
         }
 
-        [SerializeField]
-        private CharacterMoveController _playerController;
         [SerializeReference]
         private ArcMazeBuilder _mazeBuilder;
         [SerializeField]
@@ -92,7 +87,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private IPlayerMoveController _playerMoveController;
         private IManualMoveStrategy _manualMoveStrategy;
         private IPhysicMoveStrategy _physicMoveStrategy;
-        private IPlayerInputMoveStrategy _playerInputMoveStrategy;
         private int _mazeLevelsCount = 0;
     }
 }

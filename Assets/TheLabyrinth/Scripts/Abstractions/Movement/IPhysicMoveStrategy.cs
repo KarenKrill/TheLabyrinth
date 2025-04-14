@@ -2,5 +2,6 @@
 {
     public interface IPhysicMoveStrategy : IMoveStrategy
     {
+        bool IsGrounded { get; }
     }
 }

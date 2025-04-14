@@ -801,7 +801,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf31b9e7b63205b4799ba2fd2ab71996, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _usePhysics: 0
   _characterController: {fileID: 1911650152}
   _animator: {fileID: 0}
   _maximumSpeed: 500
@@ -953,7 +952,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0f764664be2636d469f10835121dfb5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _usePhysics: 0
   _characterController: {fileID: 1911650152}
   _animator: {fileID: 0}
   _maximumSpeed: 50
@@ -1692,7 +1690,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 974a067ede30d5f479863b7d6d601aa8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _playerController: {fileID: 2073521855}
   _mazeBuilder: {fileID: 120555840}
   _exitPointTransform: {fileID: 1542953278}
   _mazeMinLevelsCount: 4
@@ -2247,7 +2244,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 549c1250ea1b8a94ea86c7569b7127fb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _usePhysics: 0
   _characterController: {fileID: 1911650152}
   _animator: {fileID: 0}
   _maximumSpeed: 50
