@@ -1,8 +1,9 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace KarenKrill.TheLabyrinth
+namespace KarenKrill.TheLabyrinth.Movement
 {
+    using Abstractions;
     using Common.Utilities;
 
     /// <summary>
@@ -11,13 +12,10 @@ namespace KarenKrill.TheLabyrinth
     /// <remarks>
     /// To start/stop <see cref="NavMeshAgent"/> moving use Enable/Disable
     /// </remarks>
-    public class AiMoveController : MonoBehaviour
+    public class AiMoveController : OrdinaryMoveBehaviour, IAiMoveStrategy
     {
-        public float MaximumSpeed { get => _maximumSpeed; set => _maximumSpeed = value; }
         public float MinimumSpeed { get => _minimumSpeed; set => _minimumSpeed = value; }
 
-        [SerializeField]
-        private float _maximumSpeed = 5f;
         [SerializeField]
         private float _minimumSpeed = 5f;
         [SerializeField]
@@ -31,23 +29,33 @@ namespace KarenKrill.TheLabyrinth
         private NavMeshPath _activePath;
 #endif
 
-        private void OnEnable()
+        protected override void Awake()
         {
+            base.Awake();
+            _navAgent.enabled = false;
+        }
+        protected override void OnEnable()
+        {
+            base.OnEnable();
             if (_navAgent.isOnNavMesh)
             {
                 _navAgent.isStopped = false;
             }
             _navAgent.enabled = true;
         }
-        private void OnDisable()
+        protected override void OnDisable()
         {
+            base.OnDisable();
             if (!_navAgent.IsNullOrDestroyed())
             {
-                _navAgent.isStopped = true;
+                if (_navAgent.isOnNavMesh)
+                {
+                    _navAgent.isStopped = true;
+                }
                 _navAgent.enabled = false;
             }
         }
-        private void Update()
+        protected override void Update()
         {
             if (_navAgent.isOnNavMesh)
             {
@@ -72,14 +80,14 @@ namespace KarenKrill.TheLabyrinth
             _ = _navAgent.CalculatePath(_destination.position, _activePath);
 #endif
             _navAgent.destination = _destination.position;
-            _navAgent.acceleration = Random.Range(_minimumSpeed, _maximumSpeed);
-            _navAgent.speed = Random.Range(_minimumSpeed, _maximumSpeed);
+            _navAgent.acceleration = Random.Range(_minimumSpeed, MaximumSpeed);
+            _navAgent.speed = Random.Range(_minimumSpeed, MaximumSpeed);
             _navAgent.isStopped = false;
         }
         private void MovementUpdate()
         {
-            _navAgent.acceleration = Random.Range(_minimumSpeed, _maximumSpeed);
-            _navAgent.speed = Random.Range(_minimumSpeed, _maximumSpeed);
+            _navAgent.acceleration = Random.Range(_minimumSpeed, MaximumSpeed);
+            _navAgent.speed = Random.Range(_minimumSpeed, MaximumSpeed);
             if (_navAgent.isStopped)
             {
                 _navAgent.isStopped = false;

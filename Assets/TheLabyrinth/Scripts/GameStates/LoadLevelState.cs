@@ -6,6 +6,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
     using Common.UI.Presenters.Abstractions;
     using Common.UI.Views.Abstractions;
     using GameFlow.Abstractions;
+    using Movement.Abstractions;
     using UI.Views.Abstractions;
 
     public class LoadLevelState : IStateHandler<GameState>
@@ -17,7 +18,9 @@ namespace KarenKrill.TheLabyrinth.GameStates
             ILevelManager levelManager,
             IViewFactory viewFactory,
             IPresenter<IILevelInfoView> levelInfoPresenter,
-            IGameController gameController)
+            IGameController gameController,
+            IPlayerMoveController playerMoveController,
+            IPlayerInputMoveStrategy playerInputMoveStrategy)
         {
             _logger = logger;
             _gameFlow = gameFlow;
@@ -25,11 +28,15 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _viewFactory = viewFactory;
             _levelInfoPresenter = levelInfoPresenter;
             _gameController = gameController;
+            _playerMoveController = playerMoveController;
+            _playerInputMoveStrategy = playerInputMoveStrategy;
         }
         public void Enter()
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _levelManager.LevelLoaded += OnLevelLoaded;
+            _previousPlayerMoveStrategy = _playerMoveController.MoveStrategy;
+            _playerMoveController.MoveStrategy = _playerInputMoveStrategy;
             _levelManager.OnLevelLoad();
             _levelInfoPresenter.View ??= _viewFactory.Create<IILevelInfoView>();
             _levelInfoPresenter.Enable();
@@ -39,6 +46,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
             _levelManager.LevelLoaded -= OnLevelLoaded;
+            _playerMoveController.MoveStrategy = _previousPlayerMoveStrategy;
         }
 
         private readonly ILogger _logger;
@@ -47,6 +55,9 @@ namespace KarenKrill.TheLabyrinth.GameStates
         private readonly IViewFactory _viewFactory;
         private readonly IPresenter<IILevelInfoView> _levelInfoPresenter;
         private readonly IGameController _gameController;
+        private readonly IPlayerMoveController _playerMoveController;
+        private readonly IPlayerInputMoveStrategy _playerInputMoveStrategy;
+        private IMoveStrategy _previousPlayerMoveStrategy;
 
         private void OnLevelLoaded()
         {
