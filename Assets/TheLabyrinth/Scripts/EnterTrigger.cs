@@ -8,6 +8,10 @@ namespace KarenKrill.TheLabyrinth
         [SerializeField]
         private UnityEvent<Collider> _triggerEnter = new();
 
-        private void OnTriggerEnter(Collider other) => _triggerEnter.Invoke(other);
+        private void OnTriggerEnter(Collider other)
+        {
+            Debug.Log($"{gameObject.name} {nameof(OnTriggerEnter)} with {other.gameObject.name}");
+            _triggerEnter.Invoke(other);
+        }
     }
 }
