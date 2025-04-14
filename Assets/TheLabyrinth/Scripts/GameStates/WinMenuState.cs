@@ -6,6 +6,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
     using Common.UI.Presenters.Abstractions;
     using Common.UI.Views.Abstractions;
     using GameFlow.Abstractions;
+    using Input.Abstractions;
     using Movement.Abstractions;
     using UI.Views.Abstractions;
 
@@ -18,6 +19,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             IPresenter<IWinMenuView> winMenuPresenter,
             IPresenter<IILevelInfoView> levelInfoPresenter,
             IGameController gameController,
+            IInputActionService inputActionService,
             IPlayerMoveController playerMoveController)
         {
             _logger = logger;
@@ -25,6 +27,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _winMenuPresenter = winMenuPresenter;
             _levelInfoPresenter = levelInfoPresenter;
             _gameController = gameController;
+            _inputActionService = inputActionService;
             _playerMoveController = playerMoveController;
         }
         public void Enter()
@@ -37,6 +40,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             {
                 _levelInfoPresenter.Disable();
             }
+            _inputActionService.SetActionMap(ActionMap.UI);
             _gameController.OnPlayerWin();
         }
         public void Exit()
@@ -50,6 +54,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
         private readonly IPresenter<IWinMenuView> _winMenuPresenter;
         private readonly IPresenter<IILevelInfoView> _levelInfoPresenter;
         private readonly IGameController _gameController;
+        private readonly IInputActionService _inputActionService;
         private readonly IPlayerMoveController _playerMoveController;
     }
 }
