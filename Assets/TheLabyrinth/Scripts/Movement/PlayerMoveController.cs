@@ -14,26 +14,29 @@ namespace KarenKrill.TheLabyrinth.Movement
         }
         public IMoveStrategy MoveStrategy
         {
-            get => _moveBehaviour;
+            get => _moveStrategy;
             set
             {
-                if (value is MoveBehaviour playerMoveBehaviour)
+                if (_moveStrategy != value)
                 {
-                    if (_moveBehaviour != null)
+                    if (_moveStrategy is MoveBehaviour prevMoveBehaviour)
                     {
-                        _moveBehaviour.enabled = false;
-                        _logger.Log($"{_moveBehaviour.gameObject.name} disabled");
+                        prevMoveBehaviour.enabled = false;
+                        _logger.Log($"{prevMoveBehaviour.gameObject.name} disabled");
                     }
-                    _moveBehaviour = playerMoveBehaviour;
-                    _moveBehaviour.enabled = true;
-                    _logger.Log($"{_moveBehaviour.gameObject.name} enabled");
+                    _moveStrategy = value;
+                    if (value is MoveBehaviour moveBehaviour)
+                    {
+                        moveBehaviour.enabled = true;
+                        _logger.Log($"{moveBehaviour.gameObject.name} enabled");
+                    }
                 }
             }
         }
         public void SetStrategy(IMoveStrategy strategy) => MoveStrategy = strategy;
 
 
-        private MoveBehaviour _moveBehaviour;
+        private IMoveStrategy _moveStrategy;
         private ILogger _logger;
     }
 }
