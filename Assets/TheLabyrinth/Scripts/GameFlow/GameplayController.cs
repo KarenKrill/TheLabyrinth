@@ -7,7 +7,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
     using Abstractions;
     using Common.StateSystem.Abstractions;
     using Common.GameLevel.Abstractions;
-    using Input.Abstractions;
     using Movement;
 
     public class GameplayController : MonoBehaviour, ITimeLimitedLevelController, IGameController
@@ -28,16 +27,14 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 #nullable restore
 
         [Inject]
-        public void Initialize(IGameFlow gameFlow, IInputActionService inputActionService, IManagedStateMachine<GameState> managedStateMachine)
+        public void Initialize(IGameFlow gameFlow, IManagedStateMachine<GameState> managedStateMachine)
         {
             _gameFlow = gameFlow;
-            _inputActionService = inputActionService;
             _managedStateMachine = managedStateMachine;
         }
         public void OnGameStart()
         {
             ResetToDefaults();
-            _inputActionService.Disable();
         }
         public void OnGameEnd()
         {
@@ -50,7 +47,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         public void OnLevelLoad()
         {
             _isLevelWasPaused = false;
-            _inputActionService.Disable();
         }
         public void OnLevelPlay()
         {
@@ -67,14 +63,10 @@ namespace KarenKrill.TheLabyrinth.GameFlow
                     _TimeLeft = _timeOnCurrentLevel;
                 }
             }
-            _inputActionService.SetActionMap(ActionMap.InGame);
-            //Time.timeScale = 1;
         }
         public void OnLevelPause()
         {
             _isLevelWasPaused = true;
-            _inputActionService.SetActionMap(ActionMap.UI);
-            //Time.timeScale = 0;
         }
         public void OnLevelFinish()
         {
@@ -91,13 +83,9 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         }
         public void OnPlayerLoose()
         {
-            //Time.timeScale = 0;
-            _inputActionService.SetActionMap(ActionMap.UI);// Disable();
         }
         public void OnPlayerWin()
         {
-            //Time.timeScale = 0;
-            _inputActionService.SetActionMap(ActionMap.UI); //_inputActionService.Disable();
         }
 
         [SerializeField]
@@ -114,7 +102,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private float _lastWarningLeftTime = 0.1f;
 
         private IGameFlow _gameFlow;
-        private IInputActionService _inputActionService;
         private IManagedStateMachine<GameState> _managedStateMachine;
 
         private float _timeOnCurrentLevel;
@@ -156,8 +143,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private void Awake()
         {
             _managedStateMachine.Start();
-            _inputActionService.Pause += OnPaused;
-            _inputActionService.Back += OnResumed;
         }
         private void Update()
         {
@@ -190,14 +175,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _PassedLevels = 1;
             OnCurrentLevelChanged();
         }
-        private void OnPaused()
-        {
-            _gameFlow.PauseLevel();
-        }
-        private void OnResumed()
-        {
-            _gameFlow.PlayLevel();
-        }
+        
         private void OnMaxCompleteTimeChanged()
         {
             MaxCompleteTimeChanged?.Invoke(MaxCompleteTime);
