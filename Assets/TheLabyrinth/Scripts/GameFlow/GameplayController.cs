@@ -7,7 +7,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
     using Abstractions;
     using Common.StateSystem.Abstractions;
     using Common.GameLevel.Abstractions;
-    using Movement;
 
     public class GameplayController : MonoBehaviour, ITimeLimitedLevelController, IGameController
     {
@@ -88,8 +87,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         {
         }
 
-        [SerializeField]
-        private CharacterMoveController _playerController;
         [SerializeField]
         private LoadLevelManager _loadLevelManager;
         [SerializeField]
