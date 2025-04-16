@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KarenKrill.TheLabyrinth.UI.Presenters
 {
-    using Common.GameLevel.Abstractions;
+    using Common.GameInfo.Abstractions;
     using Common.UI.Presenters.Abstractions;
     using Common.Utilities;
     using GameFlow.Abstractions;
@@ -13,41 +13,41 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
     {
         public IILevelInfoView View { get; set; }
 
-        public LevelInfoPresenter(ITimeLimitedLevelController levelController, IGameController gameController)
+        public LevelInfoPresenter(ITimeLimitedLevelInfoProvider levelInfoProvider, IGameController gameController)
         {
-            _levelController = levelController;
+            _levelInfoProvider = levelInfoProvider;
             _gameController = gameController;
         }
         public void Enable()
         {
-            _levelController.RemainingTimeChanged += OnRemainingTimeChanged;
-            _levelController.MaxCompleteTimeChanged += OnMaxCompleteTimeChanged;
-            _levelController.WarningTimeChanged += OnWarningTimeChanged;
-            _levelController.LastWarningTimeChanged += OnWarningTimeChanged;
+            _levelInfoProvider.RemainingTimeChanged += OnRemainingTimeChanged;
+            _levelInfoProvider.MaxCompleteTimeChanged += OnMaxCompleteTimeChanged;
+            _levelInfoProvider.WarningTimeChanged += OnWarningTimeChanged;
+            _levelInfoProvider.LastWarningTimeChanged += OnWarningTimeChanged;
             _gameController.CurrentLevelChanged += OnCurrentLevelChanged;
-            OnMaxCompleteTimeChanged(_levelController.MaxCompleteTime);
+            OnMaxCompleteTimeChanged(_levelInfoProvider.MaxCompleteTime);
             OnCurrentLevelChanged();
             View.Show();
         }
         public void Disable()
         {
             View.Close();
-            _levelController.RemainingTimeChanged -= OnRemainingTimeChanged;
-            _levelController.MaxCompleteTimeChanged -= OnMaxCompleteTimeChanged;
-            _levelController.WarningTimeChanged -= OnWarningTimeChanged;
-            _levelController.LastWarningTimeChanged -= OnWarningTimeChanged;
+            _levelInfoProvider.RemainingTimeChanged -= OnRemainingTimeChanged;
+            _levelInfoProvider.MaxCompleteTimeChanged -= OnMaxCompleteTimeChanged;
+            _levelInfoProvider.WarningTimeChanged -= OnWarningTimeChanged;
+            _levelInfoProvider.LastWarningTimeChanged -= OnWarningTimeChanged;
             _gameController.CurrentLevelChanged -= OnCurrentLevelChanged;
         }
 
-        private readonly ITimeLimitedLevelController _levelController;
+        private readonly ITimeLimitedLevelInfoProvider _levelInfoProvider;
         private readonly IGameController _gameController;
 
         private void UpdateRemainingTimeTextColor()
         {
-            float relativeRemainingTime = _levelController.RemainingTime / _levelController.MaxCompleteTime;
-            if (relativeRemainingTime < _levelController.WarningTime)
+            float relativeRemainingTime = _levelInfoProvider.RemainingTime / _levelInfoProvider.MaxCompleteTime;
+            if (relativeRemainingTime < _levelInfoProvider.WarningTime)
             {
-                if (relativeRemainingTime < _levelController.LastWarningTime)
+                if (relativeRemainingTime < _levelInfoProvider.LastWarningTime)
                 {
                     View.RemainingTimeTextColor = Color.red.ToSystemColor();
                 }

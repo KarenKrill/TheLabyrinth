@@ -2,9 +2,9 @@
 
 using System;
 
-namespace KarenKrill.Common.GameLevel.Abstractions
+namespace KarenKrill.Common.GameInfo.Abstractions
 {
-    public interface ITimeLimitedLevelController : ILevelController
+    public interface ITimeLimitedLevelInfoProvider : ILevelInfoProvider
     {
         float MaxCompleteTime { get; }
         float RemainingTime { get; }

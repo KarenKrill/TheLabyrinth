@@ -6,9 +6,9 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
     using Common.StateSystem.Abstractions;
-    using Common.GameLevel.Abstractions;
+    using Common.GameInfo.Abstractions;
 
-    public class GameplayController : MonoBehaviour, ITimeLimitedLevelController, IGameController
+    public class GameplayController : MonoBehaviour, ITimeLimitedLevelInfoProvider, IGameController
     {
 #nullable enable
         public int CurrentLevelNumber => _PassedLevels;
@@ -73,12 +73,8 @@ namespace KarenKrill.TheLabyrinth.GameFlow
                 _gameFlow.WinGame();
             }
         }
-        public void OnPlayerLoose()
-        {
-        }
-        public void OnPlayerWin()
-        {
-        }
+        public void OnPlayerLoose() { }
+        public void OnPlayerWin() { }
 
         [SerializeField]
         private LoadLevelManager _loadLevelManager;
