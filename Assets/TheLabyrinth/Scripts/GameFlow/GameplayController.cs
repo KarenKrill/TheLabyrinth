@@ -8,7 +8,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
     using Common.StateSystem.Abstractions;
     using Common.GameInfo.Abstractions;
 
-    public class GameplayController : MonoBehaviour, ITimeLimitedLevelInfoProvider, IGameController
+    public class GameplayController : MonoBehaviour, ITimeLimitedLevelInfoProvider, IGameController, IGameInfoProvider
     {
 #nullable enable
         public int CurrentLevelNumber => _PassedLevels;
