@@ -35,14 +35,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         {
             ResetToDefaults();
         }
-        public void OnGameEnd()
-        {
-#if UNITY_EDITOR
-            UnityEditor.EditorApplication.isPlaying = false;
-#else
-            Application.Quit();
-#endif
-        }
+        public void OnGameEnd() { }
         public void OnLevelLoad()
         {
             _isLevelWasPaused = false;

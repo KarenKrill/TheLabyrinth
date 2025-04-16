@@ -9,16 +9,15 @@ namespace KarenKrill.TheLabyrinth.GameStates
     {
         public GameState State => GameState.GameEnd;
 
-        public GameEndState(ILogger logger, IGameFlow gameFlow, IGameController gameController)
+        public GameEndState(ILogger logger)
         {
             _logger = logger;
-            _gameFlow = gameFlow;
-            _gameController = gameController;
         }
         public void Enter()
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
-            _gameController.OnGameEnd();
+            // TODO: get user confirmation on exit
+            OnExitConfirmed();
         }
         public void Exit()
         {
@@ -26,7 +25,14 @@ namespace KarenKrill.TheLabyrinth.GameStates
         }
 
         private readonly ILogger _logger;
-        private readonly IGameFlow _gameFlow;
-        private readonly IGameController _gameController;
+
+        private void OnExitConfirmed()
+        {
+#if UNITY_EDITOR
+            UnityEditor.EditorApplication.isPlaying = false;
+#else
+            Application.Quit();
+#endif
+        }
     }
 }
