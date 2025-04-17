@@ -3,6 +3,7 @@
 namespace KarenKrill.TheLabyrinth.GameStates
 {
     using Common.StateSystem.Abstractions;
+    using Common.GameFlow.Abstractions;
     using Common.Logging;
     using GameFlow.Abstractions;
     using Input.Abstractions;
@@ -18,7 +19,8 @@ namespace KarenKrill.TheLabyrinth.GameStates
             IInputActionService inputActionService,
             IPlayerMoveController playerMoveController,
             IPlayerInputMoveStrategy playerInputMoveStrategy,
-            IAiMoveStrategy playerAiMoveStrategy)
+            IAiMoveStrategy playerAiMoveStrategy,
+            ITimeLimitedLevelController levelController)
         {
             _logger = logger;
             _gameFlow = gameFlow;
@@ -27,6 +29,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _playerMoveController = playerMoveController;
             _playerInputMoveStrategy = playerInputMoveStrategy;
             _playerAiMoveStrategy = playerAiMoveStrategy;
+            _levelController = levelController;
         }
         public void Enter(GameState prevState)
         {
@@ -35,6 +38,11 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _inputActionService.AutoPlayCheat += OnAutoPlayCheat;
             _inputActionService.Pause += OnPaused;
             _inputActionService.SetActionMap(ActionMap.InGame);
+            if (prevState != GameState.PauseMenu)
+            {
+                _levelController.OnLevelPlay();
+            }
+            _levelController.Enable();
             _gameController.OnLevelPlay();
         }
         public void Exit(GameState nextState)
@@ -42,6 +50,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
             _inputActionService.AutoPlayCheat -= OnAutoPlayCheat;
             _inputActionService.Pause -= OnPaused;
+            _levelController.Disable();
         }
 
         private readonly ILogger _logger;
@@ -51,6 +60,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
         private readonly IPlayerMoveController _playerMoveController;
         private readonly IPlayerInputMoveStrategy _playerInputMoveStrategy;
         private readonly IAiMoveStrategy _playerAiMoveStrategy;
+        private readonly ITimeLimitedLevelController _levelController;
 
         private void OnAutoPlayCheat()
         {
