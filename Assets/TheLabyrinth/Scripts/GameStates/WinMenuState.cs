@@ -30,7 +30,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _inputActionService = inputActionService;
             _playerMoveController = playerMoveController;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _playerMoveController.MoveStrategy = null;
@@ -43,7 +43,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _inputActionService.SetActionMap(ActionMap.UI);
             _gameController.OnPlayerWin();
         }
-        public void Exit()
+        public void Exit(GameState nextState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
             _winMenuPresenter.Disable();

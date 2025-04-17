@@ -16,13 +16,13 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _levelManager = levelManager;
             _gameController = gameController;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _levelManager.LevelUnloaded += OnLevelUnloaded;
             _levelManager.OnLevelEnd();
         }
-        public void Exit()
+        public void Exit(GameState nextState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
             _levelManager.LevelUnloaded -= OnLevelUnloaded;

@@ -34,7 +34,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _playerMoveController = playerMoveController;
             _playerInputMoveStrategy = playerInputMoveStrategy;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _levelManager.LevelLoaded += OnLevelLoaded;
@@ -46,7 +46,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _inputActionService.Disable();
             _gameController.OnLevelLoad();
         }
-        public void Exit()
+        public void Exit(GameState nextState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
             _levelManager.LevelLoaded -= OnLevelLoaded;

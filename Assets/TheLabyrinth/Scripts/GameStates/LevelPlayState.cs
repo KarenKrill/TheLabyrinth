@@ -28,7 +28,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _playerInputMoveStrategy = playerInputMoveStrategy;
             _playerAiMoveStrategy = playerAiMoveStrategy;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _playerMoveController.MoveStrategy ??= _playerInputMoveStrategy;
@@ -37,7 +37,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _inputActionService.SetActionMap(ActionMap.InGame);
             _gameController.OnLevelPlay();
         }
-        public void Exit()
+        public void Exit(GameState nextState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
             _inputActionService.AutoPlayCheat -= OnAutoPlayCheat;

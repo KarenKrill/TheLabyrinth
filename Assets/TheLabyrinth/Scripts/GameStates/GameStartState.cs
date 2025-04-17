@@ -18,7 +18,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _gameController = gameController;
             _inputActionService = inputActionService;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _levelManager.Reset();
@@ -26,7 +26,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _inputActionService.Disable();
             _gameController.OnGameStart();
         }
-        public void Exit() { _logger.Log($"{GetType().Name}.{nameof(Exit)}()"); }
+        public void Exit(GameState nextState) { _logger.Log($"{GetType().Name}.{nameof(Exit)}()"); }
 
         private readonly ILogger _logger;
         private readonly IGameFlow _gameFlow;

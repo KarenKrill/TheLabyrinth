@@ -27,7 +27,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _gameController = gameController;
             _inputActionService = inputActionService;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _pauseMenuPresenter.View ??= _viewFactory.Create<IPauseMenuView>();
@@ -36,7 +36,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _inputActionService.SetActionMap(ActionMap.UI);
             _gameController.OnLevelPause();
         }
-        public void Exit()
+        public void Exit(GameState nextState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
             _inputActionService.Back -= OnResume;

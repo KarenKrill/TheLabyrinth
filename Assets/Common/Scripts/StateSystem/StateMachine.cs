@@ -52,12 +52,13 @@ namespace KarenKrill.Common.StateSystem
                 {
                     try
                     {
-                        StateExit?.Invoke(_state);
+                        StateExit?.Invoke(_state, state);
                     }
                     finally
                     {
+                        var fromState = _state;
                         _state = state;
-                        StateEnter?.Invoke(_state);
+                        StateEnter?.Invoke(fromState, _state);
                     }
                 }
                 else
@@ -71,12 +72,13 @@ namespace KarenKrill.Common.StateSystem
                 {
                     try
                     {
-                        StateExit?.Invoke(_state);
+                        StateExit?.Invoke(_state, state);
                     }
                     finally
                     {
+                        var fromState = _state;
                         _state = state;
-                        StateEnter?.Invoke(_state);
+                        StateEnter?.Invoke(fromState, _state);
                     }
                     return true;
                 }
@@ -86,15 +88,16 @@ namespace KarenKrill.Common.StateSystem
             {
                 if (!_state.Equals(_initialState))
                 {
-                    StateExit?.Invoke(_state);
+                    StateExit?.Invoke(_state, _initialState);
                 }
+                var fromState = _state;
                 _state = _initialState;
-                StateEnter?.Invoke(_state);
+                StateEnter?.Invoke(fromState, _state);
             }
 
             private T _state;
-            private T _initialState;
-            private IDictionary<T, IList<T>> _stateTransitions;
+            private readonly T _initialState;
+            private readonly IDictionary<T, IList<T>> _stateTransitions;
         }
     }
 }

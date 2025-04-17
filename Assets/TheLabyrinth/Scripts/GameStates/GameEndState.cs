@@ -13,13 +13,13 @@ namespace KarenKrill.TheLabyrinth.GameStates
         {
             _logger = logger;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             // TODO: get user confirmation on exit
             OnExitConfirmed();
         }
-        public void Exit()
+        public void Exit(GameState nextState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
         }
