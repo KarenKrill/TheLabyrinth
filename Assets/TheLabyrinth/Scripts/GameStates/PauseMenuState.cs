@@ -55,12 +55,12 @@ namespace KarenKrill.TheLabyrinth.GameStates
         private readonly IPresenter<IPauseMenuView> _pauseMenuPresenter;
         private readonly IGameController _gameController;
         private readonly IInputActionService _inputActionService;
+        private readonly IPlayerMoveController _playerMoveController;
+        private IMoveStrategy _prevMoveStrategy;
 
         private void OnResume()
         {
             _gameFlow.PlayLevel();
         }
-        private readonly IPlayerMoveController _playerMoveController;
-        private IMoveStrategy _prevMoveStrategy;
     }
 }
