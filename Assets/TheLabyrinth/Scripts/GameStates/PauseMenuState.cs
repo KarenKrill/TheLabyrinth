@@ -6,6 +6,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
     using Common.UI.Presenters.Abstractions;
     using Common.UI.Views.Abstractions;
     using GameFlow.Abstractions;
+    using Input.Abstractions;
     using Movement.Abstractions;
     using UI.Views.Abstractions;
 
@@ -18,6 +19,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             IViewFactory viewFactory,
             IPresenter<IPauseMenuView> pauseMenuPresenter,
             IGameController gameController,
+            IInputActionService inputActionService,
             IPlayerMoveController playerMoveController)
         {
             _logger = logger;
@@ -25,20 +27,24 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _viewFactory = viewFactory;
             _pauseMenuPresenter = pauseMenuPresenter;
             _gameController = gameController;
+            _inputActionService = inputActionService;
             _playerMoveController = playerMoveController;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _pauseMenuPresenter.View ??= _viewFactory.Create<IPauseMenuView>();
             _pauseMenuPresenter.Enable();
+            _inputActionService.Back += OnResume;
+            _inputActionService.SetActionMap(ActionMap.UI);
             _prevMoveStrategy = _playerMoveController.MoveStrategy;
             _playerMoveController.MoveStrategy = null;
             _gameController.OnLevelPause();
         }
-        public void Exit()
+        public void Exit(GameState nextState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
+            _inputActionService.Back -= OnResume;
             _playerMoveController.MoveStrategy = _prevMoveStrategy;
             _pauseMenuPresenter.Disable();
         }
@@ -48,6 +54,12 @@ namespace KarenKrill.TheLabyrinth.GameStates
         private readonly IViewFactory _viewFactory;
         private readonly IPresenter<IPauseMenuView> _pauseMenuPresenter;
         private readonly IGameController _gameController;
+        private readonly IInputActionService _inputActionService;
+
+        private void OnResume()
+        {
+            _gameFlow.PlayLevel();
+        }
         private readonly IPlayerMoveController _playerMoveController;
         private IMoveStrategy _prevMoveStrategy;
     }

@@ -32,13 +32,13 @@ namespace KarenKrill.Common.StateSystem
 
         private Dictionary<T, IStateHandler<T>> _stateHandlers;
 
-        private void OnStateEnter(T state)
+        private void OnStateEnter(T fromState, T toState)
         {
-            _stateHandlers[state].Enter();
+            _stateHandlers[toState].Enter(fromState);
         }
-        private void OnStateExit(T state)
+        private void OnStateExit(T fromState, T toState)
         {
-            _stateHandlers[state].Exit();
+            _stateHandlers[fromState].Exit(toState);
         }
     }
 }

@@ -3,6 +3,7 @@
 namespace KarenKrill.TheLabyrinth.GameStates
 {
     using Common.StateSystem.Abstractions;
+    using Common.GameFlow.Abstractions;
     using Common.Logging;
     using GameFlow.Abstractions;
     using Input.Abstractions;
@@ -18,7 +19,8 @@ namespace KarenKrill.TheLabyrinth.GameStates
             IInputActionService inputActionService,
             IPlayerMoveController playerMoveController,
             IPlayerInputMoveStrategy playerInputMoveStrategy,
-            IAiMoveStrategy playerAiMoveStrategy)
+            IAiMoveStrategy playerAiMoveStrategy,
+            ITimeLimitedLevelController levelController)
         {
             _logger = logger;
             _gameFlow = gameFlow;
@@ -27,19 +29,39 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _playerMoveController = playerMoveController;
             _playerInputMoveStrategy = playerInputMoveStrategy;
             _playerAiMoveStrategy = playerAiMoveStrategy;
+            _levelController = levelController;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _playerMoveController.MoveStrategy ??= _playerInputMoveStrategy;
             _inputActionService.AutoPlayCheat += OnAutoPlayCheat;
+            _inputActionService.Pause += OnPaused;
+            _inputActionService.SetActionMap(ActionMap.InGame);
+            if (prevState != GameState.PauseMenu)
+            {
+                _levelController.OnLevelPlay();
+            }
+            _levelController.Enable();
             _gameController.OnLevelPlay();
         }
-        public void Exit()
+        public void Exit(GameState nextState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
             _inputActionService.AutoPlayCheat -= OnAutoPlayCheat;
+            _inputActionService.Pause -= OnPaused;
+            _levelController.Disable();
         }
+
+        private readonly ILogger _logger;
+        private readonly IGameFlow _gameFlow;
+        private readonly IGameController _gameController;
+        private readonly IInputActionService _inputActionService;
+        private readonly IPlayerMoveController _playerMoveController;
+        private readonly IPlayerInputMoveStrategy _playerInputMoveStrategy;
+        private readonly IAiMoveStrategy _playerAiMoveStrategy;
+        private readonly ITimeLimitedLevelController _levelController;
+
         private void OnAutoPlayCheat()
         {
             switch (_playerMoveController.MoveStrategy)
@@ -56,13 +78,9 @@ namespace KarenKrill.TheLabyrinth.GameStates
                     break;
             }
         }
-
-        private readonly ILogger _logger;
-        private readonly IGameFlow _gameFlow;
-        private readonly IGameController _gameController;
-        private readonly IInputActionService _inputActionService;
-        private readonly IPlayerMoveController _playerMoveController;
-        private readonly IPlayerInputMoveStrategy _playerInputMoveStrategy;
-        private readonly IAiMoveStrategy _playerAiMoveStrategy;
+        private void OnPaused()
+        {
+            _gameFlow.PauseLevel();
+        }
     }
 }

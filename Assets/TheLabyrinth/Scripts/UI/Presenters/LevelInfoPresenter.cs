@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace KarenKrill.TheLabyrinth.UI.Presenters
 {
-    using Common.GameLevel.Abstractions;
+    using Common.GameInfo.Abstractions;
     using Common.UI.Presenters.Abstractions;
     using Common.Utilities;
     using GameFlow.Abstractions;
@@ -13,41 +13,41 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
     {
         public IILevelInfoView View { get; set; }
 
-        public LevelInfoPresenter(ITimeLimitedLevelController levelController, IGameController gameController)
+        public LevelInfoPresenter(ITimeLimitedLevelInfoProvider levelInfoProvider, IGameInfoProvider gameInfoProvider)
         {
-            _levelController = levelController;
-            _gameController = gameController;
+            _levelInfoProvider = levelInfoProvider;
+            _gameInfoProvider = gameInfoProvider;
         }
         public void Enable()
         {
-            _levelController.RemainingTimeChanged += OnRemainingTimeChanged;
-            _levelController.MaxCompleteTimeChanged += OnMaxCompleteTimeChanged;
-            _levelController.WarningTimeChanged += OnWarningTimeChanged;
-            _levelController.LastWarningTimeChanged += OnWarningTimeChanged;
-            _gameController.CurrentLevelChanged += OnCurrentLevelChanged;
-            OnMaxCompleteTimeChanged(_levelController.MaxCompleteTime);
+            _levelInfoProvider.RemainingTimeChanged += OnRemainingTimeChanged;
+            _levelInfoProvider.MaxCompleteTimeChanged += OnMaxCompleteTimeChanged;
+            _levelInfoProvider.WarningTimeChanged += OnWarningTimeChanged;
+            _levelInfoProvider.LastWarningTimeChanged += OnWarningTimeChanged;
+            _gameInfoProvider.CurrentLevelChanged += OnCurrentLevelChanged;
+            OnMaxCompleteTimeChanged(_levelInfoProvider.MaxCompleteTime);
             OnCurrentLevelChanged();
             View.Show();
         }
         public void Disable()
         {
             View.Close();
-            _levelController.RemainingTimeChanged -= OnRemainingTimeChanged;
-            _levelController.MaxCompleteTimeChanged -= OnMaxCompleteTimeChanged;
-            _levelController.WarningTimeChanged -= OnWarningTimeChanged;
-            _levelController.LastWarningTimeChanged -= OnWarningTimeChanged;
-            _gameController.CurrentLevelChanged -= OnCurrentLevelChanged;
+            _levelInfoProvider.RemainingTimeChanged -= OnRemainingTimeChanged;
+            _levelInfoProvider.MaxCompleteTimeChanged -= OnMaxCompleteTimeChanged;
+            _levelInfoProvider.WarningTimeChanged -= OnWarningTimeChanged;
+            _levelInfoProvider.LastWarningTimeChanged -= OnWarningTimeChanged;
+            _gameInfoProvider.CurrentLevelChanged -= OnCurrentLevelChanged;
         }
 
-        private readonly ITimeLimitedLevelController _levelController;
-        private readonly IGameController _gameController;
+        private readonly ITimeLimitedLevelInfoProvider _levelInfoProvider;
+        private readonly IGameInfoProvider _gameInfoProvider;
 
         private void UpdateRemainingTimeTextColor()
         {
-            float relativeRemainingTime = _levelController.RemainingTime / _levelController.MaxCompleteTime;
-            if (relativeRemainingTime < _levelController.WarningTime)
+            float relativeRemainingTime = _levelInfoProvider.RemainingTime / _levelInfoProvider.MaxCompleteTime;
+            if (relativeRemainingTime < _levelInfoProvider.WarningTime)
             {
-                if (relativeRemainingTime < _levelController.LastWarningTime)
+                if (relativeRemainingTime < _levelInfoProvider.LastWarningTime)
                 {
                     View.RemainingTimeTextColor = Color.red.ToSystemColor();
                 }
@@ -71,14 +71,14 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
         }
         private void OnCurrentLevelChanged()
         {
-            if (string.IsNullOrEmpty(_gameController.CurrentLevelName))
+            if (string.IsNullOrEmpty(_gameInfoProvider.CurrentLevelName))
             {
                 string prefix = "Level";
-                View.Title = string.Format("{0}: {1}", prefix, _gameController.CurrentLevelNumber);
+                View.Title = string.Format("{0}: {1}", prefix, _gameInfoProvider.CurrentLevelNumber);
             }
             else
             {
-                View.Title = _gameController.CurrentLevelName;
+                View.Title = _gameInfoProvider.CurrentLevelName;
             }
         }
     }

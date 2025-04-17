@@ -22,7 +22,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _levelInfoPresenter = levelInfoPresenter;
             _viewFactory = viewFactory;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{nameof(MainMenuState)}.{nameof(Enter)}()");
             _mainMenuPresenter.View ??= _viewFactory.Create<IMainMenuView>();
@@ -32,7 +32,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             }
             _mainMenuPresenter.Enable();
         }
-        public void Exit()
+        public void Exit(GameState nextState)
         {
             _logger.Log($"{nameof(MainMenuState)}.{nameof(Exit)}()");
             _mainMenuPresenter.Disable();

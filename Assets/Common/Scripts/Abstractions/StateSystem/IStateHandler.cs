@@ -9,7 +9,7 @@ namespace KarenKrill.Common.StateSystem.Abstractions
         /// </summary>
         public T State { get; }
 
-        void Enter();
-        void Exit();
+        void Enter(T prevState);
+        void Exit(T nextState);
     }
 }

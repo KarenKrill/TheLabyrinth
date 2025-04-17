@@ -37,6 +37,10 @@ namespace KarenKrill.TheLabyrinth
             {
                 return GameObject.FindFirstObjectByType<GameplayController>(FindObjectsInactive.Exclude);
             }).AsSingle();
+            Container.BindInterfacesAndSelfTo<LevelController>().FromMethod(context =>
+            {
+                return GameObject.FindFirstObjectByType<LevelController>(FindObjectsInactive.Exclude);
+            }).AsSingle();
             Container.BindInterfacesAndSelfTo<AiMoveController>().FromMethod(context =>
             {
                 return GameObject.FindFirstObjectByType<AiMoveController>(FindObjectsInactive.Exclude);

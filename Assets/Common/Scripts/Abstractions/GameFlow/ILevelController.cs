@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.Common.GameLevel.Abstractions
+﻿namespace KarenKrill.Common.GameFlow.Abstractions
 {
     /// <summary>
     /// Represents base interface of all game level controllers

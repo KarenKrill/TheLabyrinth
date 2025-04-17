@@ -14,12 +14,12 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _logger = logger;
             _gameFlow = gameFlow;
         }
-        public void Enter()
+        public void Enter(GameState prevState)
         {
             _logger.Log($"{nameof(InitialState)}.{nameof(Enter)}()");
             _gameFlow.LoadMainMenu();
         }
-        public void Exit()
+        public void Exit(GameState nextState)
         {
             _logger.Log($"{nameof(InitialState)}.{nameof(Exit)}()");
         }
