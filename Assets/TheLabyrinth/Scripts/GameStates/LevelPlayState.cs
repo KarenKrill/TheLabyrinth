@@ -43,7 +43,6 @@ namespace KarenKrill.TheLabyrinth.GameStates
                 _levelController.OnLevelPlay();
             }
             _levelController.Enable();
-            _gameController.OnLevelPlay();
         }
         public void Exit(GameState nextState)
         {

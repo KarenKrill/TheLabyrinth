@@ -20,7 +20,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _levelManager.LevelUnloaded += OnLevelUnloaded;
-            _levelManager.OnLevelEnd();
+            _levelManager.UnloadLevel();
         }
         public void Exit(GameState nextState)
         {
@@ -35,7 +35,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
 
         private void OnLevelUnloaded()
         {
-            _gameController.OnLevelFinish();
+            _gameController.FinishLevel();
         }
     }
 }

@@ -41,7 +41,6 @@ namespace KarenKrill.TheLabyrinth.GameStates
                 _levelInfoPresenter.Disable();
             }
             _inputActionService.SetActionMap(ActionMap.UI);
-            _gameController.OnPlayerLoose();
         }
         public void Exit(GameState nextState)
         {

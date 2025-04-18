@@ -40,11 +40,10 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _levelManager.LevelLoaded += OnLevelLoaded;
             _previousPlayerMoveStrategy = _playerMoveController.MoveStrategy;
             _playerMoveController.MoveStrategy = _playerInputMoveStrategy;
-            _levelManager.OnLevelLoad();
+            _levelManager.LoadLevel();
             _levelInfoPresenter.View ??= _viewFactory.Create<IILevelInfoView>();
             _levelInfoPresenter.Enable();
             _inputActionService.Disable();
-            _gameController.OnLevelLoad();
         }
         public void Exit(GameState nextState)
         {

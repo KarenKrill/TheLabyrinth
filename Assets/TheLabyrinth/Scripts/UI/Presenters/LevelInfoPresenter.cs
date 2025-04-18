@@ -26,7 +26,7 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
             _levelInfoProvider.LastWarningTimeChanged += OnWarningTimeChanged;
             _gameInfoProvider.CurrentLevelChanged += OnCurrentLevelChanged;
             OnMaxCompleteTimeChanged(_levelInfoProvider.MaxCompleteTime);
-            OnCurrentLevelChanged();
+            OnCurrentLevelChanged(_gameInfoProvider.CurrentLevel);
             View.Show();
         }
         public void Disable()
@@ -69,16 +69,16 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
             View.RemainingTimeText = string.Format("{0}: {1} s", prefix, remainingTime.ToString("0.0", CultureInfo.InvariantCulture));
             UpdateRemainingTimeTextColor();
         }
-        private void OnCurrentLevelChanged()
+        private void OnCurrentLevelChanged(LevelInfo levelInfo)
         {
-            if (string.IsNullOrEmpty(_gameInfoProvider.CurrentLevelName))
+            if (string.IsNullOrEmpty(levelInfo.Name))
             {
                 string prefix = "Level";
-                View.Title = string.Format("{0}: {1}", prefix, _gameInfoProvider.CurrentLevelNumber);
+                View.Title = string.Format("{0}: {1}", prefix, levelInfo.Index);
             }
             else
             {
-                View.Title = _gameInfoProvider.CurrentLevelName;
+                View.Title = levelInfo.Name;
             }
         }
     }
