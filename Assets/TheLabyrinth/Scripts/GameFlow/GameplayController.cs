@@ -6,7 +6,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
     using Common.StateSystem.Abstractions;
-    using Common.GameInfo.Abstractions;
 
     public class GameplayController : MonoBehaviour, IGameController, IGameInfoProvider
     {

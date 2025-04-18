@@ -2,7 +2,7 @@
 
 using System;
 
-namespace KarenKrill.Common.GameInfo.Abstractions
+namespace KarenKrill.TheLabyrinth.GameFlow.Abstractions
 {
     public interface IGameInfoProvider
     {
