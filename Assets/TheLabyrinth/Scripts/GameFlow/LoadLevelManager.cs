@@ -46,7 +46,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         {
             _logger.Log($"{nameof(LoadLevelManager)}.{nameof(LoadLevelCoroutine)}");
             var previousMoveStrategy = _playerMoveController.MoveStrategy;
-            //Time.timeScale = 0;
             _playerMoveController.MoveStrategy = _manualMoveStrategy;
             yield return _mazeBuilder.RebuildCoroutine();
             var playerSpawnPoint = _mazeBuilder.GetCellCenter(_mazeBuilder.Levels - 1, 0);
@@ -65,7 +64,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private IEnumerator FinishLevelCoroutine()
         {
             var previousMoveStrategy = _playerMoveController.MoveStrategy;
-            //Time.timeScale = 0;
             _playerMoveController.MoveStrategy = _manualMoveStrategy;
             _manualMoveStrategy.Move(new Vector3(0, 1, 60));
             yield return null;
