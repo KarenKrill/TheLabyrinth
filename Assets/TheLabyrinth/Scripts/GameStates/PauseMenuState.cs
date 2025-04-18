@@ -37,6 +37,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _pauseMenuPresenter.Enable();
             _inputActionService.Back += OnResume;
             _inputActionService.SetActionMap(ActionMap.UI);
+            _prevGameState = prevState;
             _prevMoveStrategy = _playerMoveController.MoveStrategy;
             _playerMoveController.MoveStrategy = null;
         }
@@ -44,7 +45,10 @@ namespace KarenKrill.TheLabyrinth.GameStates
         {
             _logger.Log($"{GetType().Name}.{nameof(Exit)}()");
             _inputActionService.Back -= OnResume;
-            _playerMoveController.MoveStrategy = _prevMoveStrategy;
+            if (nextState == _prevGameState) // if comes back
+            {
+                _playerMoveController.MoveStrategy = _prevMoveStrategy;
+            }
             _pauseMenuPresenter.Disable();
         }
 
@@ -56,6 +60,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
         private readonly IInputActionService _inputActionService;
         private readonly IPlayerMoveController _playerMoveController;
         private IMoveStrategy _prevMoveStrategy;
+        private GameState _prevGameState;
 
         private void OnResume()
         {
