@@ -6,6 +6,7 @@ using Zenject;
 namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
+    using Common.Logging;
     using Movement.Abstractions;
     using MazeGeneration;
 
@@ -20,33 +21,28 @@ namespace KarenKrill.TheLabyrinth.GameFlow
 
         [Inject]
         public void Initialize(ILogger logger,
+            IGameInfoProvider gameInfoProvider,
             IPlayerMoveController playerMoveController,
             IManualMoveStrategy manualMoveStrategy,
             IPhysicMoveStrategy physicMoveStrategy)
         {
             _logger = logger;
+            _gameInfoProvider = gameInfoProvider;
             _playerMoveController = playerMoveController;
             _manualMoveStrategy = manualMoveStrategy;
             _physicMoveStrategy = physicMoveStrategy;
         }
 
-        public void Reset()
-        {
-            ResetToDefaults();
-        }
         public void OnLevelLoad() => StartCoroutine(LoadLevelCoroutine());
         public void OnLevelEnd() => StartCoroutine(FinishLevelCoroutine());
 
-        private void ResetToDefaults()
-        {
-            _mazeLevelsCount = _mazeMinLevelsCount;
-            _mazeBuilder.Levels = _mazeLevelsCount;
-        }
         private IEnumerator LoadLevelCoroutine()
         {
             _logger.Log($"{nameof(LoadLevelManager)}.{nameof(LoadLevelCoroutine)}");
             var previousMoveStrategy = _playerMoveController.MoveStrategy;
             _playerMoveController.MoveStrategy = _manualMoveStrategy;
+            _mazeBuilder.Levels = _gameInfoProvider.CurrentLevel.MazeLevelsCount;
+            _logger.LogWarning($"Load {_gameInfoProvider.CurrentLevel.MazeShape} level {_gameInfoProvider.CurrentLevel.Index} with {_gameInfoProvider.CurrentLevel.MazeLevelsCount} maze levels count");
             yield return _mazeBuilder.RebuildCoroutine();
             var playerSpawnPoint = _mazeBuilder.GetCellCenter(_mazeBuilder.Levels - 1, 0);
             _manualMoveStrategy.Move(new Vector3(playerSpawnPoint.x, 100, playerSpawnPoint.y));
@@ -67,7 +63,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _playerMoveController.MoveStrategy = _manualMoveStrategy;
             _manualMoveStrategy.Move(new Vector3(0, 1, 60));
             yield return null;
-            _mazeBuilder.Levels = _mazeLevelsCount < _mazeMaxLevelsCount ? ++_mazeLevelsCount : _mazeMaxLevelsCount;
             _playerMoveController.MoveStrategy = previousMoveStrategy;
             LevelUnloaded?.Invoke();
         }
@@ -76,15 +71,11 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private ArcMazeBuilder _mazeBuilder;
         [SerializeField]
         private Transform _exitPointTransform;
-        [SerializeField]
-        private int _mazeMinLevelsCount = 4;
-        [SerializeField]
-        private int _mazeMaxLevelsCount = 13;
 
         private ILogger _logger;
+        private IGameInfoProvider _gameInfoProvider;
         private IPlayerMoveController _playerMoveController;
         private IManualMoveStrategy _manualMoveStrategy;
         private IPhysicMoveStrategy _physicMoveStrategy;
-        private int _mazeLevelsCount = 0;
     }
 }

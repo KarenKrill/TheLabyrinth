@@ -10,10 +10,17 @@ namespace KarenKrill.TheLabyrinth.GameFlow
     public class GameplayController : MonoBehaviour, IGameController, IGameInfoProvider
     {
 #nullable enable
-        public int CurrentLevelNumber => _PassedLevels;
-        public string? CurrentLevelName => null;
-
-        public event Action? CurrentLevelChanged;
+        private LevelInfo _currentLevelInfo;
+        public LevelInfo CurrentLevel
+        {
+            get => _currentLevelInfo;
+            set
+            {
+                _currentLevelInfo = value;
+                CurrentLevelChanged?.Invoke(_currentLevelInfo);
+            }
+        }
+        public event Action<LevelInfo>? CurrentLevelChanged;
 #nullable restore
 
         [Inject]
@@ -28,10 +35,9 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         }
         public void OnLevelFinish()
         {
-            if (_PassedLevels < _gameLevelsCount)
+            if (CurrentLevel.Index < _gameLevelsCount)
             {
-                _PassedLevels++;
-                OnCurrentLevelChanged();
+                CurrentLevel = GetNextLevelInfo();
                 _gameFlow.LoadLevel();
             }
             else
@@ -44,22 +50,13 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         private LoadLevelManager _loadLevelManager;
         [SerializeField]
         private int _gameLevelsCount = 13;
+        [SerializeField]
+        private int _mazeMinLevelsCount = 4;
+        [SerializeField]
+        private int _mazeMaxLevelsCount = 13;
 
         private IGameFlow _gameFlow;
         private IManagedStateMachine<GameState> _managedStateMachine;
-
-        private int _passedLevels = 0;
-        private int _PassedLevels
-        {
-            get => _passedLevels;
-            set
-            {
-                if (value == 0 || _passedLevels != value)
-                {
-                    _passedLevels = value;
-                }
-            }
-        }
 
         private void Awake()
         {
@@ -78,13 +75,12 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         }
         private void ResetToDefaults()
         {
-            _PassedLevels = 1;
-            OnCurrentLevelChanged();
+            CurrentLevel = new(1, string.Empty, MazeShape.Circle, _mazeMinLevelsCount);
         }
-        
-        private void OnCurrentLevelChanged()
+        private LevelInfo GetNextLevelInfo()
         {
-            CurrentLevelChanged?.Invoke();
+            var levelsCount = CurrentLevel.MazeLevelsCount < _mazeMaxLevelsCount ? CurrentLevel.MazeLevelsCount + 1 : _mazeMaxLevelsCount;
+            return new(CurrentLevel.Index + 1, string.Empty, MazeShape.Circle, levelsCount);
         }
     }
 }

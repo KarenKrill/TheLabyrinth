@@ -21,10 +21,9 @@ namespace KarenKrill.TheLabyrinth.GameStates
         public void Enter(GameState prevState)
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
-            _levelManager.Reset();
-            _gameFlow.LoadLevel();
             _inputActionService.Disable();
             _gameController.OnGameStart();
+            _gameFlow.LoadLevel();
         }
         public void Exit(GameState nextState) { _logger.Log($"{GetType().Name}.{nameof(Exit)}()"); }
 

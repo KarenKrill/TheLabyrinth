@@ -9,7 +9,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow.Abstractions
         event Action? LevelLoaded;
         event Action? LevelUnloaded;
 
-        void Reset();
         void OnLevelLoad();
         void OnLevelEnd();
     }

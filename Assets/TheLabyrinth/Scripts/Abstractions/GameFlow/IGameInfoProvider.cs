@@ -6,9 +6,8 @@ namespace KarenKrill.TheLabyrinth.GameFlow.Abstractions
 {
     public interface IGameInfoProvider
     {
-        int CurrentLevelNumber { get; }
-        string? CurrentLevelName { get; }
+        LevelInfo CurrentLevel { get; }
 
-        event Action? CurrentLevelChanged;
+        event Action<LevelInfo>? CurrentLevelChanged;
     }
 }

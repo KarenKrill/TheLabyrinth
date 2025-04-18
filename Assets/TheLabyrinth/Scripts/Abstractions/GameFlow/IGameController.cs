@@ -6,7 +6,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow.Abstractions
 {
     public interface IGameController
     {
-        int CurrentLevelNumber { get; }
+        LevelInfo CurrentLevel { get; set; }
         string? CurrentLevelName { get; }
 
         event Action? CurrentLevelChanged;
