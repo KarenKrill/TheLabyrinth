@@ -12,12 +12,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow.Abstractions
         event Action? CurrentLevelChanged;
 
         void OnGameStart();
-        void OnGameEnd();
-        void OnLevelLoad();
-        void OnLevelPlay();
-        void OnLevelPause();
         void OnLevelFinish();
-        void OnPlayerLoose();
-        void OnPlayerWin();
     }
 }

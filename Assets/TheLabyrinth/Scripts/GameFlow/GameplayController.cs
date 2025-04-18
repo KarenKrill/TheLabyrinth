@@ -27,16 +27,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         {
             ResetToDefaults();
         }
-        public void OnGameEnd() { }
-        public void OnLevelLoad()
-        {
-        }
-        public void OnLevelPlay()
-        {
-        }
-        public void OnLevelPause()
-        {
-        }
         public void OnLevelFinish()
         {
             if (_PassedLevels < _gameLevelsCount)
@@ -50,8 +40,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
                 _gameFlow.WinGame();
             }
         }
-        public void OnPlayerLoose() { }
-        public void OnPlayerWin() { }
 
         [SerializeField]
         private LoadLevelManager _loadLevelManager;

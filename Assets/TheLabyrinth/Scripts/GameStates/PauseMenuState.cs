@@ -39,7 +39,6 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _inputActionService.SetActionMap(ActionMap.UI);
             _prevMoveStrategy = _playerMoveController.MoveStrategy;
             _playerMoveController.MoveStrategy = null;
-            _gameController.OnLevelPause();
         }
         public void Exit(GameState nextState)
         {

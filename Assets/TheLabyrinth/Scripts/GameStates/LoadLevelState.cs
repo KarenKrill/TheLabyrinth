@@ -44,7 +44,6 @@ namespace KarenKrill.TheLabyrinth.GameStates
             _levelInfoPresenter.View ??= _viewFactory.Create<IILevelInfoView>();
             _levelInfoPresenter.Enable();
             _inputActionService.Disable();
-            _gameController.OnLevelLoad();
         }
         public void Exit(GameState nextState)
         {
