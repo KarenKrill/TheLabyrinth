@@ -59,17 +59,6 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         {
             _managedStateMachine.Start();
         }
-        private void Update()
-        {
-            if (_gameFlow.State == GameState.LevelPlay)
-            {
-                UpdateLeftLevelTime();
-            }
-        }
-
-        private void UpdateLeftLevelTime()
-        {
-        }
         private void ResetToDefaults()
         {
             CurrentLevel = new(1, string.Empty, MazeShape.Circle, _mazeMinLevelsCount);
