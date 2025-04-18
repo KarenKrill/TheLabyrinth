@@ -29,11 +29,8 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _gameFlow = gameFlow;
             _managedStateMachine = managedStateMachine;
         }
-        public void OnGameStart()
-        {
-            ResetToDefaults();
-        }
-        public void OnLevelFinish()
+        public void StartGame() => ResetToDefaults();
+        public void FinishLevel()
         {
             if (CurrentLevel.Index < _gameLevelsCount)
             {

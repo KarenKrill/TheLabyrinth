@@ -33,8 +33,8 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _physicMoveStrategy = physicMoveStrategy;
         }
 
-        public void OnLevelLoad() => StartCoroutine(LoadLevelCoroutine());
-        public void OnLevelEnd() => StartCoroutine(FinishLevelCoroutine());
+        public void LoadLevel() => StartCoroutine(LoadLevelCoroutine());
+        public void UnloadLevel() => StartCoroutine(FinishLevelCoroutine());
 
         private IEnumerator LoadLevelCoroutine()
         {

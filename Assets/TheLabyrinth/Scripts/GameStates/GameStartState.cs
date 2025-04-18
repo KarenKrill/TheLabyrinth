@@ -22,7 +22,7 @@ namespace KarenKrill.TheLabyrinth.GameStates
         {
             _logger.Log($"{GetType().Name}.{nameof(Enter)}()");
             _inputActionService.Disable();
-            _gameController.OnGameStart();
+            _gameController.StartGame();
             _gameFlow.LoadLevel();
         }
         public void Exit(GameState nextState) { _logger.Log($"{GetType().Name}.{nameof(Exit)}()"); }
