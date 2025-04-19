@@ -34,7 +34,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
         }
 
         public void LoadLevel() => StartCoroutine(LoadLevelCoroutine());
-        public void UnloadLevel() => StartCoroutine(FinishLevelCoroutine());
+        public void UnloadLevel() => StartCoroutine(UnloadLevelCoroutine());
 
         private IEnumerator LoadLevelCoroutine()
         {
@@ -57,7 +57,7 @@ namespace KarenKrill.TheLabyrinth.GameFlow
             _playerMoveController.MoveStrategy = previousMoveStrategy;
             LevelLoaded?.Invoke();
         }
-        private IEnumerator FinishLevelCoroutine()
+        private IEnumerator UnloadLevelCoroutine()
         {
             var previousMoveStrategy = _playerMoveController.MoveStrategy;
             _playerMoveController.MoveStrategy = _manualMoveStrategy;
