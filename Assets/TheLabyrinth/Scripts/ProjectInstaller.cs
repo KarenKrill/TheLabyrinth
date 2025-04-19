@@ -5,7 +5,6 @@ using Zenject;
 
 namespace KarenKrill.TheLabyrinth
 {
-    using Abstractions;
     using Common.Logging;
     using Common.StateSystem.Abstractions;
     using Common.UI.Presenters.Abstractions;
@@ -22,7 +21,6 @@ namespace KarenKrill.TheLabyrinth
     {
         public override void InstallBindings()
         {
-            InstallSettings();
             Container.Bind<IInputActionService>().To<InputActionService>().FromNew().AsSingle().NonLazy();
 #if DEBUG
             Container.Bind<ILogger>().To<Logger>().FromNew().AsSingle().WithArguments(new DebugLogHandler());
@@ -70,17 +68,6 @@ namespace KarenKrill.TheLabyrinth
         [SerializeField]
         List<GameObject> _uiPrefabs;
 
-        private void InstallSettings()
-        {
-            var qualityLevel = PlayerPrefs.GetInt("Settings.Graphics.QualityLevel", (int)QualityLevel.High);
-            if (qualityLevel < 0 || qualityLevel > (int)QualityLevel.High)
-            {
-                qualityLevel = (int)QualityLevel.High;
-            }
-            var showFps = PlayerPrefs.GetInt("Settings.Diagnostic.ShowFps", 0);
-            GameSettings gameSettings = new((QualityLevel)qualityLevel, showFps != 0);
-            Container.Bind<GameSettings>().To<GameSettings>().FromInstance(gameSettings);
-        }
         private void InstallGameStateMachine()
         {
             Dictionary<GameState, IList<GameState>> validTransitions = new()
