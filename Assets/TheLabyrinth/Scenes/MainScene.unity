@@ -1347,6 +1347,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _loadLevelManager: {fileID: 1539480200}
   _gameLevelsCount: 5
+  _mazeMinLevelsCount: 4
+  _mazeMaxLevelsCount: 13
 --- !u!1 &1103324766
 GameObject:
   m_ObjectHideFlags: 3
@@ -1737,8 +1739,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _mazeBuilder: {fileID: 120555840}
   _exitPointTransform: {fileID: 1542953278}
-  _mazeMinLevelsCount: 4
-  _mazeMaxLevelsCount: 13
 --- !u!4 &1542953278 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5256851200920328858, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
