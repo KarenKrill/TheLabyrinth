@@ -11,6 +11,7 @@ namespace KarenKrill.TheLabyrinth
     using Common.UI.Presenters.Abstractions;
     using Common.StateSystem;
     using Common.UI.Views;
+    using Common.Diagnostics;
     using Common.Utilities;
     using GameFlow.Abstractions;
     using Input.Abstractions;
@@ -64,6 +65,10 @@ namespace KarenKrill.TheLabyrinth
                 return GameObject.FindFirstObjectByType<PlayerMoveController>(FindObjectsInactive.Exclude);
             }).AsSingle();
             Container.Bind<IGameFlow>().To<GameFlow.GameFlow>().FromNew().AsSingle();
+            Container.BindInterfacesAndSelfTo<DiagnosticsProvider>().FromMethod(context =>
+            {
+                return GameObject.FindFirstObjectByType<DiagnosticsProvider>(FindObjectsInactive.Exclude);
+            }).AsSingle();
             InstallPresenterBindings();
         }
 
