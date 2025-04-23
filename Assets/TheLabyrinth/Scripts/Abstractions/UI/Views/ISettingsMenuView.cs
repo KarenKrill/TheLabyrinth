@@ -13,7 +13,7 @@ namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
         #endregion
 
         #region Diagnostic
-        bool ShowFps { set; }
+        bool ShowFps { get; set; }
         #endregion
 
         event Action? Apply;
