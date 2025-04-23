@@ -1,4 +1,6 @@
-﻿namespace KarenKrill.TheLabyrinth.Abstractions
+﻿using System;
+
+namespace KarenKrill.TheLabyrinth.Abstractions
 {
     public enum QualityLevel
     {
@@ -11,20 +13,53 @@
     {
         #region Graphics
 
-        public QualityLevel QualityLevel;
+        public QualityLevel QualityLevel
+        {
+            get => _qualityLevel;
+            set
+            {
+                if (_qualityLevel != value)
+                {
+                    _qualityLevel = value;
+                    QualityLevelChanged?.Invoke(_qualityLevel);
+                }
+            }
+        }
 
         #endregion
 
         #region Diagnostic
 
-        public bool ShowFps;
+        public bool ShowFps
+        {
+            get => _showFps;
+            set
+            {
+                if (_showFps != value)
+                {
+                    _showFps = value;
+                    ShowFpsChanged?.Invoke(_showFps);
+                }
+            }
+        }
 
         #endregion
 
+#nullable enable
+
+        public event Action<QualityLevel>? QualityLevelChanged;
+
+        public event Action<bool>? ShowFpsChanged;
+
+#nullable restore
+
         public GameSettings(QualityLevel qualityLevel = QualityLevel.High, bool showFps = false)
         {
-            QualityLevel = qualityLevel;
-            ShowFps = showFps;
+            _qualityLevel = qualityLevel;
+            _showFps = showFps;
         }
+
+        private QualityLevel _qualityLevel;
+        private bool _showFps;
     }
 }
