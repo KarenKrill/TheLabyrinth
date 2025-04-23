@@ -1,8 +1,7 @@
-﻿using UnityEngine;
-
-namespace KarenKrill.TheLabyrinth.UI.Presenters
+﻿namespace KarenKrill.TheLabyrinth.UI.Presenters
 {
     using Common.UI.Presenters.Abstractions;
+    using Common.UI.Views.Abstractions;
     using GameFlow.Abstractions;
     using Views.Abstractions;
 
@@ -10,10 +9,11 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
     {
         public IPauseMenuView View { get; set; }
 
-        public PauseMenuPresenter(ILogger logger, IGameFlow gameFlow)
+        public PauseMenuPresenter(IGameFlow gameFlow, IPresenter<ISettingsMenuView> settingsPresenter, IViewFactory viewFactory)
         {
-            _logger = logger;
             _gameFlow = gameFlow;
+            _settingsPresenter = settingsPresenter;
+            _viewFactory = viewFactory;
         }
         public void Enable()
         {
@@ -34,14 +34,25 @@ namespace KarenKrill.TheLabyrinth.UI.Presenters
             View.Exit -= OnExit;
         }
 
-        private readonly ILogger _logger;
         private readonly IGameFlow _gameFlow;
+        private readonly IPresenter<ISettingsMenuView> _settingsPresenter;
+        private readonly IViewFactory _viewFactory;
 
         private void OnRestart() => _gameFlow.StartGame();
         private void OnResume() => _gameFlow.PlayLevel();
         private void OnSettings()
         {
-            _logger.Log("Settings shown");
+            _settingsPresenter.View ??= _viewFactory.Create<ISettingsMenuView>();
+            _settingsPresenter.View.Apply += OnClosing;
+            _settingsPresenter.View.Cancel += OnClosing;
+            View.Close();
+            _settingsPresenter.Enable();
+        }
+        private void OnClosing()
+        {
+            _settingsPresenter.View.Apply -= OnClosing;
+            _settingsPresenter.View.Cancel -= OnClosing;
+            View.Show();
         }
         private void OnMainMenuExit() => _gameFlow.LoadMainMenu();
         private void OnExit() => _gameFlow.EndGame();
