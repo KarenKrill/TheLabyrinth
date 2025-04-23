@@ -18,6 +18,5 @@ namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
 
         event Action? Apply;
         event Action? Cancel;
-        event Action<bool>? ShowFpsChanged;
     }
 }
