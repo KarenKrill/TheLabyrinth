@@ -14,13 +14,11 @@ namespace KarenKrill.TheLabyrinth.GameStates
 
         public MainMenuState(ILogger logger,
             IPresenter<IMainMenuView> mainMenuPresenter,
-            IPresenter<IDiagnosticInfoView> diagnosticInfoPresenter,
             IPresenter<IILevelInfoView> levelInfoPresenter,
             IViewFactory viewFactory)
         {
             _logger = logger;
             _mainMenuPresenter = mainMenuPresenter;
-            _diagnosticInfoPresenter = diagnosticInfoPresenter;
             _levelInfoPresenter = levelInfoPresenter;
             _viewFactory = viewFactory;
         }
@@ -33,11 +31,6 @@ namespace KarenKrill.TheLabyrinth.GameStates
                 _levelInfoPresenter.Disable();
             }
             _mainMenuPresenter.Enable();
-            if (_diagnosticInfoPresenter.View is null)
-            {
-                _diagnosticInfoPresenter.View = _viewFactory.Create<IDiagnosticInfoView>();
-                _diagnosticInfoPresenter.Enable();
-            }
         }
         public void Exit(GameState nextState)
         {
@@ -47,7 +40,6 @@ namespace KarenKrill.TheLabyrinth.GameStates
         
         private readonly ILogger _logger;
         private readonly IPresenter<IMainMenuView> _mainMenuPresenter;
-        private readonly IPresenter<IDiagnosticInfoView> _diagnosticInfoPresenter;
         private readonly IPresenter<IILevelInfoView> _levelInfoPresenter;
         private readonly IViewFactory _viewFactory;
     }
