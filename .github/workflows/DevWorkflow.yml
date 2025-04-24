@@ -15,7 +15,6 @@ jobs:
         projectPath:
           - TheLabyrinthProject
         unityVersion:
-          - 2020.2.1f1
           - 2022.3.38f1
         targetPlatform:
           - StandaloneWindows # Build a Windows 32-bit standalone.
@@ -43,5 +42,5 @@ jobs:
           targetPlatform: ${{ matrix.targetPlatform }}
       - uses: actions/upload-artifact@v4
         with:
-          name: Build-${{ matrix.targetPlatform }}
+          name: Build-${{ matrix.targetPlatform }}(${{ matrix.unityVersion }})
           path: build/${{ matrix.targetPlatform }}
