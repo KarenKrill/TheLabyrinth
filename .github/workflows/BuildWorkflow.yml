@@ -22,7 +22,6 @@ jobs:
           - 2022.3.38f1
           - 6000.0.47f1
         targetPlatform:
-          #- Android # Build an Android player.
           - StandaloneWindows # Build a Windows 32-bit standalone.
           - StandaloneWindows64 # Build a Windows 64-bit standalone.
     steps:
@@ -47,9 +46,6 @@ jobs:
           restore-keys: |
             Library-${{ runner.os }}-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}-
             Library-${{ runner.os }}-${{ matrix.unityVersion }}-
-      - name: Free disk space for Android build
-        if: matrix.targetPlatform == 'Android'
-        uses: jlumbroso/free-disk-space@v1.3.1
       - name: Build project
         uses: game-ci/unity-builder@v4
         env:
