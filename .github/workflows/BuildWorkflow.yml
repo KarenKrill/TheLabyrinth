@@ -1,0 +1,67 @@
+name: BuildWorkflow
+
+on:
+  push:
+    branches: [ "main", "dev" ]
+  pull_request:
+    branches: [ "main", "dev" ]
+  workflow_dispatch: # to run manually
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  MultiplatformBuild:
+    name: ${{ matrix.targetPlatform }} build (${{ matrix.unityVersion }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        unityVersion:
+          - 2022.3.38f1
+          - 6000.0.47f1
+        targetPlatform:
+          #- Android # Build an Android player.
+          - StandaloneWindows # Build a Windows 32-bit standalone.
+          - StandaloneWindows64 # Build a Windows 64-bit standalone.
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          lfs: true
+      - name: Set environment variables
+        run: |
+          echo HEAD_COMMIT_SHA=$(git rev-parse HEAD) >> $GITHUB_ENV
+          echo PROJECT_NAME=${GITHUB_REPOSITORY#*/} >> $GITHUB_ENV
+      - name: Print environment variables
+        run: |
+          echo HEAD_COMMIT_SHA=${{ env.HEAD_COMMIT_SHA }}
+          echo PROJECT_NAME=${{ env.PROJECT_NAME }}
+      - name: Restore Library directory from cache
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key:
+            Library-${{ runner.os }}-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}
+          restore-keys: |
+            Library-${{ runner.os }}-${{ matrix.unityVersion }}-${{ matrix.targetPlatform }}-
+            Library-${{ runner.os }}-${{ matrix.unityVersion }}-
+      - name: Free disk space for Android build
+        if: matrix.targetPlatform == 'Android'
+        uses: jlumbroso/free-disk-space@v1.3.1
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_SERIAL: ${{ secrets.UNITY_SERIAL }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          unityVersion: ${{ matrix.unityVersion }}
+          targetPlatform: ${{ matrix.targetPlatform }}
+          buildName: ${{ env.PROJECT_NAME }}
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.PROJECT_NAME }}.${{ matrix.targetPlatform }}.${{ matrix.unityVersion }}.Build
+          path: build/${{ matrix.targetPlatform }}
