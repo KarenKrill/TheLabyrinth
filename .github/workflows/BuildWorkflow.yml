@@ -44,7 +44,8 @@ jobs:
         with:
           unityVersion: ${{ matrix.unityVersion }}
           targetPlatform: ${{ matrix.targetPlatform }}
+          buildName: ${{ env.PROJECT_NAME }}
       - uses: actions/upload-artifact@v4
         with:
-          name: Build-${{ matrix.targetPlatform }}(${{ matrix.unityVersion }})
+          name: ${{ env.PROJECT_NAME }}.${{ matrix.targetPlatform }}.${{ matrix.unityVersion }}.Build
           path: build/${{ matrix.targetPlatform }}
