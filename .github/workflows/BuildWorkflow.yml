@@ -28,6 +28,14 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+      - name: Set environment variables
+        run: |
+          echo HEAD_COMMIT_SHA=$(git rev-parse HEAD) >> $GITHUB_ENV
+          echo PROJECT_NAME=${GITHUB_REPOSITORY#*/} >> $GITHUB_ENV
+      - name: Print environment variables
+        run: |
+          echo HEAD_COMMIT_SHA=${{ env.HEAD_COMMIT_SHA }}
+          echo PROJECT_NAME=${{ env.PROJECT_NAME }}
       - uses: actions/cache@v4
         with:
           path: Library
