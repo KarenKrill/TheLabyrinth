@@ -7,13 +7,11 @@ on:
   workflow_dispatch:
 jobs:
   WindowsBasedPlatformsBuild:
-    name: Build for ${{ matrix.targetPlatform }}
+    name: ${{ matrix.targetPlatform }} build (${{ matrix.unityVersion }})
     runs-on: windows-2022
     strategy:
       fail-fast: false
       matrix:
-        projectPath:
-          - TheLabyrinthProject
         unityVersion:
           - 2022.3.38f1
         targetPlatform:
@@ -24,7 +22,7 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
-      - uses: actions/cache@v3
+      - uses: actions/cache@v4
         with:
           path: Library
           key:
