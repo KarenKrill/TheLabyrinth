@@ -65,6 +65,7 @@ jobs:
 
   LinuxBasedBuild:
     name: ${{ matrix.targetPlatform }} build (${{ matrix.unityVersion }})
+    if: false
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
