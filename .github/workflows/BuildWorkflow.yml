@@ -31,8 +31,9 @@ jobs:
           lfs: true
       - name: Set environment variables
         run: |
-          echo HEAD_COMMIT_SHA=$(git rev-parse HEAD) >> $GITHUB_ENV
-          echo PROJECT_NAME=${GITHUB_REPOSITORY#*/} >> $GITHUB_ENV
+          echo HEAD_COMMIT_SHA=$(git rev-parse HEAD) >> $env:GITHUB_ENV
+          $PROJECT_NAME_TEMP="${{ github.repository }}".Split('/')[-1]
+          echo PROJECT_NAME=$PROJECT_NAME_TEMP >> $env:GITHUB_ENV
       - name: Print environment variables
         run: |
           echo HEAD_COMMIT_SHA=${{ env.HEAD_COMMIT_SHA }}
