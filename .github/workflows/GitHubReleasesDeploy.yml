@@ -13,8 +13,8 @@ env:
 
 jobs:
 
-  AnalyseVersionChanges:
-    name: Analyse version changes
+  ObtainVersionInfo:
+    name: Obtain version info
     if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
     steps:
@@ -23,45 +23,15 @@ jobs:
           fetch-depth: 0
       - name: Obtain version info
         run: |
-          echo $(git tag --sort "-creatordate")
           echo MAJOR_VERSION=$(echo ${{ github.ref_name }} | cut -d. -f1 | sed -e "s/^v//") >> $GITHUB_ENV
-          echo MINOR_VERSION=$(echo ${{ github.ref_name }} | cut -d. -f2) >> $GITHUB_ENV
-          echo PATCH_VERSION=$(echo ${{ github.ref_name }} | cut -d. -f3) >> $GITHUB_ENV
-          echo PREVIOUS_MAJOR_VERSION=$(git tag --sort "-creatordate" | cut -d$'\n' -f2 | cut -d. -f1 | sed -e "s/^v//") >> $GITHUB_ENV
-          echo PREVIOUS_MINOR_VERSION=$(git tag --sort "-creatordate" | cut -d$'\n' -f2 | cut -d. -f2) >> $GITHUB_ENV
-          echo PREVIOUS_PATCH_VERSION=$(git tag --sort "-creatordate" | cut -d$'\n' -f2 | cut -d. -f3) >> $GITHUB_ENV
           echo TAG_COMMIT_SHA=$(git show -s '${{ github.ref_name }}^{commit}' --format='%H') >> $GITHUB_ENV
-      - name: Print versions
-        run: |
-          echo CurrentVerison = ${{ env.MAJOR_VERSION }}.${{ env.MINOR_VERSION }}.${{ env.PATCH_VERSION }}
-          echo PreviousVerison = ${{ env.PREVIOUS_MAJOR_VERSION }}.${{ env.PREVIOUS_MINOR_VERSION }}.${{ env.PREVIOUS_PATCH_VERSION }}
-      - name: Compare versions
-        run: |
-          echo MAJOR_CHANGE=$(($MAJOR_VERSION - $PREVIOUS_MAJOR_VERSION)) >> $GITHUB_ENV
-          echo MINOR_CHANGE=$(($MINOR_VERSION - $PREVIOUS_MINOR_VERSION)) >> $GITHUB_ENV
-          echo PATCH_CHANGE=$(($PATCH_VERSION - $PREVIOUS_PATCH_VERSION)) >> $GITHUB_ENV
-      - name: Print versions diffs
-        run: |
-          echo MAJOR_CHANGE = ${{ env.MAJOR_CHANGE }}
-          echo MINOR_CHANGE = ${{ env.MINOR_CHANGE }}
-          echo PATCH_CHANGE = ${{ env.PATCH_CHANGE }}
-      - name: There are no significant changes for release
-        id: DetectWorkflowCancel
-        run: |
-            if ((${{ env.MAJOR_CHANGE }} == 0 && ${{ env.MINOR_CHANGE }} == 0)); then
-                echo WORKFLOW_CANCELLED=1 >> $GITHUB_OUTPUT
-            else
-                echo WORKFLOW_CANCELLED=0 >> $GITHUB_OUTPUT
-            fi
     outputs:
-      WORKFLOW_CANCELLED: ${{ steps.DetectWorkflowCancel.outputs.WORKFLOW_CANCELLED }}
       MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
       TAG_COMMIT_SHA: ${{ env.TAG_COMMIT_SHA }}
 
-  AnalyseBuildWorkflow:
+  AwaitBuildWorkflow:
     name: Analyse build workflow
-    needs: [AnalyseVersionChanges]
-    if: needs.AnalyseVersionChanges.result == 'success' && needs.AnalyseVersionChanges.outputs.WORKFLOW_CANCELLED == 0
+    needs: [ObtainVersionInfo]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -70,35 +40,34 @@ jobs:
       - name: Find build run id
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAG_COMMIT_SHA: ${{ needs.AnalyseVersionChanges.outputs.TAG_COMMIT_SHA }}
+          TAG_COMMIT_SHA: ${{ needs.ObtainVersionInfo.outputs.TAG_COMMIT_SHA }}
         run: |
-          echo BUILD_RUN_ID=$(gh run list --commit ${{ env.TAG_COMMIT_SHA }} --status success --workflow=${{ env.BUILD_WORKFLOW_NAME }} --json databaseId --jq '.[] | .databaseId') >> $GITHUB_ENV
+          echo BUILD_RUN_ID=$(gh run list --commit ${{ env.TAG_COMMIT_SHA }} --workflow=${{ env.BUILD_WORKFLOW_NAME }} --json databaseId --jq '.[] | .databaseId') >> $GITHUB_ENV
       - name: Print build run id
         run: echo "BUILD_RUN_ID = $BUILD_RUN_ID"
-      - name: Builds for release found
-        id: ReleaseBuildsFound
+      - name: Get owner/repo names
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_COMMIT_SHA: ${{ needs.AnalyseVersionChanges.outputs.TAG_COMMIT_SHA }}
         run: |
-            if [[ ${BUILD_RUN_ID:+x} ]]; then
-                echo WORKFLOW_CANCELLED=0 >> $GITHUB_OUTPUT
-            else
-                echo WORKFLOW_CANCELLED=1 >> $GITHUB_OUTPUT
-            fi
+          echo GITHUB_REPO=${GITHUB_REPOSITORY#*/} >> $GITHUB_ENV
+          echo GITHUB_OWNER=${GITHUB_REPOSITORY%/*} >> $GITHUB_ENV
+      - name: Await Build Run (${{ env.BUILD_WORKFLOW_NAME }}/${{ env.TAG_COMMIT_SHA }})
+        uses: Codex-/await-remote-run@v1.0.0
+        with:
+            token: ${{ github.token }}
+            run_id: ${{ env.BUILD_RUN_ID }}
+            repo: ${{ env.GITHUB_REPO }}
+            owner: ${{ env.GITHUB_OWNER }}
+            run_timeout_seconds: 1800 # Timeout - 30 minutes
+            poll_interval_ms: 5000 # Optional
     outputs:
-      WORKFLOW_CANCELLED: ${{ steps.ReleaseBuildsFound.outputs.WORKFLOW_CANCELLED }}
       BUILD_RUN_ID: ${{ env.BUILD_RUN_ID }}
-
-  CancelDetect:
-    name: Cancel detect
-    needs: [AnalyseVersionChanges, AnalyseBuildWorkflow]
-    if: needs.AnalyseBuildWorkflow.result == 'success' && needs.AnalyseBuildWorkflow.outputs.WORKFLOW_CANCELLED == 0
-    runs-on: ubuntu-latest
-    steps:
-      - run: exit 0
   
   CreateRelease:
     name: Create release
-    needs: [AnalyseVersionChanges, CancelDetect]
-    if: needs.CancelDetect.result == 'success' && needs.AnalyseVersionChanges.outputs.MAJOR_VERSION > 0
+    needs: [ObtainVersionInfo]
+    if: needs.ObtainVersionInfo.outputs.MAJOR_VERSION > 0 && !endsWith(github.ref_name, 'alpha') && !endsWith(github.ref_name, 'beta')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -117,8 +86,8 @@ jobs:
 
   CreatePreRelease:
     name: Create pre-release
-    needs: [AnalyseVersionChanges, CancelDetect]
-    if: needs.CancelDetect.result == 'success' && needs.AnalyseVersionChanges.outputs.MAJOR_VERSION == 0
+    needs: [ObtainVersionInfo]
+    if: needs.ObtainVersionInfo.outputs.MAJOR_VERSION == 0 || endsWith(github.ref_name, 'alpha') || endsWith(github.ref_name, 'beta')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -138,7 +107,7 @@ jobs:
 
   UploadReleaseBuilds:
     name: Upload release builds
-    needs: [AnalyseBuildWorkflow, CreateRelease, CreatePreRelease]
+    needs: [AwaitBuildWorkflow, CreateRelease, CreatePreRelease]
     if: always() && (needs.CreateRelease.result == 'success' || needs.CreatePreRelease.result == 'success')
     runs-on: ubuntu-latest
     steps:
@@ -148,7 +117,7 @@ jobs:
       - name: Download builds artifacts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BUILD_RUN_ID: ${{ needs.AnalyseBuildWorkflow.outputs.BUILD_RUN_ID }}
+          BUILD_RUN_ID: ${{ needs.AwaitBuildWorkflow.outputs.BUILD_RUN_ID }}
         run: |
           mkdir -p artifacts
           gh run download $BUILD_RUN_ID --dir artifacts
@@ -164,16 +133,19 @@ jobs:
                 BUILD_NAME=$PROJECT_NAME.$BUILD_VERSION.${BUILD_DIR_WITHOUT_PROJECT_NAME%*$BUILD_DIRECTORY_POSTFIX}
                 echo BuildDirWithoutProjName = $BUILD_DIR_WITHOUT_PROJECT_NAME
                 echo BuildName = $BUILD_NAME
+                rm -rf $BUILD_DIR/*NotShip*
+                rm -rf $BUILD_DIR/*DontShip*
                 FILES_COUNT=$(($(ls "$BUILD_DIR" -1a | wc -l) - 2))
                 if (($FILES_COUNT == 1)); then # no need to pack a single file
                     FILENAME=$(ls "$BUILD_DIR" -1a | head -n 3 | tail -n 1) ## there are 3 files: ".", ".." and "single build file"
                     echo $BUILD_DIR/$FILENAME moved to $BUILD_NAME.${FILENAME##*.}
                     mv "$BUILD_DIR/$FILENAME" "$BUILD_NAME.${FILENAME##*.}"
                 else # pack build files (except DontShip dir)
+                    cd $BUILD_DIR
                     BUILD_PACK_NAME="$BUILD_NAME.zip"
                     echo $BUILD_PACK_NAME packing...
-                    echo "Exclude: $BUILD_DIR/*DontShip*"
-                    zip -r "$BUILD_PACK_NAME" "$BUILD_DIR" -x "$BUILD_DIR/*DontShip*"
+                    zip -r ../$BUILD_PACK_NAME ./*
+                    cd ..
                 fi
                 rm -rf "$BUILD_DIR"
               fi
