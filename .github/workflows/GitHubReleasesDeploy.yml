@@ -63,11 +63,11 @@ jobs:
             poll_interval_ms: 5000 # Optional
     outputs:
       BUILD_RUN_ID: ${{ env.BUILD_RUN_ID }}
-
+  
   CreateRelease:
     name: Create release
     needs: [ObtainVersionInfo]
-    if: needs.ObtainVersionInfo.outputs.MAJOR_VERSION > 0
+    if: needs.ObtainVersionInfo.outputs.MAJOR_VERSION > 0 && !endsWith(github.ref_name, 'alpha') && !endsWith(github.ref_name, 'beta')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -87,7 +87,7 @@ jobs:
   CreatePreRelease:
     name: Create pre-release
     needs: [ObtainVersionInfo]
-    if: needs.ObtainVersionInfo.outputs.MAJOR_VERSION == 0
+    if: needs.ObtainVersionInfo.outputs.MAJOR_VERSION == 0 || endsWith(github.ref_name, 'alpha') || endsWith(github.ref_name, 'beta')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
