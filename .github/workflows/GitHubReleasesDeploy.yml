@@ -148,10 +148,11 @@ jobs:
                     echo $BUILD_DIR/$FILENAME moved to $BUILD_NAME.${FILENAME##*.}
                     mv "$BUILD_DIR/$FILENAME" "$BUILD_NAME.${FILENAME##*.}"
                 else # pack build files (except DontShip dir)
+                    cd $BUILD_DIR
                     BUILD_PACK_NAME="$BUILD_NAME.zip"
                     echo $BUILD_PACK_NAME packing...
-                    echo "Exclude: $BUILD_DIR/*DontShip*"
-                    zip -r "$BUILD_PACK_NAME" "$BUILD_DIR" -x "$BUILD_DIR/*DontShip*"
+                    zip -r ../$BUILD_PACK_NAME ./*
+                    cd ..
                 fi
                 rm -rf "$BUILD_DIR"
               fi
