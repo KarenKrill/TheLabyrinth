@@ -140,6 +140,8 @@ jobs:
                 BUILD_NAME=$PROJECT_NAME.$BUILD_VERSION.${BUILD_DIR_WITHOUT_PROJECT_NAME%*$BUILD_DIRECTORY_POSTFIX}
                 echo BuildDirWithoutProjName = $BUILD_DIR_WITHOUT_PROJECT_NAME
                 echo BuildName = $BUILD_NAME
+                rm -rf $BUILD_DIR/*NotShip*
+                rm -rf $BUILD_DIR/*DontShip*
                 FILES_COUNT=$(($(ls "$BUILD_DIR" -1a | wc -l) - 2))
                 if (($FILES_COUNT == 1)); then # no need to pack a single file
                     FILENAME=$(ls "$BUILD_DIR" -1a | head -n 3 | tail -n 1) ## there are 3 files: ".", ".." and "single build file"
