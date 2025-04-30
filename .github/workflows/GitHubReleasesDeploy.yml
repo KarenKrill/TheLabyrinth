@@ -29,7 +29,7 @@ jobs:
       MAJOR_VERSION: ${{ env.MAJOR_VERSION }}
       TAG_COMMIT_SHA: ${{ env.TAG_COMMIT_SHA }}
 
-  AnalyseBuildWorkflow:
+  AwaitBuildWorkflow:
     name: Analyse build workflow
     needs: [ObtainVersionInfo]
     runs-on: ubuntu-latest
@@ -42,25 +42,31 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAG_COMMIT_SHA: ${{ needs.ObtainVersionInfo.outputs.TAG_COMMIT_SHA }}
         run: |
-          echo BUILD_RUN_ID=$(gh run list --commit ${{ env.TAG_COMMIT_SHA }} --status success --workflow=${{ env.BUILD_WORKFLOW_NAME }} --json databaseId --jq '.[] | .databaseId') >> $GITHUB_ENV
+          echo BUILD_RUN_ID=$(gh run list --commit ${{ env.TAG_COMMIT_SHA }} --workflow=${{ env.BUILD_WORKFLOW_NAME }} --json databaseId --jq '.[] | .databaseId') >> $GITHUB_ENV
       - name: Print build run id
         run: echo "BUILD_RUN_ID = $BUILD_RUN_ID"
-      - name: Builds for release found
-        id: ReleaseBuildsFound
+      - name: Get owner/repo names
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG_COMMIT_SHA: ${{ needs.AnalyseVersionChanges.outputs.TAG_COMMIT_SHA }}
         run: |
-            if [[ ${BUILD_RUN_ID:+x} ]]; then
-                echo WORKFLOW_CANCELLED=0 >> $GITHUB_OUTPUT
-            else
-                echo WORKFLOW_CANCELLED=1 >> $GITHUB_OUTPUT
-            fi
+          echo GITHUB_REPO=${GITHUB_REPOSITORY#*/} >> $GITHUB_ENV
+          echo GITHUB_OWNER=${GITHUB_REPOSITORY%/*} >> $GITHUB_ENV
+      - name: Await Build Run (${{ env.BUILD_WORKFLOW_NAME }}/${{ env.TAG_COMMIT_SHA }})
+        uses: Codex-/await-remote-run@v1.0.0
+        with:
+            token: ${{ github.token }}
+            run_id: ${{ env.BUILD_RUN_ID }}
+            repo: ${{ env.GITHUB_REPO }}
+            owner: ${{ env.GITHUB_OWNER }}
+            run_timeout_seconds: 1800 # Timeout - 30 minutes
+            poll_interval_ms: 5000 # Optional
     outputs:
-      WORKFLOW_CANCELLED: ${{ steps.ReleaseBuildsFound.outputs.WORKFLOW_CANCELLED }}
       BUILD_RUN_ID: ${{ env.BUILD_RUN_ID }}
 
   CancelDetect:
     name: Cancel detect
-    needs: [ObtainVersionInfo, AnalyseBuildWorkflow]
-    if: needs.AnalyseBuildWorkflow.result == 'success' && needs.AnalyseBuildWorkflow.outputs.WORKFLOW_CANCELLED == 0
+    needs: [ObtainVersionInfo, AwaitBuildWorkflow]
     runs-on: ubuntu-latest
     steps:
       - run: exit 0
@@ -108,7 +114,7 @@ jobs:
 
   UploadReleaseBuilds:
     name: Upload release builds
-    needs: [AnalyseBuildWorkflow, CreateRelease, CreatePreRelease]
+    needs: [AwaitBuildWorkflow, CreateRelease, CreatePreRelease]
     if: always() && (needs.CreateRelease.result == 'success' || needs.CreatePreRelease.result == 'success')
     runs-on: ubuntu-latest
     steps:
@@ -118,7 +124,7 @@ jobs:
       - name: Download builds artifacts
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          BUILD_RUN_ID: ${{ needs.AnalyseBuildWorkflow.outputs.BUILD_RUN_ID }}
+          BUILD_RUN_ID: ${{ needs.AwaitBuildWorkflow.outputs.BUILD_RUN_ID }}
         run: |
           mkdir -p artifacts
           gh run download $BUILD_RUN_ID --dir artifacts
