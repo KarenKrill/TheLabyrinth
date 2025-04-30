@@ -64,17 +64,10 @@ jobs:
     outputs:
       BUILD_RUN_ID: ${{ env.BUILD_RUN_ID }}
 
-  CancelDetect:
-    name: Cancel detect
-    needs: [ObtainVersionInfo, AwaitBuildWorkflow]
-    runs-on: ubuntu-latest
-    steps:
-      - run: exit 0
-  
   CreateRelease:
     name: Create release
-    needs: [ObtainVersionInfo, CancelDetect]
-    if: needs.CancelDetect.result == 'success' && needs.ObtainVersionInfo.outputs.MAJOR_VERSION > 0
+    needs: [ObtainVersionInfo]
+    if: needs.ObtainVersionInfo.outputs.MAJOR_VERSION > 0
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -93,8 +86,8 @@ jobs:
 
   CreatePreRelease:
     name: Create pre-release
-    needs: [ObtainVersionInfo, CancelDetect]
-    if: needs.CancelDetect.result == 'success' && (needs.ObtainVersionInfo.outputs.MAJOR_VERSION == 0
+    needs: [ObtainVersionInfo]
+    if: needs.ObtainVersionInfo.outputs.MAJOR_VERSION == 0
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
