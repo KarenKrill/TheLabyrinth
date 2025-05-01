@@ -74,7 +74,9 @@ jobs:
           - 2022.3.38f1
           - 6000.0.47f1
         targetPlatform:
+          - StandaloneLinux64 # Build a Linux 64-bit standalone.
           - Android # Build an Android player.
+          - WebGL # WebGL.
     steps:
       - uses: actions/checkout@v4
         with:
