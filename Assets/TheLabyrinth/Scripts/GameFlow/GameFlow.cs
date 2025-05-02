@@ -1,8 +1,9 @@
-namespace KarenKrill.TheLabyrinth.GameFlow
+using KarenKrill.StateSystem.Abstractions;
+
+namespace TheLabyrinth.GameFlow
 {
     using Abstractions;
-    using StateSystem.Abstractions;
-
+    
     public class GameFlow : IGameFlow
     {
         public GameState State => _stateSwitcher.State;

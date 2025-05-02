@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KarenKrill.TheLabyrinth.MazeGeneration
+namespace TheLabyrinth.MazeGeneration
 {
     public enum MazeCellWallType
     {

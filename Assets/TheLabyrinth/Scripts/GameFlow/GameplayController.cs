@@ -2,11 +2,12 @@ using System;
 using UnityEngine;
 using Zenject;
 
-namespace KarenKrill.TheLabyrinth.GameFlow
+using KarenKrill.StateSystem.Abstractions;
+
+namespace TheLabyrinth.GameFlow
 {
     using Abstractions;
-    using StateSystem.Abstractions;
-
+    
     public class GameplayController : MonoBehaviour, IGameController, IGameInfoProvider
     {
 #nullable enable

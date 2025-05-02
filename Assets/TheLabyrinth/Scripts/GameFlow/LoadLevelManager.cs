@@ -3,10 +3,11 @@ using System.Collections;
 using UnityEngine;
 using Zenject;
 
-namespace KarenKrill.TheLabyrinth.GameFlow
+using KarenKrill.Logging;
+
+namespace TheLabyrinth.GameFlow
 {
     using Abstractions;
-    using Logging;
     using Movement.Abstractions;
     using MazeGeneration;
 

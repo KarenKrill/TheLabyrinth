@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace KarenKrill.TheLabyrinth
+namespace TheLabyrinth
 {
     public class EnterTrigger : MonoBehaviour
     {

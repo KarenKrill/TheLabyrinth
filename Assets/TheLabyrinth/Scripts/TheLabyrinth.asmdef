@@ -1,6 +1,6 @@
 {
-    "name": "KarenKrill.TheLabyrinth",
-    "rootNamespace": "KarenKrill.TheLabyrinth",
+    "name": "TheLabyrinth",
+    "rootNamespace": "TheLabyrinth",
     "references": [
         "GUID:4da59cf68760d4448ad74b8c0d7330ac",
         "GUID:75469ad4d38634e559750d17036d5f7c",

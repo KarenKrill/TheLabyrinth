@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.TheLabyrinth.GameFlow
+﻿namespace TheLabyrinth.GameFlow
 {
     using Abstractions;
 

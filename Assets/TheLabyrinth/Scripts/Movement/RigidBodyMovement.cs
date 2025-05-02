@@ -3,7 +3,7 @@ using UnityEngine;
 using Zenject;
 using TMPro;
 
-namespace KarenKrill.TheLabyrinth.Movement
+namespace TheLabyrinth.Movement
 {
     using Input.Abstractions;
 

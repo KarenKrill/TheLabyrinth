@@ -3,7 +3,7 @@
 using System;
 using UnityEngine;
 
-namespace KarenKrill.TheLabyrinth.Input.Abstractions
+namespace TheLabyrinth.Input.Abstractions
 {
     public enum ActionMap
     {

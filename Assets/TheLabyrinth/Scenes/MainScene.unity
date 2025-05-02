@@ -2478,7 +2478,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
       propertyPath: _triggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName
-      value: KarenKrill.TheLabyrinth.GameFlow.GameFlowBehaviour, KarenKrill.TheLabyrinth
+      value: TheLabyrinth.GameFlow.GameFlowBehaviour, TheLabyrinth
       objectReference: {fileID: 0}
     - target: {fileID: 6539380103547673080, guid: ab8e7ec1c25a10a4894683bc5835d370, type: 3}
       propertyPath: _triggerEnter.m_PersistentCalls.m_Calls.Array.data[0].m_Arguments.m_ObjectArgumentAssemblyTypeName

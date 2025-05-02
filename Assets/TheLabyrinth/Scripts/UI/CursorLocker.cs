@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace KarenKrill.TheLabyrinth.UI
+namespace TheLabyrinth.UI
 {
     public class CursorLocker : MonoBehaviour
     {

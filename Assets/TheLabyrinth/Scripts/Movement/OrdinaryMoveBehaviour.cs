@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 
-namespace KarenKrill.TheLabyrinth.Movement
+using KarenKrill.Utilities;
+
+namespace TheLabyrinth.Movement
 {
     using Abstractions;
-    using Common.Utilities;
 
     public class OrdinaryMoveBehaviour : MoveBehaviour, IMoveStrategy
     {

@@ -1,8 +1,9 @@
-﻿namespace KarenKrill.TheLabyrinth.UI.Presenters
+﻿using KarenKrill.UI.Presenters.Abstractions;
+
+namespace TheLabyrinth.UI.Presenters
 {
-    using Common.UI.Presenters.Abstractions;
-    using Views.Abstractions;
     using TheLabyrinth.Abstractions;
+    using Views.Abstractions;
 
     public class SettingsMenuPresenter : IPresenter<ISettingsMenuView>
     {

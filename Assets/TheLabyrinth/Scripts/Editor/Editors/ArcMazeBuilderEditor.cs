@@ -5,9 +5,10 @@ using UnityEngine.UIElements;
 using UnityEditor;
 using Unity.EditorCoroutines.Editor;
 
-namespace KarenKrill.TheLabyrinth.MazeGeneration
+using KarenKrill.Logging;
+
+namespace TheLabyrinth.MazeGeneration
 {
-    using Logging;
 
     [CustomEditor(typeof(ArcMazeBuilder))]
     public class ArcMazeBuilderEditor : Editor

@@ -1,6 +1,6 @@
 {
-    "name": "KarenKrill.TheLabyrinth-Editor",
-    "rootNamespace": "",
+    "name": "TheLabyrinth-Editor",
+    "rootNamespace": "TheLabyrinth.Editor",
     "references": [
         "GUID:478a2357cc57436488a56e564b08d223",
         "GUID:dba450939f2546049b63d2109a9dfa51",

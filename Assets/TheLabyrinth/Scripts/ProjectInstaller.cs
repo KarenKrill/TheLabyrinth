@@ -3,16 +3,17 @@ using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
-namespace KarenKrill.TheLabyrinth
+using KarenKrill.StateSystem.Abstractions;
+using KarenKrill.UI.Presenters.Abstractions;
+using KarenKrill.StateSystem;
+using KarenKrill.Logging;
+using KarenKrill.UI.Views;
+using KarenKrill.Diagnostics;
+using KarenKrill.Utilities;
+
+namespace TheLabyrinth
 {
     using Abstractions;
-    using Common.Logging;
-    using Common.StateSystem.Abstractions;
-    using Common.UI.Presenters.Abstractions;
-    using Common.StateSystem;
-    using Common.UI.Views;
-    using Common.Diagnostics;
-    using Common.Utilities;
     using GameFlow.Abstractions;
     using Input.Abstractions;
     using GameFlow;

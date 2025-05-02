@@ -2,10 +2,10 @@
 
 using System;
 
-namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
-{
-    using UI.Views.Abstractions;
+using KarenKrill.UI.Views.Abstractions;
 
+namespace TheLabyrinth.UI.Views.Abstractions
+{
     public interface IPauseMenuView : IView
     {
         public event Action? Resume;

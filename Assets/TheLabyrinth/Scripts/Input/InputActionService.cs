@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace KarenKrill.TheLabyrinth.Input
+namespace TheLabyrinth.Input
 {
     using Abstractions;
 
