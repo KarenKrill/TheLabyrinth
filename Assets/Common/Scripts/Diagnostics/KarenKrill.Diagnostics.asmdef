@@ -1,11 +1,9 @@
 {
-    "name": "TheLabyrinth-Editor",
-    "rootNamespace": "TheLabyrinth.Editor",
+    "name": "KarenKrill.Diagnostics",
+    "rootNamespace": "KarenKrill.Diagnostics",
     "references": [
-        "GUID:478a2357cc57436488a56e564b08d223",
-        "GUID:7f007642e137ecb449a3e9961d029924",
-        "GUID:dba450939f2546049b63d2109a9dfa51",
-        "GUID:d1cded6862b708c4a9beee3b150d476d"
+        "GUID:eb77829cf584bef44aef3b2d63d955db",
+        "GUID:2e99e42ee65569241a08ab41d4155790"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

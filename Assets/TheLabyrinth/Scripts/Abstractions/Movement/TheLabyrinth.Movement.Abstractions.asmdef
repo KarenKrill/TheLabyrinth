@@ -1,11 +1,8 @@
 {
-    "name": "TheLabyrinth-Editor",
-    "rootNamespace": "TheLabyrinth.Editor",
+    "name": "TheLabyrinth.Movement.Abstractions",
+    "rootNamespace": "TheLabyrinth.Movement.Abstractions",
     "references": [
-        "GUID:478a2357cc57436488a56e564b08d223",
-        "GUID:7f007642e137ecb449a3e9961d029924",
-        "GUID:dba450939f2546049b63d2109a9dfa51",
-        "GUID:d1cded6862b708c4a9beee3b150d476d"
+        "GUID:2fe59c8cfa1bb0d4487bbdac944b0670"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
