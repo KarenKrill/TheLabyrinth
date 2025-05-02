@@ -11,15 +11,12 @@ namespace KarenKrill.Utilities
             var assemblies = AppDomain.CurrentDomain.GetAssemblies();
             foreach (var assembly in assemblies)
             {
-                if (assembly.FullName.StartsWith(nameof(KarenKrill)))
+                var assemblyTypes = assembly.GetTypes();
+                foreach (var type in assemblyTypes)
                 {
-                    var assemblyTypes = assembly.GetTypes();
-                    foreach (var type in assemblyTypes)
+                    if (interfaceType.IsAssignableFrom(type) && !excludeTypes.Contains(type))
                     {
-                        if (interfaceType.IsAssignableFrom(type) && !excludeTypes.Contains(type))
-                        {
-                            yield return type;
-                        }
+                        yield return type;
                     }
                 }
             }
