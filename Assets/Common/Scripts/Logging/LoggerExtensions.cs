@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace KarenKrill.Common.Logging
+namespace KarenKrill.Logging
 {
     public static class LoggerExtensions
     {

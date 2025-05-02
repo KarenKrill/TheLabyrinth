@@ -2,7 +2,7 @@
 
 namespace KarenKrill.TheLabyrinth.GameStates
 {
-    using Common.StateSystem.Abstractions;
+    using StateSystem.Abstractions;
     using GameFlow.Abstractions;
     using Input.Abstractions;
 

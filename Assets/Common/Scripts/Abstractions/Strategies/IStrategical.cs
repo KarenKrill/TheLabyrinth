@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.Common.Strategies.Abstractions
+﻿namespace KarenKrill.Strategies.Abstractions
 {
     public interface IStrategical<StrategyType> where StrategyType : IStrategy
     {

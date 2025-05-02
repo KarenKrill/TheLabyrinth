@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.Common.UI.Presenters.Abstractions
+﻿namespace KarenKrill.UI.Presenters.Abstractions
 {
     using Views.Abstractions;
 

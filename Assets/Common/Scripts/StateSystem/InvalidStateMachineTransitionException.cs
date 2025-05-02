@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KarenKrill.Common.StateSystem
+namespace KarenKrill.StateSystem
 {
     public class InvalidStateMachineTransitionException<T> : Exception
     {

@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.Common.Instantiation.Abstractions
+﻿namespace KarenKrill.Instantiation.Abstractions
 {
     public interface IFactory { }
 

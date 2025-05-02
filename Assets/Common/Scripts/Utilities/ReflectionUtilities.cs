@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace KarenKrill.Common.Utilities
+namespace KarenKrill.Utilities
 {
     public static class ReflectionUtilities
     {

@@ -6,7 +6,7 @@ using Zenject;
 namespace KarenKrill.TheLabyrinth.GameFlow
 {
     using Abstractions;
-    using Common.Logging;
+    using Logging;
     using Movement.Abstractions;
     using MazeGeneration;
 

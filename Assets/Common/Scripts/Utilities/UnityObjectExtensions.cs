@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.Common.Utilities
+﻿namespace KarenKrill.Utilities
 {
     public static class UnityObjectExtensions
     {

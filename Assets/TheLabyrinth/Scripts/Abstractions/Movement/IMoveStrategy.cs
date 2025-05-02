@@ -1,6 +1,6 @@
 ﻿namespace KarenKrill.TheLabyrinth.Movement.Abstractions
 {
-    using Common.Strategies.Abstractions;
+    using Strategies.Abstractions;
 
     public interface IMoveStrategy : IStrategy
     {

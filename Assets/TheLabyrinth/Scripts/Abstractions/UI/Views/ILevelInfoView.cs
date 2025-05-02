@@ -4,7 +4,7 @@ using System.Drawing;
 
 namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
 {
-    using Common.UI.Views.Abstractions;
+    using UI.Views.Abstractions;
 
     public interface IILevelInfoView : IView
     {

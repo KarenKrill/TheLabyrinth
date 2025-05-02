@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.Common.Abstractions
+﻿namespace KarenKrill.Abstractions
 {
     /// <summary>
     /// Something that can be enabled or disabled

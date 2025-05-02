@@ -4,7 +4,7 @@ using UnityEngine.AI;
 namespace KarenKrill.TheLabyrinth.Movement
 {
     using Abstractions;
-    using Common.Utilities;
+    using Utilities;
 
     /// <summary>
     /// Makes an unit to chase a target

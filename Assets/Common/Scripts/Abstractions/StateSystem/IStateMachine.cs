@@ -2,7 +2,7 @@
 
 using System;
 
-namespace KarenKrill.Common.StateSystem.Abstractions
+namespace KarenKrill.StateSystem.Abstractions
 {
     public delegate void StateTransitionDelegate<T>(T fromState, T toState) where T : Enum;
 

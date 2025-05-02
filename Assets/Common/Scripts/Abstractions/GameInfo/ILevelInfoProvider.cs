@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.Common.GameInfo.Abstractions
+﻿namespace KarenKrill.GameInfo.Abstractions
 {
     /// <summary>
     /// Represents base interface of all game level info providers
