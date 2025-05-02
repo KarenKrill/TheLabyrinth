@@ -2,7 +2,7 @@
 
 using System;
 
-namespace KarenKrill.GameInfo.Abstractions
+namespace KarenKrill.GameFlow.Abstractions
 {
     public interface ITimeLimitedLevelInfoProvider : ILevelInfoProvider
     {
