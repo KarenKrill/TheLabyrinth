@@ -4,7 +4,7 @@ using UnityEngine;
 
 #nullable enable
 
-namespace KarenKrill.Generators.MazeGeneration
+namespace KarenKrill.MazeGeneration
 {
     using Logging;
     using PathFinding.DepthFirstSearch;
