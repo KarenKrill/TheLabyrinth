@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace KarenKrill.Common.Logging
+namespace KarenKrill.Logging
 {
     public class DebugLogHandler : ILogHandler
     {

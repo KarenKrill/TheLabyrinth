@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Utilities;
 
-namespace KarenKrill.TheLabyrinth.Input
+namespace TheLabyrinth.Input
 {
     public partial class @PlayerControls: IInputActionCollection2, IDisposable
     {

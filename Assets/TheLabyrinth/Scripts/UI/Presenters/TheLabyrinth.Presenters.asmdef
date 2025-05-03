@@ -1,0 +1,23 @@
+{
+    "name": "TheLabyrinth.Presenters",
+    "rootNamespace": "TheLabyrinth.Presenters",
+    "references": [
+        "GUID:9ce69da7243473a4f8e5dd1e9dbae22d",
+        "GUID:760c2e9496ca26e4d8f30deca2d52b53",
+        "GUID:7a46791a36c29db4382df4ea59e1f085",
+        "GUID:eb77829cf584bef44aef3b2d63d955db",
+        "GUID:936a56fdb6f27ac449ed464d2bb61bc0",
+        "GUID:2e99e42ee65569241a08ab41d4155790",
+        "GUID:426b99f3eedd05043ab6e659bceb49e4",
+        "GUID:d4fc5e891d3a0e14d83b7db97c334542"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

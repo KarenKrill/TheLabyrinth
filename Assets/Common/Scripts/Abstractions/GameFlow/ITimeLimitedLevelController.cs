@@ -1,6 +1,4 @@
-﻿using KarenKrill.Common.Abstractions;
-
-namespace KarenKrill.Common.GameFlow.Abstractions
+﻿namespace KarenKrill.GameFlow.Abstractions
 {
     public interface ITimeLimitedLevelController : ILevelController, IAbility
     {

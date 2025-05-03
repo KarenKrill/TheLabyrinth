@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.TheLabyrinth.GameFlow.Abstractions
+﻿namespace TheLabyrinth.GameFlow.Abstractions
 {
     public enum MazeShape
     {

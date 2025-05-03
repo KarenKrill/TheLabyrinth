@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.TheLabyrinth.Movement
+﻿namespace TheLabyrinth.Movement
 {
     using Abstractions;
 

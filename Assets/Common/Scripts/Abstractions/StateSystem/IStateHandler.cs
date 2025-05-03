@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KarenKrill.Common.StateSystem.Abstractions
+namespace KarenKrill.StateSystem.Abstractions
 {
     public interface IStateHandler<T> where T : Enum
     {

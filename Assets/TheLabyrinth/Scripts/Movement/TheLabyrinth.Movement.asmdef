@@ -1,0 +1,22 @@
+{
+    "name": "TheLabyrinth.Movement",
+    "rootNamespace": "TheLabyrinth.Movement",
+    "references": [
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:09dcc9c0126b6b34ab2a877b8f2277f5",
+        "GUID:2fe59c8cfa1bb0d4487bbdac944b0670",
+        "GUID:2e99e42ee65569241a08ab41d4155790",
+        "GUID:426b99f3eedd05043ab6e659bceb49e4",
+        "GUID:021276811a6686e41a97f73560ebb328",
+        "GUID:8e8a6d34c5402114b9bbd3a05dfea0ea"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

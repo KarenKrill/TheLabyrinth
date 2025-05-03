@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KarenKrill.Common.Diagnostics
+namespace KarenKrill.Diagnostics
 {
     using Abstractions;
     using Utilities;

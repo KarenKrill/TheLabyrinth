@@ -11,4 +11,4 @@ ScriptedImporter:
   generateWrapperCode: 1
   wrapperCodePath: Assets/TheLabyrinth/Scripts/Input/PlayerControls.cs
   wrapperClassName: 
-  wrapperCodeNamespace: KarenKrill.TheLabyrinth.Input
+  wrapperCodeNamespace: TheLabyrinth.Input

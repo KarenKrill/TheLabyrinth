@@ -7,10 +7,10 @@ using UnityEngine.Events;
 using UnityEngine.ProBuilder;
 using Zenject;
 
-namespace KarenKrill.TheLabyrinth.MazeGeneration
-{
-    using Common.Generators.MazeGeneration;
+using KarenKrill.Generators.MazeGeneration;
 
+namespace TheLabyrinth.MazeGeneration
+{
     public class ArcMazeBuilder : MonoBehaviour
     {
         public int Levels = 3;

@@ -2,10 +2,10 @@
 
 using System;
 
-namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
-{
-    using Common.UI.Views.Abstractions;
+using KarenKrill.UI.Views.Abstractions;
 
+namespace TheLabyrinth.UI.Views.Abstractions
+{
     public interface ILooseMenuView : IView
     {
         public event Action? Restart;

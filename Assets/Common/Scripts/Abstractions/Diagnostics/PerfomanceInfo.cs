@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.Common.Diagnostics.Abstractions
+﻿namespace KarenKrill.Diagnostics.Abstractions
 {
     public readonly struct PerfomanceInfo
     {

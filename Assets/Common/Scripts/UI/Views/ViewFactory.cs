@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace KarenKrill.Common.UI.Views
+namespace KarenKrill.UI.Views
 {
     using Abstractions;
 

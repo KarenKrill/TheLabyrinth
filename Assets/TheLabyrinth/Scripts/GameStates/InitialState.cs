@@ -1,12 +1,13 @@
 ﻿using UnityEngine;
 
-namespace KarenKrill.TheLabyrinth.GameStates
+using KarenKrill.StateSystem.Abstractions;
+using KarenKrill.UI.Presenters.Abstractions;
+using KarenKrill.UI.Views.Abstractions;
+
+namespace TheLabyrinth.GameStates
 {
-    using Common.StateSystem.Abstractions;
-    using Common.UI.Presenters.Abstractions;
-    using Common.UI.Views.Abstractions;
-    using GameFlow.Abstractions;
     using TheLabyrinth.Abstractions;
+    using GameFlow.Abstractions;
     using UI.Views.Abstractions;
 
     public class InitialState : IStateHandler<GameState>

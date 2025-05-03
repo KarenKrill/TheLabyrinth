@@ -1,10 +1,11 @@
 ﻿using UnityEngine;
 
-namespace KarenKrill.TheLabyrinth.GameStates
+using KarenKrill.StateSystem.Abstractions;
+using KarenKrill.GameFlow.Abstractions;
+using KarenKrill.Logging;
+
+namespace TheLabyrinth.GameStates
 {
-    using Common.StateSystem.Abstractions;
-    using Common.GameFlow.Abstractions;
-    using Common.Logging;
     using GameFlow.Abstractions;
     using Input.Abstractions;
     using Movement.Abstractions;

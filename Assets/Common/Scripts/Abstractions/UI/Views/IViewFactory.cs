@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.Common.UI.Views.Abstractions
+﻿namespace KarenKrill.UI.Views.Abstractions
 {
     using Instantiation.Abstractions;
 

@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
 
-namespace KarenKrill.TheLabyrinth.GameStates
+using KarenKrill.StateSystem.Abstractions;
+
+namespace TheLabyrinth.GameStates
 {
-    using Common.StateSystem.Abstractions;
     using GameFlow.Abstractions;
     using Input.Abstractions;
 

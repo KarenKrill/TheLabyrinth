@@ -1,4 +1,4 @@
-﻿namespace KarenKrill.TheLabyrinth.Movement.Abstractions
+﻿namespace TheLabyrinth.Movement.Abstractions
 {
     public interface IPhysicMoveStrategy : IMoveStrategy
     {

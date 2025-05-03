@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Zenject;
 
-namespace KarenKrill.TheLabyrinth.GameFlow
+namespace TheLabyrinth.GameFlow
 {
     using Abstractions;
 

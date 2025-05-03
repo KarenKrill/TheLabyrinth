@@ -2,11 +2,11 @@ using System;
 using UnityEngine;
 using Zenject;
 
-namespace KarenKrill.TheLabyrinth.GameFlow
+using KarenKrill.GameFlow.Abstractions;
+
+namespace TheLabyrinth.GameFlow
 {
     using Abstractions;
-    using Common.GameFlow.Abstractions;
-    using Common.GameInfo.Abstractions;
 
     public class LevelController : MonoBehaviour, ITimeLimitedLevelController, ITimeLimitedLevelInfoProvider
     {

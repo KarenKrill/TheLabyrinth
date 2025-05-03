@@ -1,11 +1,12 @@
 ﻿using UnityEngine;
 using TMPro;
 
-namespace KarenKrill.TheLabyrinth.UI.Views
+using KarenKrill.UI.Views;
+using KarenKrill.Utilities;
+
+namespace TheLabyrinth.UI.Views
 {
     using Abstractions;
-    using Common.UI.Views;
-    using Common.Utilities;
 
     public class LevelInfoView : ViewBehaviour, IILevelInfoView
     {

@@ -2,7 +2,7 @@
 
 using System;
 
-namespace KarenKrill.Common.Diagnostics.Abstractions
+namespace KarenKrill.Diagnostics.Abstractions
 {
     public interface IDiagnosticsProvider
     {

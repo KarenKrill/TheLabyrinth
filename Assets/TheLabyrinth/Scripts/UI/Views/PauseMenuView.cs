@@ -2,10 +2,11 @@ using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace KarenKrill.TheLabyrinth.UI.Views
+using KarenKrill.UI.Views;
+
+namespace TheLabyrinth.UI.Views
 {
     using Abstractions;
-    using Common.UI.Views;
 
     public class PauseMenuView : ViewBehaviour, IPauseMenuView
     {

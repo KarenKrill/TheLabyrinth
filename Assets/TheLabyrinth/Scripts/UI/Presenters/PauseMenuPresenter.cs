@@ -1,7 +1,8 @@
-﻿namespace KarenKrill.TheLabyrinth.UI.Presenters
+﻿using KarenKrill.UI.Presenters.Abstractions;
+using KarenKrill.UI.Views.Abstractions;
+
+namespace TheLabyrinth.UI.Presenters
 {
-    using Common.UI.Presenters.Abstractions;
-    using Common.UI.Views.Abstractions;
     using GameFlow.Abstractions;
     using Views.Abstractions;
 

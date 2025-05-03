@@ -2,7 +2,7 @@
 
 using System;
 
-namespace KarenKrill.TheLabyrinth.GameFlow.Abstractions
+namespace TheLabyrinth.GameFlow.Abstractions
 {
     public interface ILevelManager
     {

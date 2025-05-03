@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace KarenKrill.TheLabyrinth.Movement.Abstractions
+namespace TheLabyrinth.Movement.Abstractions
 {
     public interface IManualMoveStrategy : IMoveStrategy
     {

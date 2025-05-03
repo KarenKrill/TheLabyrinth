@@ -1,8 +1,9 @@
 {
-    "name": "KarenKrill.Common",
-    "rootNamespace": "KarenKrill.Common",
+    "name": "KarenKrill.MazeGeneration",
+    "rootNamespace": "KarenKrill.MazeGeneration",
     "references": [
-        "GUID:65d3750065b68574288560ac45c5e3e0"
+        "GUID:0ad2485019150bc439cf79488930f85c",
+        "GUID:7f007642e137ecb449a3e9961d029924"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

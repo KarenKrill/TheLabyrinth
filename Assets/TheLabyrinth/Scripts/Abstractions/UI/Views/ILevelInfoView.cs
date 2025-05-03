@@ -2,10 +2,10 @@
 
 using System.Drawing;
 
-namespace KarenKrill.TheLabyrinth.UI.Views.Abstractions
-{
-    using Common.UI.Views.Abstractions;
+using KarenKrill.UI.Views.Abstractions;
 
+namespace TheLabyrinth.UI.Views.Abstractions
+{
     public interface IILevelInfoView : IView
     {
         public string Title { set; }

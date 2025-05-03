@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace KarenKrill.TheLabyrinth.Abstractions
+namespace TheLabyrinth.Abstractions
 {
     public enum QualityLevel
     {

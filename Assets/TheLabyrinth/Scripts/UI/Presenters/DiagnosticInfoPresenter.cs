@@ -1,7 +1,8 @@
-﻿namespace KarenKrill.TheLabyrinth.UI.Presenters
+﻿using KarenKrill.Diagnostics.Abstractions;
+using KarenKrill.UI.Presenters.Abstractions;
+
+namespace TheLabyrinth.UI.Presenters
 {
-    using Common.Diagnostics.Abstractions;
-    using Common.UI.Presenters.Abstractions;
     using Views.Abstractions;
 
     public class DiagnosticInfoPresenter : IPresenter<IDiagnosticInfoView>

@@ -1,7 +1,7 @@
 using UnityEngine;
 using Zenject;
 
-namespace KarenKrill.TheLabyrinth.Movement
+namespace TheLabyrinth.Movement
 {
     using Abstractions;
     using Input.Abstractions;

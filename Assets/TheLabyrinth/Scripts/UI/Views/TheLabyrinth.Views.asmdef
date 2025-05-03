@@ -1,0 +1,20 @@
+{
+    "name": "TheLabyrinth.Views",
+    "rootNamespace": "TheLabyrinth.Views",
+    "references": [
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:c4d2c914c542f7a44a74a26c3bb547c1",
+        "GUID:7a46791a36c29db4382df4ea59e1f085",
+        "GUID:2e99e42ee65569241a08ab41d4155790",
+        "GUID:d4fc5e891d3a0e14d83b7db97c334542"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

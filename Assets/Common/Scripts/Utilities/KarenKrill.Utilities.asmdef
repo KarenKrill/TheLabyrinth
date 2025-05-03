@@ -1,6 +1,6 @@
 {
-    "name": "KarenKrill.Common.Abstractions",
-    "rootNamespace": "KarenKrill.Common",
+    "name": "KarenKrill.Utilities",
+    "rootNamespace": "KarenKrill.Utilities",
     "references": [],
     "includePlatforms": [],
     "excludePlatforms": [],

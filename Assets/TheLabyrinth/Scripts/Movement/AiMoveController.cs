@@ -1,11 +1,12 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace KarenKrill.TheLabyrinth.Movement
+using KarenKrill.Utilities;
+
+namespace TheLabyrinth.Movement
 {
     using Abstractions;
-    using Common.Utilities;
-
+    
     /// <summary>
     /// Makes an unit to chase a target
     /// </summary>

@@ -3,7 +3,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace KarenKrill.Common.StateSystem
+namespace KarenKrill.StateSystem
 {
     using Abstractions;
 
