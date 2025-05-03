@@ -9,7 +9,7 @@ namespace TheLabyrinth.GameFlow
 {
     using Abstractions;
     using Movement.Abstractions;
-    using MazeGeneration;
+    using MazeBuilding;
 
     public class LoadLevelManager : MonoBehaviour, ILevelManager
     {
