@@ -7,7 +7,7 @@ using UnityEngine.Events;
 using UnityEngine.ProBuilder;
 using Zenject;
 
-using KarenKrill.Generators.MazeGeneration;
+using KarenKrill.MazeGeneration;
 
 namespace TheLabyrinth.MazeGeneration
 {

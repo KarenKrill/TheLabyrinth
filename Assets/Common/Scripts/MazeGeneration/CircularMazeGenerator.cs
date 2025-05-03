@@ -2,51 +2,10 @@
 using System.Linq;
 using UnityEngine;
 
-#nullable enable
-
-namespace KarenKrill.Generators.MazeGeneration
+namespace KarenKrill.MazeGeneration
 {
     using Logging;
     using PathFinding.DepthFirstSearch;
-
-    public class CircularMazeCell
-    {
-        public IReadOnlyList<bool> FrontWalls => _frontWalls;
-        public bool LeftWall { get; private set; } = true;
-        public bool RightWall { get; private set; } = true;
-        public bool BackWall { get; private set; } = true;
-        public int Level { get; private set; }
-        public int Cell { get; private set; }
-
-        public CircularMazeCell(int level, int cell, int frontWallsCount)
-        {
-            Level = level;
-            Cell = cell;
-            _frontWalls = new List<bool>(frontWallsCount);
-            for (int i = 0; i < frontWallsCount; i++)
-            {
-                _frontWalls.Add(true);
-            }
-        }
-        public void BreakFrontWall(int wallIndex) => _frontWalls[wallIndex] = false;
-        public void BreakLeftWall() => LeftWall = false;
-        public void BreakRightWall() => RightWall = false;
-        public void BreakBackWall() => BackWall = false;
-
-        private readonly List<bool> _frontWalls;
-    }
-
-    public class CircularMaze
-    {
-        public CircularMazeCell[][] Cells { get; set; }
-        public CircularMazeCell ExitCell { get; set; }
-
-        public CircularMaze(CircularMazeCell[][] cells, CircularMazeCell exitCell)
-        {
-            Cells = cells;
-            ExitCell = exitCell;
-        }
-    }
 
     public class CircularMazeGenerator
     {
