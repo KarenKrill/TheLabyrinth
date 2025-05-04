@@ -9,7 +9,7 @@ using Zenject;
 
 using KarenKrill.MazeGeneration;
 
-namespace TheLabyrinth.MazeGeneration
+namespace TheLabyrinth.MazeBuilding
 {
     public class ArcMazeBuilder : MonoBehaviour
     {

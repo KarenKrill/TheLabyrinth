@@ -7,7 +7,7 @@ using Unity.EditorCoroutines.Editor;
 
 using KarenKrill.Logging;
 
-namespace TheLabyrinth.MazeGeneration
+namespace TheLabyrinth.MazeBuilding
 {
 
     [CustomEditor(typeof(ArcMazeBuilder))]

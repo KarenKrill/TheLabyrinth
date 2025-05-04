@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace TheLabyrinth.MazeGeneration
+namespace TheLabyrinth.MazeBuilding
 {
     public enum MazeCellWallType
     {

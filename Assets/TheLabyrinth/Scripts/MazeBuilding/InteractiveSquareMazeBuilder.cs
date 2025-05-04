@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace TheLabyrinth.MazeGeneration
+namespace TheLabyrinth.MazeBuilding
 {
-    public class InteractiveSquareMazeGenerator : MonoBehaviour
+    public class InteractiveSquareMazeBuilder : MonoBehaviour
     {
         [SerializeField]
         private MazeCell _mazeCellPrefab;
